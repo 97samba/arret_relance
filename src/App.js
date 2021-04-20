@@ -1,24 +1,47 @@
-import logo from './logo.svg';
-import './App.css';
+import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
+import Create from './Pages/Create';
+import DashBoard from './Pages/DashBoard'
+import Manage from './Pages/Manage';
+import Settings from './Pages/Settings';
+import Layout from './Components/Layout'
+import { createMuiTheme, ThemeProvider } from '@material-ui/core'
+
+const theme = createMuiTheme({
+  typography: {
+    fontFamily: 'Quicksand',
+    fontWeightLight: 400,
+    fontWeightRegular: 500,
+    fontWeightMedium: 600,
+    fontWeightBold: 1000,
+  }
+})
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React 
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={theme}>
+      <Router>
+        <Layout>
+          <Switch>
+            <Route exact path="/">
+              <DashBoard />
+            </Route>
+
+            <Route  path="/create">
+              <Create />
+            </Route>
+
+            <Route  path="/manage">
+              <Manage />
+            </Route>
+
+            <Route  path="/settings">
+              <Settings />
+            </Route>
+          </Switch>
+        </Layout>
+
+      </Router>
+   </ThemeProvider>
   );
 }
 
