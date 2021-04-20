@@ -9,8 +9,6 @@ const Create = () => {
             gutterBottom
             >Parpre : ARES</Typography>
             <ARCard name="Arrêt"/>
-            <ARCard name = 'Relance'/>
-
         </div>
      );
 }

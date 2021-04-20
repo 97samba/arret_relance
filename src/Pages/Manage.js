@@ -1,4 +1,3 @@
-import DashboardCard from "../Components/Dashboard/DashboardCard"
 
 const Manage = () => {
     return ( 

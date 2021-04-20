@@ -1,6 +1,6 @@
 import { Box, IconButton, Menu, MenuItem, Paper, TextField } from "@material-ui/core"
 import {makeStyles} from '@material-ui/core'
-import { Delete, FileCopy, MoreVert, Description } from "@material-ui/icons"
+import { Delete, FileCopy, MoreVert, Storage } from "@material-ui/icons"
 import { useContext, useState } from "react"
 import ActionContext from "../../Context/ActionContext"
 
@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme)=>({
         marginRight:theme.spacing(2)
     }
 }))
-const ARScript = ({actionID, index}) => {
+const Database = ({actionID,index}) => {
     const classes = useStyles()
     const [anchorEl, setAnchor] = useState(null)
     const { deleteAction} = useContext(ActionContext)
@@ -38,12 +38,13 @@ const ARScript = ({actionID, index}) => {
 
                 >
                     <Box my="auto">
-                    <Description color="primary" />
+                        <Storage color="primary" />
 
                     </Box>
                     <div>
                         <TextField
                         onChange={(e) => setState({...state, server:e.target.value})}
+
                         className={classes.fields} 
                         id='server'
                         color='primary'
@@ -59,23 +60,24 @@ const ARScript = ({actionID, index}) => {
                     </div>
                     <div>
                         <TextField 
-                        onChange={(e) => setState({...state, path:e.target.value})}
+                        autoComplete="false"
                         className={classes.fields} 
-                        id='Path'
+                        id='DBName'
                         color='primary'
-                        label= 'Path' />
+                        label= 'Instance'
+                        onChange={(e) => setState({...state, Database:e.target.value})}
+                        />
                     </div>
                     <div>
                         <TextField 
                         className={classes.fields} 
                         onChange={(e) => setState({...state, action:e.target.value})}
                         id='Action'
-                        color='primary'
-                        label= 'INVOKE'
-                        placeholder='INVOKE'
-                        disabled />
+                        color='secondary'
+                        label= 'Action'
+                        placeholder='STOP'
+                         />
                     </div>
-
 
                     <Menu
                         id="menu"
@@ -88,13 +90,15 @@ const ARScript = ({actionID, index}) => {
                         <MenuItem onClick={handleClick} ><FileCopy /> Dupliquer</MenuItem>
                     </Menu>
                     <IconButton onClick={handleClick}>
-                        <MoreVert  />
+                        <MoreVert />
 
                     </IconButton>
+                    
+                    
                 </Box>
             </Paper>
         </div>
      );
 }
  
-export default ARScript;
+export default Database;

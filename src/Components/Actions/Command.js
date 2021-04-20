@@ -1,6 +1,6 @@
 import { Box, IconButton, Menu, MenuItem, Paper, TextField } from "@material-ui/core"
 import {makeStyles} from '@material-ui/core'
-import { Delete, FileCopy, MoreVert, Description } from "@material-ui/icons"
+import { Delete, FileCopy, MoreVert, Code } from "@material-ui/icons"
 import { useContext, useState } from "react"
 import ActionContext from "../../Context/ActionContext"
 
@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme)=>({
         marginRight:theme.spacing(2)
     }
 }))
-const ARScript = ({actionID, index}) => {
+const Command = ({actionID, index}) => {
     const classes = useStyles()
     const [anchorEl, setAnchor] = useState(null)
     const { deleteAction} = useContext(ActionContext)
@@ -38,7 +38,7 @@ const ARScript = ({actionID, index}) => {
 
                 >
                     <Box my="auto">
-                    <Description color="primary" />
+                        <Code color="primary" />
 
                     </Box>
                     <div>
@@ -59,20 +59,22 @@ const ARScript = ({actionID, index}) => {
                     </div>
                     <div>
                         <TextField 
-                        onChange={(e) => setState({...state, path:e.target.value})}
+                        autoComplete="false"
                         className={classes.fields} 
-                        id='Path'
+                        id='CMD'
                         color='primary'
-                        label= 'Path' />
+                        label= 'Command'
+                        onChange={(e) => setState({...state, command:e.target.value})}
+                        />
                     </div>
                     <div>
                         <TextField 
                         className={classes.fields} 
-                        onChange={(e) => setState({...state, action:e.target.value})}
-                        id='Action'
-                        color='primary'
-                        label= 'INVOKE'
-                        placeholder='INVOKE'
+
+                        id='env'
+                        color='secondary'
+                        label= 'env'
+                        placeholder='Windows'
                         disabled />
                     </div>
 
@@ -88,7 +90,7 @@ const ARScript = ({actionID, index}) => {
                         <MenuItem onClick={handleClick} ><FileCopy /> Dupliquer</MenuItem>
                     </Menu>
                     <IconButton onClick={handleClick}>
-                        <MoreVert  />
+                        <MoreVert />
 
                     </IconButton>
                 </Box>
@@ -97,4 +99,4 @@ const ARScript = ({actionID, index}) => {
      );
 }
  
-export default ARScript;
+export default Command;

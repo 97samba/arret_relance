@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { AppBar, Box, Button, CircularProgress, Fade, Icon, InputBase, List, ListItem, ListItemIcon, ListItemText, TextField, Toolbar } from '@material-ui/core'
+import { AppBar, Box, Button, CircularProgress, Fade, List, ListItem, ListItemIcon, ListItemText, TextField, Toolbar } from '@material-ui/core'
 import Drawer from '@material-ui/core/Drawer'
 import Typography from '@material-ui/core/Typography'
 import { AppsSharp, Code,  DashboardSharp, FolderOpenSharp, SettingsSharp } from '@material-ui/icons'

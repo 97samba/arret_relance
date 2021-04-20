@@ -1,0 +1,14 @@
+{
+  "Actions": [
+    {
+      "id": 1,
+      "type": "service",
+      "action": "stop"
+    },
+    {
+      "id": 2,
+      "type": "script",
+      "path": "c:/Temp/test.bat"
+    }
+  ]
+}
