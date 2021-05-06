@@ -1,0 +1,31 @@
+[
+    {
+        "name": "ARES",
+        "auteur": "Samba NDIAYE",
+        "date_de_creation": "05/05/2021, 16:31:40",
+        "Arret": [
+            {
+                "index": 0,
+                "type": "webAction",
+                "url": "fornako.com",
+                "informations": {
+                    "login": "mimi",
+                    "loginSelector": "login",
+                    "password": "76492d1116743f0423413b16050a5345MgB8AHUAdQAzAGgARAArAEIAVABZAHgAcwBnADUAUgBpAG8ANQB3AFUAOABoAFEAPQA9AHwAZgA3AGMAMwBkADAAYQBiADUAMgA1ADMAMwBjADAAMwAwADIANwA0ADQAYwA3ADcAZAA1AGIAMQAwADUANwBlAGEAYQBkAGYAZgA0ADcAOAA4ADAANwBhADEAMwBkADkANwAxADcAYQAzAGMANQA3AGQAMgAzADUANQA0AGEANgA=",
+                    "passwordSelector": "password",
+                    "navigator": "Firefox",
+                    "navigatorMode": "private"
+                }
+            },
+            {
+                "index": 1,
+                "type": "Link",
+                "url": "google.com",
+                "informations": {
+                    "url": "google.com",
+                    "urlState": "UP"
+                }
+            }
+        ]
+    }
+]
