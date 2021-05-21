@@ -1,7 +1,10 @@
-import {Typography} from '@material-ui/core'
+import {makeStyles, Typography} from '@material-ui/core'
 
 
 const Manage = () => {
+
+    const [Parpre, SetParpre] = makeStyles([])
+
     return ( 
         <div>
             <Typography>Gestion</Typography>

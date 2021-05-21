@@ -57,10 +57,20 @@ const ARCard = ({name}) => {
     const deleteAction=(actionID)=>{
 
         const newState = actions.filter(action => action.index !== actionID)
+        
+        var i ;
 
-        console.log(actionID, actions, newState)
+        for(i = 0; i < newState.length; i++){
+            newState[i].index = i;
+        }
+        setIndex(newState.length )
+
+        newState.map(action => console.log(action))
+
 
         SetActions(newState)
+        console.log("index ", index)
+
     }
     const duplicateAction=(actionID)=>{
         var actionToDuplicateIndex = actions.findIndex(e=>e.id === actionID)
@@ -73,6 +83,7 @@ const ARCard = ({name}) => {
 
     }
     const saveData = (object) =>{
+        
         const result = Object.values(StopActions).filter(e => e.index === object.index)
 
         if (result.length > 0){
@@ -97,28 +108,13 @@ const ARCard = ({name}) => {
         }
         
     }
-    const saveServiceState= (object) =>{
-        
-    }
 
-    const saveWebAction = (object) =>{
-
-    }
-
-
-    const handleClose=() =>{
-        setOpen(false)
-    }
-
-    const handleOpen=() =>{
-        setOpen(true)
-    }
 
     const generateJson = async () => {
-        var currentDate = new Date()
-        const parpre = {name : "ARES",auteur: "Samba NDIAYE", date_de_creation : new Date().toLocaleString(), Arret : StopActions}
 
-        axios.post(`http://localhost:5000/api/PARPRE/test`, parpre)
+        const parpre = {name : "ARES" ,auteur: "Samba NDIAYE", date_de_creation : new Date().toLocaleString(), Arret : StopActions}
+
+        axios.post(`http://localhost:5000/api/PARPRE/create`, parpre)
             .then(res => console.log(res))
             
         console.log(JSON.stringify(parpre))
@@ -144,8 +140,8 @@ const ARCard = ({name}) => {
                         icon={<SpeedDialIcon />}
                         open={ open }
                         direction = 'left'
-                        onOpen={handleOpen}
-                        onMouseLeave={handleClose}
+                        onOpen={() => setOpen(true)}
+                        onMouseLeave={() => setOpen(false)}
                         >
                         {iconsAction.map((action) => (
                             <SpeedDialAction 
