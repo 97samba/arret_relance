@@ -41,18 +41,35 @@ const WebAction = ({index}) => {
         setAnchor(null)
     }
     const reduire = () =>{
+ 
+    }
+    const formatUrl = (url) =>{
+        
+        if(url.startsWith("http")){
 
+            console.log('url est bonne')
+            return url
+        }else{
+            console.log('error url')    
+            return "http://"+url       
+        }
         
     }
 
     const testConnection = async (e) =>{
-        if(e.target.value !== ''){
 
-            console.log('accessing ',e.target.value)
+        const formatedUrl = formatUrl(e.target.value)
 
-            await fetch(`http://localhost:5000/api/PARPRE/link?url=${e.target.value}`)
+        if(formatedUrl !== ''){
+
+            console.log('accessing ',formatedUrl)
+
+            setState({...state, url:formatedUrl})
+
+            fetch(`http://localhost:5000/api/PARPRE/link?url=${formatedUrl}`)
                 .then(res => res.json())
                 .then(result => console.log(result.result))
+                
         }
   
     }
@@ -64,10 +81,7 @@ const WebAction = ({index}) => {
         setOpenDialog(false);
     }
 
-    const handleDialogSubmit =( ) =>{
-
-    }
-
+    
     return ( 
         <div>
             <Paper 
@@ -86,8 +100,7 @@ const WebAction = ({index}) => {
                         className={classes.fields} 
                         id='url'
                         color='primary'
-                        label= 'Lien'
-            
+                        label= 'Lien'                        
                         onChange={(e) => setState({...state, url:e.target.value})}
                         onBlur={(e) => (testConnection(e))}
                         />
@@ -100,6 +113,7 @@ const WebAction = ({index}) => {
                                 <MenuItem value="Déconnexion" >Déconnexion</MenuItem>
                                 <MenuItem value="Click">Click</MenuItem>
                                 <MenuItem value="Remplir">Remplir champ(s)</MenuItem>
+                                <MenuItem value="Contenu">Vérifier un contenu</MenuItem>
                             </Select>
                         </FormControl>
                     </Box>
@@ -124,6 +138,7 @@ const WebAction = ({index}) => {
                             url:state.url,                             
                             informations:
                             {
+                                type: "connection",
                                 login : state.login,
                                 loginSelector : state.loginSelector, 
                                 password : state.password, 
@@ -328,10 +343,11 @@ const WebAction = ({index}) => {
                         onBlur={() => {saveData(
                             {
                                 index:index,
-                                type:"webAction-Click",
+                                type:"webAction",
                                 url:state.url,                             
                                 informations:
                                 {
+                                    type:"click",
                                     x : state.x,
                                     y : state.y, 
                                     clickSelector : state.clickSelector, 
