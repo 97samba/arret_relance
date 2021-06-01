@@ -268,6 +268,7 @@ const WebAction = ({index}) => {
                         {
                             index:index,
                             type:"webAction",
+                            url:state.url,
                             informations:
                             {
                                 type: "logOut",

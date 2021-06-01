@@ -31,27 +31,43 @@ const Link = ({index}) => {
     const handleClick = (event) =>{
         setAnchor(event.currentTarget)
     }
+
     const handleClose= () => {
         setAnchor(null)
     }
-    
+
+    const formatUrl = (url) =>{
+
+        if(url.startsWith("http")){
+
+            console.log('url est bonne')
+            return url
+        }else{
+            console.log('error url')    
+            return "http://"+url       
+        }
+        
+    }
+
 
     const testConnection = async (e) =>{
+
+        const formatedUrl = formatUrl(e.target.value)
+
         saveData({
             index:index,
-            type:"Link",
-            url:state.link,                             
+            type:"link",
+            url:formatedUrl,                             
             informations:
             {
-                url : state.link,
                 urlState : urlState,
-                navigationMode : state.navigationMode                                  
+                navigationMode : navigationMode                                  
             }})
         if(e.target.value !== ''){
 
-            console.log('accessing ',e.target.value)
+            console.log('accessing ',formatedUrl)
 
-            await fetch(`http://localhost:5000/api/PARPRE/link?url=${e.target.value}`)
+            await fetch(`http://localhost:5000/api/PARPRE/link?url=${formatedUrl}`)
                 .then(res => res.json())
                 .then(result => console.log(result.result))
         }
@@ -86,10 +102,11 @@ const Link = ({index}) => {
                     </Box>
                     <Box flexGrow={0.6} >
                     <FormControl className={classes.dropDown}>
-                            <InputLabel>Etat</InputLabel>
-                            <Select value={urlState} onChange={(e) => (setUrlState(e.target.value))}>
+                            <InputLabel>Etat du site</InputLabel>
+                            <Select value={urlState} onChange={(e) => (setUrlState(e.target.value))} onBlur={(e) => (testConnection(e))}>
                                 <MenuItem value="Down" >Down</MenuItem>
                                 <MenuItem value="UP">UP</MenuItem>
+                                <MenuItem value="Null">Page blanche</MenuItem>
                             </Select>
                         </FormControl>
                     </Box>
@@ -97,7 +114,7 @@ const Link = ({index}) => {
                     <Box  >
                     <FormControl className={classes.dropDown}>
                             <InputLabel>Navigation</InputLabel>
-                            <Select value={navigationMode} onChange={(e) => (setState({...state, navigationMode : e.target.value}))}>
+                            <Select value={navigationMode} onChange={(e) => (setnavigationMode(e.target.value))} onBlur={(e) => (testConnection(e))}>
                                 <MenuItem value="Privée" >Privée</MenuItem>
                                 <MenuItem value="normal">Normal</MenuItem>
                             </Select>

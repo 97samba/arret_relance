@@ -1,18 +1,21 @@
 import React from 'react'
 
-import { AppBar, Box, Button, CircularProgress, Fade, List, ListItem, ListItemIcon, ListItemText, TextField, Toolbar } from '@material-ui/core'
+import { AppBar, Box, Button,  List, ListItem, ListItemIcon, ListItemText,  Toolbar } from '@material-ui/core'
 import Drawer from '@material-ui/core/Drawer'
 import Typography from '@material-ui/core/Typography'
-import { AppsSharp, Code,  DashboardSharp, FolderOpenSharp, SettingsSharp } from '@material-ui/icons'
+import { AppsSharp, Code,  DashboardSharp, FindReplace, FolderOpenSharp, SettingsSharp, Timeline } from '@material-ui/icons'
 import {makeStyles} from '@material-ui/core'
 import { useHistory, useLocation } from 'react-router'
 
-const drawerWidth = 250
+
+const drawerWidth = 220
+const drawerWidthRight = 200
 const useStyles = makeStyles((theme) =>{
     return{
         root:{
             display:'flex',
-            background: '#F6F6FB'
+            background: '#F6F6FB',
+            minHeight:"750px"
         },
         nav:{
             width: drawerWidth,
@@ -52,7 +55,7 @@ const useStyles = makeStyles((theme) =>{
         toolbar:theme.mixins.toolbar,
         page: {
             background:'F9F9F9',
-            width:'100%',
+            width:"100%",
             padding: theme.spacing(3)
         },
         drawerPaper:{
@@ -68,9 +71,15 @@ const useStyles = makeStyles((theme) =>{
 
         },
         navRight:{
-            width:drawerWidth,
-            display:'none'
-        }
+            width: drawerWidthRight,
+            //display:'none'
+        },
+        drawerPaperRight:{
+            width : drawerWidthRight,
+            backgroundColor:"#FFFFF",
+            borderLeft:'0px'
+
+        },
 
 }})
 
@@ -82,17 +91,27 @@ const Layout = ({children}) => {
             path:'/'
         },
         {
-            text: 'Create',
+            text: 'Création',
             icon:<AppsSharp color="primary" />,
             path:'/create'
         },
         {
-            text: 'Manage',
+            text: 'Gestion',
             icon:<FolderOpenSharp color="primary" />,
             path:'/manage'
         },
         {
-            text: 'Settings',
+            text: 'Monitoring',
+            icon: <Timeline color="primary"/>,
+            path:'#'
+        },
+        {
+            text: 'Prod h-Prod',
+            icon: <FindReplace color="primary"/>,
+            path:'#'
+        },
+        {
+            text: 'Parametres',
             icon:<SettingsSharp color="primary" />,
             path:'/settings'
         },
@@ -198,39 +217,31 @@ const Layout = ({children}) => {
             </div>
 
             
-            {/**Left nav bar */}
+            {/**right nav bar */}
             <Drawer
             elevation={0}
             variant = "permanent"
             anchor = 'right'
-            classes = {{paper : classes.drawerPaperLeft}}
+            classes = {{paper : classes.drawerPaperRight}}
             className={classes.navRight}
-            >
-                <Box m={3}>
-                    <Typography color="primary">
-                        Informations personnelles
-                    </Typography>
-                    <form noValidate autoComplete="off">
-                        <TextField  label="prenom" margin="dense" />
-                        <TextField label="Nom"  margin="dense" />
-                        
-
-                    </form>
-                </Box>
-
+            >                
                 <Box m={3} display="block">
                     <Typography gutterBottom>
                         Vérification active                                       
                     </Typography>
                     <Box mt={1} display="flex" justifyContent="space-around">
+                        {/** 
                         <Fade
                             in="true"
                             style = {{transitionDelay : '800ms'}}
                             unmountOnExit
+                            
                             >
                                 <CircularProgress value={10} size= {25} />
-                            </Fade>
-                            <Typography variant="body2">Ping serveur SW11203 </Typography>
+                        </Fade>
+                        
+                        <Typography variant="body2">Ping serveur SW11203 </Typography>
+                            */}
                     </Box>
                 </Box>
             </Drawer>

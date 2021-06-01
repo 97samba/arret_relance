@@ -1,14 +1,47 @@
 {
     "name": "ARES",
     "auteur": "Samba NDIAYE",
-    "date_de_creation": "24/05/2021, 04:28:26",
+    "date_de_creation": "25/05/2021, 16:14:40",
     "Arret": [
         {
             "index": 0,
-            "type": "service",
-            "server": "localhost",
-            "name": "bits",
-            "login": "samba"
+            "type": "webAction",
+            "url": "https://linkedin.com",
+            "informations": {
+                "type": "connection",
+                "login": "97samba@gmail.com",
+                "loginSelector": "#session_key",
+                "password": "76492d1116743f0423413b16050a5345MgB8AGkAQQBmAGkAMABKAGwAMABZAC8ATwArAFcAcwBzAHEALwArAGQAMQBFAFEAPQA9AHwANQBhAGIAMAA1ADMANABhADgAYwAzAGEAZQA4ADQAMQAwADEAYQA1ADMANwA3AGIAYgBjADMAZgA4AGUAMAAyADIAOQBlADUAOQA1ADQAMQBhAGYANwAwADgAMQA0ADgAZgA1ADkAMwBkADgAMgBkADAAOAA1ADAAZABlADEAOQA=\r\n",
+                "passwordSelector": "#session_password",
+                "navigator": "Chrome",
+                "navigatorMode": "normal"
+            }
+        },
+        {
+            "index": 1,
+            "type": "webAction",
+            "url": "https://linkedin.com",
+            "informations": {
+                "type": "click",
+                "clickSelector": "#ember455 > button"
+            }
+        },
+        {
+            "index": 2,
+            "type": "webAction",
+            "informations": {
+                "type": "click",
+                "clickSelector": "#ember41"
+            }
+        },
+        {
+            "index": 3,
+            "type": "link",
+            "url": "https://linkedin.com/m/logout",
+            "informations": {
+                "urlState": "UP",
+                "navigationMode": "normal"
+            }
         }
     ]
 }

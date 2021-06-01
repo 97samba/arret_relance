@@ -1,28 +1,37 @@
-import { Box, IconButton, Menu, MenuItem, Paper, TextField, Typography } from "@material-ui/core"
+import { Avatar, Box, Chip, IconButton, Menu, MenuItem, Paper, TextField, Typography } from "@material-ui/core"
 import {makeStyles} from '@material-ui/core'
 import { Comment, Delete, FileCopy, MoreVert, SettingsSharp } from "@material-ui/icons"
-import axios from "axios"
 import { useContext, useState } from "react"
 import ActionContext from "../../Context/ActionContext"
 
 const useStyles = makeStyles((theme)=>({
     root:{
         background:'#F6F6FB',
-        padding: theme.spacing(2),
+        padding: theme.spacing(1),
         marginBottom: theme.spacing(1)
 
     },
     fields:{
         marginRight:theme.spacing(2)
+    },
+    smallAvatar: {
+      width: theme.spacing(2.5),
+      height: theme.spacing(2.5)
     }
 }))
 const Service = ({actionID,index}) => {
+    //css
     const classes = useStyles()
+
     const [anchorEl, setAnchor] = useState(null)
-    const { deleteAction, duplicateAction,saveData} = useContext(ActionContext)
     const [action, setAction] = useState('STOP')
+    //létat du composant
     const [state, setState] = useState([])
-    const [pingState, setPingState] = useState('ok')
+    //l'état du server
+    const [pingState, setPingState] = useState("ko")
+
+    //context pour sauvegarder l'état dans le parent
+    const { deleteAction, duplicateAction,saveData,test} = useContext(ActionContext)
 
     const handleClick = (event) =>{
         setAnchor(event.currentTarget)
@@ -30,20 +39,31 @@ const Service = ({actionID,index}) => {
     const handleClose= () => {
         setAnchor(null)
     }
-    const reduire = () =>{
 
-        
+    //test si le service existe
+    const testService = async(service)=>{
+
+        if(state.server === null || pingState === "ko"){return}
+
+        console.log("Testing service : ",service,"server ",state.server)
+        fetch(`http://localhost:5000/api/PARPRE/service?name=${service}&server=${state.server}`)
+            .then(res => res.json())
+            .then(result => console.log(result))
+            .then(() => {
+                saveData(
+                {
+                    index:index, type:"service", server : state.server , name : state.service, login : state.login
+                })
+            })
     }
-
+    //Fait un ping
     const testPing = async (e,server) =>{
         var error=''
         
         await fetch(`http://localhost:5000/api/PARPRE?server=${server}`)
             .then(res => res.json())
-            .then(result => {setPingState(result); console.log(result.result); error= result}
+            .then(result => {setPingState(result); console.log(result); error= result}
         )
-        
-  
     }
 
 
@@ -84,7 +104,11 @@ const Service = ({actionID,index}) => {
                         color='primary'
                         label= 'Login' 
                         onChange={(e) => setState({...state, login:e.target.value})}
-                        onBlur={reduire}
+                        onBlur={() => saveData(
+                            {
+                                index:index, type:"service", server : state.server , name : state.service, login : state.login
+                            })
+                        }
 
                         />
                     </div>
@@ -96,7 +120,7 @@ const Service = ({actionID,index}) => {
                         color='primary'
                         label= 'Service'
                         onChange={(e) => setState({...state, service:e.target.value})}
-                        
+                        onBlur={(e) => testService(e.target.value) }
 
                         />
                     </div>
@@ -124,12 +148,24 @@ const Service = ({actionID,index}) => {
                                 index:index, type:"service", server : state.server , name : state.service, login : state.login
                             })
                             ;setAnchor(null)}} ><FileCopy /> save</MenuItem>
-                        <MenuItem  ><Comment /> Réduire</MenuItem>
+                        <MenuItem onclick={()=> test()} ><Comment /> Réduire</MenuItem>
                     </Menu>
                     <IconButton onClick={handleClick}>
                         <MoreVert />
 
                     </IconButton>
+
+                    <Box my="auto" >
+                        <Avatar className={classes.smallAvatar} >
+                        
+                        <Typography>
+                            {index + 1}
+                        </Typography> 
+                        
+                        </Avatar>
+
+                    </Box>
+                    
                 </Box>
             </Paper>
         </div>

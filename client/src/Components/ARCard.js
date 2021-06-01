@@ -17,7 +17,7 @@ import WebAction from './Actions/WebAction';
 const cardWidth = 850
 const useStyles = makeStyles(theme =>({
     root:{
-        width : cardWidth,
+        //width : cardWidth,
         marginBottom : theme.spacing(2) 
     }
 }))
@@ -132,7 +132,7 @@ const ARCard = ({name}) => {
         <Container>
             <Card className= {classes.root}>
                 <CardHeader 
-                    title="Arrêt"
+                    title={name}
                     subheader="hybride"
                     action={
                         <SpeedDial

@@ -8,23 +8,30 @@ const DashBoard = () => {
                 <Grid container spacing={3}>
                     <Grid
                     item
-                    xs = {12} sm={3} md={3} lg={3} >
-                        <DashboardCard />
+                    spacing={1}
+                    xs = {12} sm={6} md={3} lg={3} >
+                        <DashboardCard name="Pos réalisées"/>
                     </Grid>
                     <Grid
                     item
-                    xs = {12} sm={3} md={3} lg={3} >
-                        <DashboardCard />
+                    spacing={1}
+
+                    xs = {12} sm={6} md={3} lg={3} >
+                        <DashboardCard name="Parpre réalisées" />
                     </Grid>
                     <Grid
                     item
-                    xs = {12} sm={3} md={3} lg={3} >
-                        <DashboardCard />
+                    spacing={1}
+
+                    xs = {12} sm={6} md={3} lg={3} >
+                        <DashboardCard name="SSA traitées" />
                     </Grid>
                     <Grid
                     item
-                    xs = {12} sm={3} md={3} lg={3} >
-                        <DashboardCard />
+                    spacing={1}
+
+                    xs = {12} sm={6} md={3} lg={3} >
+                        <DashboardCard name="Taches plannifiées"/>
                     </Grid>
                    
                     

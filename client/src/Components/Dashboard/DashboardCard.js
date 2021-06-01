@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-const DashboardCard = () => {
+const DashboardCard = ({name}) => {
     const classes = useStyles()
     return ( 
         <div>
@@ -20,11 +20,11 @@ const DashboardCard = () => {
                     </Box>
                     <Box mx={3}>
                        <Typography>
-                            Administrators
+                            {name}
                         </Typography> 
                     </Box>
                     <Box mx={3}>
-                        <Typography variant='h5'> 125,282</Typography>
+                        <Typography variant='h5'> 125</Typography>
                     </Box>
                 </Box>
             </Paper>

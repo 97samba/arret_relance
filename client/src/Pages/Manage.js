@@ -1,13 +1,125 @@
-import {makeStyles, Typography} from '@material-ui/core'
+import {Avatar, Button, Card, CardContent, Divider, FormControl, Grid, IconButton, InputBase, InputLabel, makeStyles, MenuItem, Paper, Select, Typography} from '@material-ui/core'
+import { useEffect, useState } from 'react';
+import { Add, CallMissedSharp, Code, Description, Directions, Http, Menu, SearchSharp, SettingsSharp, Storage, Web } from '@material-ui/icons';
+import ListSSA from '../Components/Manage/ListSSA';
+
+const useStyles = makeStyles((theme)=>({
+    root:{
+        margin:theme.spacing(1),
+
+    },
+    fields:{
+        padding:theme.spacing(2),
+        display:'flex',
+        justifyContent:'space-between'
+    },
+    head:{
+        marginLeft:theme.spacing(1),
+        marginTop:theme.spacing(2),
+        marginBottom:theme.spacing(3)
+        
+    }
+}))
 
 
 const Manage = () => {
+    const url = "http://localhost:5000/api"
+    const [POS, SetPOS] = useState([])
 
-    const [Parpre, SetParpre] = makeStyles([])
+    useEffect(()=>{
+        getAllPos()
+    },POS)
+
+
+    const classes = useStyles()
+
+    const getAllPos = async () =>{
+        await fetch(`${url}/AllPOS`)
+            .then(Response =>Response.json())
+            .then(result=>{
+                console.log(result)
+                SetPOS(result)
+            })
+            
+    }
+
+   
 
     return ( 
         <div>
-            <Typography>Gestion</Typography>
+            <div className={classes.head}>
+                <Grid container spacing={2}>
+                    <Grid item sm={4}>
+                         <Button 
+                         startIcon={<Add/>}
+                         variant="contained" 
+                         elevation={0}> Nouveau</Button>
+                    </Grid>
+                    <Grid item sm={3}>
+                        <Paper component="form" elevation={1} >
+                            <IconButton aria-label="menu">
+                                <SearchSharp />
+                            </IconButton>
+                            <InputBase
+                            
+                                placeholder="Rechercher une SSA"
+                            />
+                                            
+                        </Paper>
+                    </Grid>
+                    {/*
+                    <Grid item sm={3}>
+                        
+                        
+                        
+                       
+                        <FormControl size="medium" variant="filled">
+                            <InputLabel id="filter">Filter par</InputLabel>
+                            <Select labelId="filter" value="filtre" >
+                                <MenuItem value="">
+                                    <em>None</em>
+                                </MenuItem>
+                                <MenuItem value="nom">Nom</MenuItem>
+                                <MenuItem value={20}>Type</MenuItem>
+                                <MenuItem value={30}>état</MenuItem>
+                            </Select>
+                        </FormControl>
+                        
+                    </Grid>
+                     */}
+                </Grid>
+            </div>
+
+            <div>
+            <Grid style={{padding:5}} container direction="row" className={classes.root}>
+                    <Grid item xs={3} sm={1} >
+                        <Typography>Code</Typography>
+                    </Grid>
+
+                    <Grid item xs={3} sm={3}  >
+                        <Typography> Nom</Typography>
+                    </Grid>
+
+                    <Grid item xs={3} sm={1}  >
+                        <Typography> Etapes</Typography>
+                    </Grid>
+
+                    <Grid item xs={3} sm={2}  >
+                        <Typography> Auteur</Typography>
+                    </Grid>
+
+                    <Grid item xs={3} sm={2}  >
+                        <Typography> Date de création </Typography>
+                    </Grid>
+
+                    <Grid item xs={3} sm={3} spacing={1} container justify="center">
+                        <Typography>Actions</Typography>
+                    </Grid>
+                </Grid>
+                {POS.map(pos => (                                      
+                    <ListSSA ssa={pos} key={pos._id}/>
+                ))}
+            </div>
             
         </div>
      );
