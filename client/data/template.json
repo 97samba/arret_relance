@@ -1,0 +1,31 @@
+{
+    "nom" : "IDSSA_nomSSA",
+    "author": "Firstname_LASTNAME",
+    "created_at":"date de creation",
+    "Actions": {
+        "Arret":[
+            {
+                "type":"service",
+                "server":"SW11203",
+                "login":"webadmin",
+                "action":"stop",
+                "options":[]
+            },
+            {
+                "other":"autres actions"
+            }
+        ],
+        "Relance": [
+            {
+                "type":"service",
+                "server":"SW11203",
+                "login":"webadmin",
+                "action":"stop",
+                "options":[]
+            },
+            {
+                "other":"autres actions"
+            }
+        ]
+    }
+}

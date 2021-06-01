@@ -1,0 +1,14 @@
+{
+    "name": "ARES",
+    "auteur": "Samba NDIAYE",
+    "date_de_creation": "24/05/2021, 04:28:26",
+    "Arret": [
+        {
+            "index": 0,
+            "type": "service",
+            "server": "localhost",
+            "name": "bits",
+            "login": "samba"
+        }
+    ]
+}
