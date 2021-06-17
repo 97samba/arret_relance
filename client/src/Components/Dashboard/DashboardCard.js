@@ -1,5 +1,6 @@
 import { Box, makeStyles, Paper, Typography} from '@material-ui/core'
 import { SupervisedUserCircle } from '@material-ui/icons'
+import { useEffect } from 'react'
 
 const useStyles = makeStyles((theme) => ({
     root:{
@@ -10,10 +11,12 @@ const useStyles = makeStyles((theme) => ({
 
 const DashboardCard = ({name}) => {
     const classes = useStyles()
+
+
     return ( 
         <div>
             <Paper className = {classes.root} elevation={1} >
-                <Box p={3} display='block' 
+                <Box p={2} display='block' 
                 justifyContent='center'>
                     <Box mx={3}>
                        <SupervisedUserCircle  /> 

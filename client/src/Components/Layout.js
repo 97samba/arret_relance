@@ -7,9 +7,9 @@ import { AppsSharp, Code,  DashboardSharp, FindReplace, FolderOpenSharp, Setting
 import {makeStyles} from '@material-ui/core'
 import { useHistory, useLocation } from 'react-router'
 
+const drawerWidthRight = 260
 
 const drawerWidth = 220
-const drawerWidthRight = 200
 const useStyles = makeStyles((theme) =>{
     return{
         root:{
@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme) =>{
 
         },
         appbar:{
-            width:`calc(100% - ${drawerWidth}px)`
+            width:`calc(100% - ${drawerWidth}px -${drawerWidthRight})`
         },
         toolbar:theme.mixins.toolbar,
         page: {
@@ -172,7 +172,7 @@ const Layout = ({children}) => {
                         color='primary' 
                         className = {classes.button}
                         >
-                            Générer le script
+                            Charger un Excel
                         </Button>
                     </div>
 
@@ -184,7 +184,7 @@ const Layout = ({children}) => {
                         justifyContent='space-around'>
                         {menuItems.map(item => (
                             <Box 
-                            
+                            //Affiche une petite bordure sur la page courante
                             borderRight={location.pathname === item.path ? 2 : 0 }
                             >
                             <ListItem 
@@ -215,36 +215,6 @@ const Layout = ({children}) => {
                 {children}
 
             </div>
-
-            
-            {/**right nav bar */}
-            <Drawer
-            elevation={0}
-            variant = "permanent"
-            anchor = 'right'
-            classes = {{paper : classes.drawerPaperRight}}
-            className={classes.navRight}
-            >                
-                <Box m={3} display="block">
-                    <Typography gutterBottom>
-                        Vérification active                                       
-                    </Typography>
-                    <Box mt={1} display="flex" justifyContent="space-around">
-                        {/** 
-                        <Fade
-                            in="true"
-                            style = {{transitionDelay : '800ms'}}
-                            unmountOnExit
-                            
-                            >
-                                <CircularProgress value={10} size= {25} />
-                        </Fade>
-                        
-                        <Typography variant="body2">Ping serveur SW11203 </Typography>
-                            */}
-                    </Box>
-                </Box>
-            </Drawer>
         </div>
      );
 }

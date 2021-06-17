@@ -1,0 +1,92 @@
+{
+    "name": "TestAutorelance",
+    "auteur": "Samba NDIAYE",
+    "date_de_creation": "14/06/2021, 12:03:04",
+    "type": "PARPRE",
+    "Arret": [
+        {
+            "index": 0,
+            "type": "service",
+            "server": "localhost",
+            "service": "bits",
+            "action": "stop"
+        },
+        {
+            "index": 1,
+            "type": "service",
+            "server": "localhost",
+            "service": "bits",
+            "action": "status"
+        },
+        {
+            "index": 2,
+            "type": "database",
+            "server": "sw11203",
+            "name": "test",
+            "action": "stop",
+            "databaseType": "MSSQL"
+        },
+        {
+            "index": 3,
+            "type": "database",
+            "server": "sw11203",
+            "name": "test",
+            "action": "status",
+            "databaseType": "MSSQL"
+        }
+    ],
+    "Relance": [
+        {
+            "index": 0,
+            "type": "database",
+            "server": "sw11203",
+            "name": "test",
+            "action": "start",
+            "databaseType": "MSSQL"
+        },
+        {
+            "index": 1,
+            "type": "database",
+            "server": "sw11203",
+            "name": "test",
+            "action": "status",
+            "databaseType": "MSSQL",
+            "options": {
+                "result": "running"
+            }
+        },
+        {
+            "index": 2,
+            "type": "service",
+            "server": "localhost",
+            "service": "bits",
+            "action": "start"
+        },
+        {
+            "index": 3,
+            "type": "service",
+            "server": "localhost",
+            "service": "bits",
+            "action": "status",
+            "options": {
+                "result": "running"
+            }
+        }
+    ],
+    "variables": {
+        "servers": [
+            {
+                "id": 1,
+                "prod": "localhost",
+                "hprod": "definir",
+                "dev": "definir"
+            },
+            {
+                "id": 2,
+                "prod": "sw11203",
+                "hprod": "definir",
+                "dev": "definir"
+            }
+        ]
+    }
+}

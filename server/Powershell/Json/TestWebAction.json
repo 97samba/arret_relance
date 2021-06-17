@@ -1,0 +1,51 @@
+{
+    "name": "TestWebAction",
+    "auteur": "Samba NDIAYE",
+    "date_de_creation": "09/06/2021, 09:48:13",
+    "Arret": [
+        {
+            "index": 0,
+            "type": "webAction",
+            "url": "http://www.linkedin.com",
+            "informations": {
+                "type": "connection",
+                "login": "test@sfr.com",
+                "loginSelector": "#session_key",
+                "password": "76492d1116743f0423413b16050a5345MgB8AGYARABsAHUARwBnAHcARgBYADUAZwAwAEgARAB3AEQAcQBoADAAOABOAGcAPQA9AHwAOABmAGIANgAwAGQAMgAxAGEAYwBhADAANwA3ADMAOQAwAGEAYQAyAGMANgAwAGQANwBkAGEAOQA0ADcAYwA0AGUAZQBkADAAZABhADQAOQA0ADcAMwA5AGIAOABlADcAMAAyADQAYgBiAGIAYQBmAGQAYwBmAGYANgBkADYAMgA=\r\n",
+                "passwordSelector": "#session_password"
+            }
+        },
+        {
+            "index": 1,
+            "type": "link",
+            "url": "http://www.github.com",
+            "informations": {
+                "urlState": "UP",
+                "navigationMode": "normal"
+            }
+        },
+        {
+            "index": 2,
+            "type": "webAction",
+            "url": "http://www.github.com",
+            "informations": {
+                "type": "click",
+                "clickSelector": "body > div.position-relative.js-header-wrapper > header > div > div.HeaderMenu.HeaderMenu--logged-out.position-fixed.top-0.right-0.bottom-0.height-fit.position-lg-relative.d-lg-flex.flex-justify-between.flex-items-center.flex-auto > div.d-lg-flex.flex-items-center.px-3.px-lg-0.text-center.text-lg-left > a"
+            }
+        },
+        {
+            "index": 3,
+            "type": "webAction",
+            "url": "http://www.github.com",
+            "informations": {
+                "type": "connection",
+                "login": "test@sfr.com",
+                "loginSelector": "#login_field",
+                "password": "76492d1116743f0423413b16050a5345MgB8AFIAagBxAGgAUQBQAGgAMgAwAG4ATQA0ADkAeABoAHQAOQBxAEUASwBTAFEAPQA9AHwAZgBkADgAZAA5AGIAMQA0ADQAMQA2AGEAOABmADAANAAwADEAZAA1AGMAYQA3ADgAZgA5ADUAOAAyADYAZQA4ADIAMQA1ADgAMAAwADIAMQA2ADYAYQAyAGUAYQAwADMAZABiAGEANAAwAGYANgAzAGYAMQBjADUAYgAzAGMAMQA=\r\n",
+                "passwordSelector": "#password"
+            }
+        }
+    ],
+    "Relance": [],
+    "_id": "60c07240cfc7ed21d8dd16ed"
+}

@@ -1,104 +1,159 @@
-import { Box, IconButton, Menu, MenuItem, Paper, TextField } from "@material-ui/core"
-import {makeStyles} from '@material-ui/core'
+import { Avatar, Box, FormControl, Grid, IconButton, InputLabel, Menu, MenuItem, Paper, Select, TextField, Typography } from "@material-ui/core"
+import { makeStyles } from '@material-ui/core'
 import { Delete, FileCopy, MoreVert, Storage } from "@material-ui/icons"
-import { useContext, useState } from "react"
+import { useContext, useState,useEffect } from "react"
 import ActionContext from "../../Context/ActionContext"
+import OptionMenu from "../Creation/OptionMenu"
 
-const useStyles = makeStyles((theme)=>({
-    root:{
-        background:'#F6F6FB',
-        padding: theme.spacing(2),
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+        background: '#F6F6FB',
+        padding: theme.spacing(1),
         marginBottom: theme.spacing(1)
 
     },
-    fields:{
-        marginRight:theme.spacing(2)
+    fields: {
+        width: "100%"
+
+    },
+    smallAvatar: {
+        width: theme.spacing(2.5),
+        height: theme.spacing(2.5)
     }
 }))
-const Database = ({index}) => {
-    const classes = useStyles()
-    const [anchorEl, setAnchor] = useState(null)
-    const { deleteAction} = useContext(ActionContext)
-    const [state, setState] = useState({})
 
-    const handleClick = (event) =>{
-        setAnchor(event.currentTarget)
+const Database = ({ index, type,initialSTate }) => {
+    const classes = useStyles()
+    const { deleteAction, duplicateAction, saveData, AddServer } = useContext(ActionContext)
+
+    const [state, setState] = useState({initialSTate})
+    const [status, setStatus] = useState(type)
+    const [databaseType, setDatabaseType] = useState("MSSQL")
+    const [OS, SetOS] = useState("")
+
+    useEffect(() =>{
+        setState(initialSTate)
+        if(initialSTate.action){
+            setStatus(initialSTate.action.toLowerCase())
+        }            
+        initialSTate.databaseType !== undefined 
+            ?   setDatabaseType(initialSTate.databaseType.toUpperCase())
+            :   setDatabaseType("MSSQL")
+
+    },[]
+    )
+
+    const saveInformations = () => {
+
+        if (state.name === undefined || state.server === undefined) { return }
+        
+        let result
+        if(status ==="status"){
+            type === "stop" ?  result = "stopped": result = "running"
+        }
+
+        saveData(
+            {
+                index: index, 
+                type: "database", 
+                server: state.server, 
+                name: state.name, 
+                action: status, 
+                databaseType: databaseType
+            }
+        )
     }
-    const handleClose= () => {
-        setAnchor(null)
-    }
-    return ( 
+    return (
         <div>
-            <Paper 
-            elevation={0}
-            className= {classes.root}>
-                <Box 
-                display='flex'
-                justifyContent='space-between'
+            <Paper
+                elevation={0}
+                className={classes.root}>
+                <Grid
+                    container
+                    spacing={2}
+                    alignItems="center"
 
                 >
-                    <Box my="auto">
-                        <Storage color="primary" />
+                    <Grid item md={1} xl={1}  >
+                        <Box display="flex" justifyContent="center">
+                            <Storage color="primary" />
+                        </Box>
 
-                    </Box>
-                    <div>
+                    </Grid>
+
+                    <Grid item xs={2} md={2} xl={2}>
                         <TextField
-                        onChange={(e) => setState({...state, server:e.target.value})}
+                        value={state.server}
+                            className={classes.fields}
+                            id='server'
+                            color='primary'
+                            label='Serveur'
+                            onChange={(e) => setState({ ...state, server: e.target.value })}
+                            onBlur={saveInformations}
 
-                        className={classes.fields} 
-                        id='server'
-                        color='primary'
-                        label= 'Serveur' />
-                    </div>
-                    <div>
-                        <TextField 
-                        className={classes.fields} 
-                        onChange={(e) => setState({...state, login:e.target.value})}
-                        id='login'
-                        color='primary'
-                        label= 'Login' />
-                    </div>
-                    <div>
-                        <TextField 
-                        autoComplete="false"
-                        className={classes.fields} 
-                        id='DBName'
-                        color='primary'
-                        label= 'Instance'
-                        onChange={(e) => setState({...state, Database:e.target.value})}
                         />
-                    </div>
-                    <div>
-                        <TextField 
-                        className={classes.fields} 
-                        onChange={(e) => setState({...state, action:e.target.value})}
-                        id='Action'
-                        color='secondary'
-                        label= 'Action'
-                        placeholder='STOP'
-                         />
-                    </div>
+                    </Grid>
+                    <Grid item xs={2} md={2} xl={2}>
+                        <FormControl className={classes.fields}>
+                            <InputLabel>Action</InputLabel>
+                            <Select value={status} 
+                            onChange={(e) => setStatus(e.target.value)} 
+                            onBlur={saveInformations} >
+                                <MenuItem value="stop">Stop</MenuItem>
+                                <MenuItem value="start">Start</MenuItem>
+                                <MenuItem value="status" >Status</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={3} md={3} xl={3}>
+                        <TextField
+                            autoComplete="false"
+                            className={classes.fields}
+                            value={state.name}
+                            id='DBName'
+                            color='primary'
+                            label='Instance'
+                            onChange={(e) => setState({ ...state, name: e.target.value })}
+                            onBlur={saveInformations}
 
-                    <Menu
-                        id="menu"
-                        anchorEl={anchorEl}
-                        keepMounted
-                        open={Boolean(anchorEl)}
-                        onClose={handleClose}
-                    >
-                        <MenuItem onClick={() => deleteAction(index)} ><Delete />Supprimer</MenuItem>
-                        <MenuItem onClick={handleClick} ><FileCopy /> Dupliquer</MenuItem>
-                    </Menu>
-                    <IconButton onClick={handleClick}>
-                        <MoreVert />
+                        />
+                    </Grid>
+                    <Grid item xs={3} md={3} xl={3}>
+                        <FormControl className={classes.fields}>
+                            <InputLabel>Type</InputLabel>
+                            <Select value={databaseType} onChange={(e) => setDatabaseType(e.target.value)} onBlur={saveInformations} >
+                                <MenuItem value="MSSQL">MSSQL</MenuItem>
+                                <MenuItem value="MONGODB">MONGODB</MenuItem>
+                                <MenuItem value="Oracle" >Oracle</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Grid>
 
-                    </IconButton>
-                    
-                    
-                </Box>
+
+                    <Grid item md={1} xl={1}  >
+                        <Grid container spacing={3} alignItems="center" >
+                            <Grid item md={6} >
+                                <OptionMenu index={index} deleteAction={deleteAction} duplicateAction={duplicateAction} />
+                            </Grid>
+
+                            <Grid item md={6}>
+                                <Box my="auto" >
+                                    <Avatar className={classes.smallAvatar} >
+                                        <Typography>
+                                            {index + 1}
+                                        </Typography>
+                                    </Avatar>
+
+                                </Box>
+                            </Grid>
+
+                        </Grid>
+                    </Grid>
+                </Grid>
             </Paper>
         </div>
-     );
+    );
 }
- 
+
 export default Database;

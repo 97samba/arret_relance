@@ -5,6 +5,8 @@ import Manage from './Pages/Manage';
 import Settings from './Pages/Settings';
 import Layout from './Components/Layout'
 import { createMuiTheme, ThemeProvider } from '@material-ui/core'
+import Modify from './Pages/Modify';
+import ViewItem from './Pages/ViewItem';
 
 const theme = createMuiTheme({
   typography: {
@@ -36,6 +38,12 @@ function App() {
 
             <Route  path="/settings">
               <Settings />
+            </Route>
+            <Route  path="/modify">
+              <Modify />
+            </Route>
+            <Route  path="/view">
+              <ViewItem />
             </Route>
           </Switch>
         </Layout>

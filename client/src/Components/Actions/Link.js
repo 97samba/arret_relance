@@ -1,44 +1,45 @@
-import { Box, FormControl, IconButton, InputLabel, Menu, MenuItem, Paper, Select, TextField } from "@material-ui/core"
+import { Avatar, Box, FormControl, Grid, IconButton, InputLabel, Menu, MenuItem, Paper, Select, TextField, Typography } from "@material-ui/core"
 import {makeStyles} from '@material-ui/core'
 import { Comment, Delete, FileCopy, Http, MoreVert } from "@material-ui/icons"
 import axios from "axios"
-import { useContext, useState } from "react"
+import { useContext,useEffect, useState } from "react"
 import ActionContext from "../../Context/ActionContext"
+import OptionMenu from "../Creation/OptionMenu"
 
 const useStyles = makeStyles((theme)=>({
     root:{
         background:'#F6F6FB',
-        padding: theme.spacing(2),
+        padding: theme.spacing(1),
         marginBottom: theme.spacing(1)
 
     },
     fields:{
-        minWidth:300,
-        marginRight:theme.spacing(2)
+        width:"100%"
     },
     dropDown:{
-        minWidth:100,
+        width:"100%"
+    },
+    smallAvatar: {
+      width: theme.spacing(2.5),
+      height: theme.spacing(2.5)
     }
 }))
-const Link = ({index}) => {
+const Link = ({index,initialSTate}) => {
     const classes = useStyles()
-    const [anchorEl, setAnchor] = useState(null)
     const { deleteAction, duplicateAction,saveData} = useContext(ActionContext)
-    const [state, setState] = useState([])
+    const [state, setState] = useState({initialSTate})
     const [urlState, setUrlState] = useState("UP")
     const [navigationMode, setnavigationMode] = useState("normal")
 
-    const handleClick = (event) =>{
-        setAnchor(event.currentTarget)
-    }
+    useEffect(() =>{
+        setState(initialSTate)
+        setState(initialSTate)
 
-    const handleClose= () => {
-        setAnchor(null)
-    }
-
+    },[]
+    )
     const formatUrl = (url) =>{
 
-        if(url.startsWith("http")){
+        if(url.startsWith("http") || url.length < 4){
 
             console.log('url est bonne')
             return url
@@ -53,16 +54,8 @@ const Link = ({index}) => {
     const testConnection = async (e) =>{
 
         const formatedUrl = formatUrl(e.target.value)
+        setState({...state,url:formatedUrl})
 
-        saveData({
-            index:index,
-            type:"link",
-            url:formatedUrl,                             
-            informations:
-            {
-                urlState : urlState,
-                navigationMode : navigationMode                                  
-            }})
         if(e.target.value !== ''){
 
             console.log('accessing ',formatedUrl)
@@ -70,77 +63,104 @@ const Link = ({index}) => {
             await fetch(`http://localhost:5000/api/PARPRE/link?url=${formatedUrl}`)
                 .then(res => res.json())
                 .then(result => console.log(result.result))
+                .then(()=>saveInformations())
         }
   
     }
 
+    const saveInformations = () =>{
+
+        if(state.url ===undefined){return}
+        console.log("state before save : ",state)
+
+        saveData({
+            index:index,
+            type:"link",
+            url:state.url,                             
+            informations:
+            {
+                urlState : urlState,
+                navigationMode : navigationMode                                  
+            }})
+    }
 
     return ( 
         <div>
             <Paper 
                 elevation={0}
                 className= {classes.root}>
-                    <Box 
-                display='flex'
-                >
-                    <Box my="auto" mx={2} >
-                        <Http color="primary" />
+                <Grid 
+                    container
+                    spacing={2}
+                    alignItems="center" >
 
-                    </Box>
-                    <Box my="auto" flexGrow={0.5}>
+                    <Grid item md={1} xl={1} container alignContent="center" direction="column" >
+                        <Box  display="flex" justifyContent="center">
+                            <Http color="primary" />
+                        </Box>                       
+                        
+                    </Grid>
+                    
+                    <Grid item md={6} xl={2}>
                         <TextField
                         
                         className={classes.fields} 
                         id='url'
-                        value = {state.link}
+                        value = {state.url}
                         color='primary'
                         label= 'Lien'
-            
-                        onChange={(e) => setState({...state, link:e.target.value})}
-                        onBlur={(e) => (testConnection(e))}
+
+                        onChange={(e) => setState({...state, url: formatUrl(e.target.value)})}
+                        onBlur={(e) => {
+                            testConnection(e)
+                        }}
+
                         />
-                    </Box>
-                    <Box flexGrow={0.6} >
+                    </Grid>
+                    <Grid item md={2} xl={2} >
                     <FormControl className={classes.dropDown}>
                             <InputLabel>Etat du site</InputLabel>
-                            <Select value={urlState} onChange={(e) => (setUrlState(e.target.value))} onBlur={(e) => (testConnection(e))}>
+                            <Select value={urlState} onChange={(e) => (setUrlState(e.target.value))} onBlur={saveInformations}>
                                 <MenuItem value="Down" >Down</MenuItem>
                                 <MenuItem value="UP">UP</MenuItem>
                                 <MenuItem value="Null">Page blanche</MenuItem>
                             </Select>
                         </FormControl>
-                    </Box>
+                    </Grid>
 
-                    <Box  >
+                    <Grid item md={2} xl={2} >
                     <FormControl className={classes.dropDown}>
                             <InputLabel>Navigation</InputLabel>
-                            <Select value={navigationMode} onChange={(e) => (setnavigationMode(e.target.value))} onBlur={(e) => (testConnection(e))}>
+                            <Select value={navigationMode} onChange={(e) => (setnavigationMode(e.target.value))} onBlur={saveInformations}>
                                 <MenuItem value="Privée" >Privée</MenuItem>
                                 <MenuItem value="normal">Normal</MenuItem>
                             </Select>
                         </FormControl>
-                    </Box>
-                    
-                    <Menu
-                        id="menu"
-                        anchorEl={anchorEl}
-                        keepMounted
-                        open={Boolean(anchorEl)}
-                        onClose={handleClose}
-                    >
-                        <MenuItem onClick={() => deleteAction(index)} ><Delete />Supprimer</MenuItem>
-                        <MenuItem onClick={() => {saveData(
-                            {
-                                index:index, type:"lien", url : state.link, status : urlState
-                            })
-                            ;setAnchor(null)}} ><FileCopy /> save</MenuItem>
-                        <MenuItem  ><Comment /> Réduire</MenuItem>
-                    </Menu>
-                    <IconButton onClick={handleClick}>
-                        <MoreVert />
+                    </Grid>
+                   
+                    <Grid item md={1} xl={1}  >
+                        <Grid container spacing={3} alignItems="center" >
+                            <Grid item md={6} >
+                                    <OptionMenu index={index} deleteAction={deleteAction} duplicateAction={duplicateAction} />
+                            </Grid>
+                        
+                            <Grid item md={6}>
+                                <Box my="auto" >
+                                    <Avatar className={classes.smallAvatar} >
+                                    
+                                    <Typography>
+                                        {index + 1}
+                                    </Typography> 
+                                    
+                                    
+                                    </Avatar>
 
-                    </IconButton>
-                </Box>
+                                </Box>
+                            </Grid>
+                        
+                        </Grid>
+                    </Grid>
+                </Grid>
             </Paper>
         </div>
      );

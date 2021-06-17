@@ -1,41 +1,31 @@
-import { Button,Box,  Container,  makeStyles, Paper, Card, CardHeader, CardContent} from '@material-ui/core'
-import { Code, Description, Http, KeyboardArrowRight, SettingsSharp, Storage, Web } from '@material-ui/icons';
+import { Button, Container,  makeStyles, Card, CardHeader, CardContent} from '@material-ui/core'
+import { Autorenew, Code, Description, Http, KeyboardArrowRight, Save, SettingsSharp, Storage, Web } from '@material-ui/icons';
 import Service from './Actions/Service';
 import Database from './Actions/Database';
-import Command from './Actions/Command';
+import Process from './Actions/Process';
 import ARScript from './Actions/ARScript';
-import { useEffect, useState } from 'react';
+import {  useState } from 'react';
 import SpeedDial from '@material-ui/lab/SpeedDial'
 import { SpeedDialAction, SpeedDialIcon } from '@material-ui/lab';
 import ActionContext from '../Context/ActionContext';
-import {v4 as uuid} from "uuid";
 import { useHistory } from 'react-router';
-import axios from 'axios';
 import Link from './Actions/Link'
 import WebAction from './Actions/WebAction';
+import Command from './Actions/Command';
 
 const cardWidth = 850
 const useStyles = makeStyles(theme =>({
     root:{
-        //width : cardWidth,
+        // width : cardWidth,
         marginBottom : theme.spacing(2) 
     }
 }))
-const ARCard = ({name}) => {
+const ARCard = ({name, actions,SetActions,autoRelance,type,AddServer,generateJson}) => {
     const classes = useStyles();
     const history = useHistory()
-    const [actions, SetActions] = useState([])
     const [open,setOpen] = useState(false)
     const [index, setIndex] = useState(0)
-    const [StopActions, setStopActions] = useState([])
-    const [StartActions, setStartActions] = useState([])
 
-
-    useEffect(() =>{
-        //fetch("http://localhost:8000/Actions")
-        //.then(res => res.json())
-        //.then(data => SetActions(data))
-    },[])
 
     const testPing = (server) =>{
         fetch(`http://localhost:5000/api/PARPRE?server=${server}`)
@@ -47,9 +37,13 @@ const ARCard = ({name}) => {
         const newState = [
             ...actions,{
                 index : index,
-                type : type
+                type : type,
+                informations:{
+                }
             }
         ]
+        console.log("new state ",newState)
+
         SetActions(newState)
         setIndex(index+1)
     }
@@ -63,71 +57,84 @@ const ARCard = ({name}) => {
         for(i = 0; i < newState.length; i++){
             newState[i].index = i;
         }
+
         setIndex(newState.length )
 
-        newState.map(action => console.log(action))
-
+        //newState.map(action => console.log(action))
 
         SetActions(newState)
+
         console.log("index ", index)
 
     }
+
     const duplicateAction=(actionID)=>{
-        var actionToDuplicateIndex = actions.findIndex(e=>e.id === actionID)
+
+        var actionToDuplicateIndex = actionID
         const clone = actions[actionToDuplicateIndex]
-        const newClone = {...clone,id:uuid()}
+        console.log("action to duplicate",clone,"index ", actionToDuplicateIndex," actionId ",actionID)
+
+        const newClone = {...clone,index:actionToDuplicateIndex+1,action:"status"}
         actionToDuplicateIndex=actionToDuplicateIndex+1
-        
+
         actions.splice(actionToDuplicateIndex,0,newClone)
+
+        
+        var i ;
+
+        for(i = 0; i < actions.length; i++){
+            actions[i].index = i;
+            //console.log(actions[i].server)
+        }
+
+        setIndex(actions.length )
+
+        //newState.map(action => console.log(action))
+
         SetActions(actions)
 
     }
+
     const saveData = (object) =>{
         
-        const result = Object.values(StopActions).filter(e => e.index === object.index)
+        const result = actions.filter(e => e.index === object.index)
 
         if (result.length > 0){
 
-            const index = StopActions.findIndex(e => e.id === object.index )
+            const index = actions.findIndex(e => e.index === object.index )
+            
+            console.log('Changement',actions[index])
 
-            console.log('Changement',StopActions[index])
+            actions.splice(index,1,object)
 
-            StopActions.splice(index,1,object)
-            //console.log("datas : ", StopActions)
-
-            setStopActions(StopActions)            
+            SetActions(actions)  
+          
         }
         else
         {
             console.log("Nouvelle entrée")
             const newState = [
-                ...StopActions, object
+                ...actions, object
             ]
-            setStopActions(newState) 
-
+            SetActions(newState) 
         }
         
     }
 
 
-    const generateJson = async () => {
 
-        const parpre = {name : "ARES" ,auteur: "Samba NDIAYE", date_de_creation : new Date().toLocaleString(), Arret : StopActions}
 
-        axios.post(`http://localhost:5000/api/PARPRE/create`, parpre)
-            .then(res => console.log(res))
-            
-        console.log(JSON.stringify(parpre))
-    }
     const iconsAction = [
         {icon : <Http />, name: 'Url', action: () => addAction("link")}, 
         {icon : <Web />, name: 'Action Web', action: () => addAction("webAction")}, 
         {icon : <SettingsSharp />, name: 'Service', action: () => addAction("service")},
-        {icon : <Code />, name: 'Commande', action: () => addAction("command")},
+        {icon : <Autorenew />, name: 'Processus', action: () => addAction("process")},
         {icon : <Description />, name: 'Script', action: () => addAction("script")},
-        {icon : <Storage />, name: 'Base de données', action: () => addAction("database")}
-        
+        {icon : <Storage />, name: 'Base de données', action: () => addAction("database")},
+        {icon : <Code />, name: 'Commande', action: () => addAction("command")}
     ]
+//{icon : <Save />, name: 'Disque', action: () => addAction("disk")},
+        //{icon : <AccountTree />, name: 'Disque', action: () => addAction("Pool")}
     return ( 
         <Container>
             <Card className= {classes.root}>
@@ -150,6 +157,7 @@ const ARCard = ({name}) => {
                                 tooltipTitle={action.name}
                                 tooltipPlacement = 'top'
                                 onClick= {action.action}
+                                
                             />
                         ))}
                     </SpeedDial>
@@ -157,16 +165,18 @@ const ARCard = ({name}) => {
                 />
 
                 <CardContent>
-                    <ActionContext.Provider value={{actions, deleteAction, duplicateAction, saveData, testPing}}>
+                    <ActionContext.Provider value={{actions, deleteAction, duplicateAction, saveData, testPing,AddServer}}>
                         <form noValidate autoComplete='on'>
-                            {actions.map(item => (
+                            {actions.map((item,index) => (
                                 (
-                                    item.type === "service" ?   <Service key={item.index} index={item.index}/> :
-                                    item.type === "script"  ?   <ARScript key={item.index} index={item.index} /> :
-                                    item.type === "database"?   <Database key={item.index} index={item.index}/> :
-                                    item.type === "command" ?   <Command key={item.index}  index={item.index} /> :
-                                    item.type === "link" ?      <Link key={item.index}  index={item.index} /> :
-                                    item.type === "webAction" ? <WebAction key={item.index}  index={item.index} /> :
+                                    item.type === "service" ?   <Service key={item.index} index={item.index} type={type} initialSTate={item} /> :
+                                    item.type === "script"  ?   <ARScript key={item.index} index={item.index} initialSTate={item} /> :
+                                    item.type === "database"?   <Database key={item.index} index={item.index} type={type} initialSTate={item}/> :
+                                    item.type === "process" ?   <Process key={item.index}  index={item.index} type={type} initialSTate={item} /> :
+                                    item.type === "link" ?      <Link key={item.index}  index={item.index} initialSTate={item} /> :
+                                    item.type === "webAction" ? <WebAction key={item.index}  index={item.index} initialSTate={item} /> :
+                                    item.type === "command" ? <Command key={item.index}  index={item.index} initialSTate={item} /> :
+                                    item.type === "disk" ? <Service key={item.index}  index={item.index} type={type} initialSTate={item} /> :
                                     null
                                 )
                             ))}
@@ -174,11 +184,10 @@ const ARCard = ({name}) => {
                                 
                                 color="secondary" 
                                 variant="contained"
-                                //onClick={generateJson}
                                 onClick={generateJson}
                                 
                                 endIcon={<KeyboardArrowRight />}>
-                                Generate
+                                Save
                             </Button>
                         </form>
                     </ActionContext.Provider>

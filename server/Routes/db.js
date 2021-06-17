@@ -1,8 +1,9 @@
 // Les routes liées aux bases de données
 const router = require("express").Router()
-const fs = require('fs')
 const util = require("util")
 const exec = util.promisify(require('child_process').exec);
+const fs = require('fs')
+
 const YAML = require("yaml")
 
 
@@ -28,7 +29,7 @@ mongoClient.connect(url, {useUnifiedTopology : true})
         
         
         listAllCollection()
-        listDatabases()
+        //listDatabases()
     })
     
 async function listDatabases(){
@@ -43,18 +44,42 @@ async function listAllCollection(){
 
     db.collection(collectionName).find().toArray()
         .then(result => {
-            console.log(result)
+            //console.log(result)
     })
     parpreCollection = db.collection(collectionName)
 }
 
-router.post('/PARPRE/create', (req, res) =>{
+/*
+    Création de parpre et de pos
+*/
+router.post('/PARPRE/create',  async (req, res) =>{
 
-    let parpre = req.body
+    let element = req.body
+    console.log(element.variables)
 
-    treatWebAction(parpre, ()=> parpreCollection.insertOne(parpre))
+    if(element.type === "PARPRE"){
+        console.log("parpre")
+        //parpreCollection.insertOne(element)
+        
+        console.log(element.name)
+
+        await fs.promises.writeFile(`./Powershell/Json/${element.name}.json`,JSON.stringify(element),'utf8')
+        //.then(() => console.log("test"))
+        console.log("Json file done")
+        
+        exec(`./Powershell/PARPREGenerator.ps1 ./Powershell/Json/${element.name}.json`,{'shell':'powershell.exe'}).then((result)=>{
+
+            console.log("stdout :",result.stdout)
+            console.log("ERROR  :",result.stderr)
+        })
+        
+    }else{
+        console.log("Traitement de la POS ",element.name)
+        treatWebAction(element, ()=> parpreCollection.insertOne(element))
+    }
     
-    res.send("you are good")
+    res.send("file inserted")
+    
 
 })
 function treatServices(parpre){
@@ -95,17 +120,12 @@ async function treatWebAction(parpre,save){
         if(i=== webActions.length - 1){
             //save()
             
-            console.log("string",YAML.stringify(parpre))
-            fs.writeFile(`./Powershell/Json/${parpre.name}.yaml`,YAML.stringify(parpre),'utf8',()=>console.log("yaml file created"))
+            //console.log("string",YAML.stringify(parpre))
+            //fs.writeFile(`./Powershell/Json/${parpre.name}.yaml`,YAML.stringify(parpre),'utf8',()=>console.log("yaml file created"))
             
             //fs.writeFile(`./Powershell/Json/${parpre.name}.json`,JSON.stringify(parpre),'utf8',() => console.log('file created'))          
         }
         
-    }
-
-    if(webActions.length === 0){
-        //save()
-        //fs.writeFile(`./Powershell/Json/${parpre.name}.json`,JSON.stringify(parpre),'utf8',() => console.log('file created')) 
     }
     
 }

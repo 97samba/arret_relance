@@ -1,6 +1,7 @@
 import { Avatar, Box, Divider, Drawer, Grid, LinearProgress, makeStyles, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@material-ui/core";
 import { Computer, Rowing, Settings } from "@material-ui/icons";
 import { useEffect, useState } from "react";
+import {DataGrid} from '@material-ui/data-grid';
 
 const drawerWidthRight = 280
 
@@ -28,8 +29,13 @@ const useStyles = makeStyles((theme) => {
 
 
 
-const RightNav = ({ ServerRow }) => {
+const RightNav = ({ ServerRow, saveRows }) => {
     const [progress, setProgress] = useState(0);
+    const columns = [
+        {field : 'prod', headerName: 'prod', width : 90, editable : true, sortable:false },
+        {field : 'hprod', headerName: 'hprod', width : 90, editable : true, sortable:false },
+        {field : 'dev', headerName: 'IPP2', width :90, editable : true, sortable:false }
+    ]
 
     /*
     useEffect(() => {
@@ -44,6 +50,22 @@ const RightNav = ({ ServerRow }) => {
     */
 
     const classes = useStyles()
+    
+    const handleCellchange = (cell) => {
+        console.log("Changing the ",cell)
+        
+
+        const editedServers = ServerRow.map(row => {
+            if(row.id === cell.id){
+                row = {...row, [cell.field] :cell.props.value  }
+                return row
+            }
+            return row
+        })
+        saveRows(editedServers)
+        console.log("edited ",editedServers)
+    }
+
     return (
         <div>
 
@@ -57,13 +79,23 @@ const RightNav = ({ ServerRow }) => {
                 <Box>
                     <Box m={2} display="flex" justifyContent="center">
                         <Typography gutterBottom>
-                            Informations
+                            Variables
                         </Typography>
                     </Box>
 
-                    <Box>
-
-                    </Box>
+                        
+                    <div style={{height : 300,width:"100%"}}>
+                        <DataGrid 
+                        rows={ServerRow}
+                        columns={columns}
+                        hideFooter
+                        disableColumnMenu
+                        rowHeight={40}
+                        headerHeight={40}
+                        onEditCellChangeCommitted={cell => handleCellchange(cell)}
+                        
+                        />
+                    </div>
                 </Box>
 
                 <Box>

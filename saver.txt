@@ -1,0 +1,47 @@
+                        <TableContainer>
+                            <Table size="small">
+                                <TableHead  >
+                                    <TableRow >
+                                        <TableCell size="small">Prod</TableCell>
+                                        <TableCell size="small">h-Prod</TableCell>
+                                        <TableCell size="small">DEV</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {ServerRow.map((row) => (
+                                        <TableRow key={row.name}>
+                                            <TableCell component="th" scope="row" size="small">
+                                                {row.name}
+                                            </TableCell>
+                                            <TableCell align="left" size="small">{row.hprod}</TableCell>
+                                            <TableCell align="left" size="small">{row.dev}</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+
+                        {dialogs.map(dialog => {
+                        openDialog && actionType ==="Click" ? dialog.element : <div>test</div>
+
+                    })}
+                        const dialogs = [
+        {
+            type:"Connection",
+            element : <ConnectionDialog state={state} saveData = {saveData} setState = {setState} openDialog = {openDialog} closeDialog = {closeDialog} />
+        },
+        {
+            type:"Deconection",
+            element:<DisconnectDialog state={state} setState={setState} saveData={saveData} closeDialog={closeDialog} openDialog={openDialog}/>
+        },
+        {
+            type:"Click",
+            element: (<ClickDialog saveData={saveData} state={state} setState={setState} closeDialog={closeDialog} openDialog={openDialog} />)
+        },
+        {
+            type:"Remplir",
+            element:<FormDialog state={state} saveData={saveData} closeDialog={closeDialog} openDialog={openDialog} setState={setState}/>
+        }
+
+
+    ]

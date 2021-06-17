@@ -1,39 +1,132 @@
-﻿$json = Get-Content .\json\ares.json | ConvertFrom-Json
+﻿$json = gc $args[0] | ConvertFrom-Json
+
+
 $json.name
 $json.auteur
 $json.date_de_creation
+$CURRENT_URL=""
 
-$inf = $json.Arret | where {$_.type -eq "webAction"} | Select-Object informations
+function convert-password($password, $login){
 
-#$json.Arret | ForEach-Object { write-host "information of" $_.index "is "`n ; $_.informations}
-
-function visitUrl($url){
-
-    $mdp = Get-Content .\password.txt | ConvertTo-SecureString -key (Get-Content .\aes.key)
+    $mdp = $password | ConvertTo-SecureString -key (Get-Content .\aes.key)
     
 
-    $pscred = New-Object System.Management.Automation.PSCredential("test@gmail.com",$mdp)
+    $pscred = New-Object System.Management.Automation.PSCredential($login,$mdp)
     
-    $chromeDriver = Start-SeChrome -StartURL "https://linkedin.com" -Maximized 
+    return $pscred.GetNetworkCredential().Password
+    
+}
 
-     
-
-    $mail = Find-SeElement -Driver $chromeDriver -Id "session_key"
+function get-driver($navigator){
     
-    Send-SeKeys -Element $mail -Keys $pscred.UserName
-
-    $password = Find-SeElement -Driver $chromeDriver -id "session_password"
-
-    Send-SeKeys -Element $password -Keys $pscred.GetNetworkCredential().Password
-    
-    $submit = Find-SeElement -Driver $chromeDriver -Css "#main-content > section.section.section--hero > div.sign-in-form-container > form > button"
-    
-    
-    #Invoke-SeClick -Element $submit
-
-    #faire une capture d'ecran
-    
+    if($navigator -eq "Chrome")
+    {
+        $driver = Start-SeChrome -ImplicitWait 5
+        
+        return $driver
+    }
+    if($navigator -eq "Firefox")
+    {
+        return Start-SeFirefox
+    }
+    if($navigator -eq "Edge")
+    {
+        return Start-SeEdge 
+    }
+    if($navigator -eq $null)
+    {
+        return $null
+    }
 
 }
 
-visitUrl -url $url
+function Url($url, $driver)
+{
+    if($url -ne $CURRENT_URL){
+        #Entre que quand c'est un url diferrent 
+        Enter-SeUrl -Url $url -Target $driver
+        write-host Lien different $url current $CURRENT_URL`n
+    }
+
+    Start-Sleep -s 2
+}
+
+function click-element($driver, $url,$informations){
+    
+    if($url -ne $CURRENT_URL){
+
+        write-host Lien different $url current $CURRENT_URL`n
+        Enter-SeUrl -Url $url -Target $driver
+
+    }
+    write-host $informations.clickSelector`n       
+    $clickELement = Find-SeElement -Target $driver -By CssSelector $informations.clickSelector    
+    
+    write-host "Element found : $clickElement"`n  
+    send-SeClick -Element $clickELement -SleepSeconds 2
+     
+
+}
+
+function webAction($driver, $url, $informations){
+    
+    if($informations.type -eq "connection"){
+        
+        if($url -ne $CURRENT_URL){
+            Enter-SeUrl -Url $url -Target $driver
+            write-host Lien different $url current $CURRENT_URL`n
+        }
+        
+
+        $loginSelector = Find-SeElement -Target $driver -By CssSelector $informations.loginSelector
+        $passwordSelector = Find-SeElement -target $driver -By CssSelector $informations.passwordSelector
+
+        Send-SeKeys -Element $loginSelector -Keys $informations.login 
+
+        $password = convert-password -login $informations.login -password $informations.password
+        
+        Send-SeKeys -Element $passwordSelector -Keys $password
+
+        Start-Sleep -s 2
+
+        $screenshot = Invoke-SeScreenshot -Target $driver 
+        
+        $filename = Join-Path (Get-Location).Path "$($json.name)-1$.png"
+        $bytes = [Convert]::FromBase64String($screenshot)
+
+        [IO.File]::WriteAllBytes($filename, $bytes)
+
+    }
+    if($informations.type -eq "click"){
+
+        click-element -driver $driver -url $url -informations $informations
+    }
+    
+}
+
+######################## Main ######################
+$driver = Start-SeChrome 
+
+
+$json.Arret | ForEach-Object {
+
+    if($_.type -eq "Link")
+    {
+        Write-Host "Url action found" 
+        Url -url $_.url -driver $driver
+        
+    }
+
+    if($_.type -eq "webAction"){
+
+        
+        Write-Host "Web action found type : " $_.informations.type
+        webAction -driver $driver -informations $_.informations -url $_.url
+                
+    }
+    $CURRENT_URL = $_.url
+    Write-Host current URL : $CURRENT_URL
+
+}
+Stop-SeDriver -Target $driver
+#>

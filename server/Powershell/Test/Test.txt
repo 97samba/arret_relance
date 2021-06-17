@@ -1,0 +1,10 @@
+Arret_App(){
+    $url=http://www.linkedin.com
+    $type=webAction
+    $url=http://www.github.com
+    $type=link
+    $url=http://www.github.com
+    $type=webAction
+    $url=http://www.github.com
+    $type=webAction
+}
