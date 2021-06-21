@@ -21,50 +21,75 @@ const router = require("express").Router()
 
 const Excel = require('exceljs')
 
+const fs = require('fs')
+
 const windowsScripts = [
     "service", "invoke", "process", "database", "checkurl", "checklog", "checkdisk", "pool_iis", "rename"
 ]
 
 router.post('/ConvertAll-Excel', (req, res) => {
 
-    var stopRows = []
-    var startRows = []
-
+    var files = fs.readdirSync('./excel')
+    console.log(files)
     var wb = new Excel.Workbook()
+    var allElements = []
 
-    var filePath = "./excel/Transformers_APP_2747_TREMA.xlsm"
+    files.map((file, index) => {
 
-    wb.xlsx.readFile(filePath).then(function () {
+        var filePath = `./excel/${file}`
 
-        var sh = wb.getWorksheet("Accueil")
+        wb.xlsx.readFile(filePath).then(function () {
+        console.log("Start  element ", file)
 
-        var informations = getInformations(sh)
+            var sh = wb.getWorksheet("Accueil")
 
-        var variables = getVariables(sh)
+            var informations = getInformations(sh)
 
-        var actions = getLine(sh)
+            var variables = getVariables(sh)
+            //console.log("variables ",variables)
 
-        var stopActions = editLines(actions.stop, variables)
-        var startActions = editLines(actions.start, variables)
+            var actions = getLine(sh)
 
-        startActions = startActions.map(action => WebFormat(action))
-        startActions = startActions.map((action, index) => { return action = { ...action, index: index } })
+            var stopActions = editLines(actions.stop, variables)
+            var startActions = editLines(actions.start, variables)
 
-        stopActions = stopActions.map(action => WebFormat(action))
-        stopActions = stopActions.map((action, index) => { return action = { ...action, index: index } })
+            startActions = startActions.map(action => WebFormat(action))
+            startActions = startActions.map((action, index) => { return action = { ...action, index: index } })
+
+            stopActions = stopActions.map(action => WebFormat(action))
+            stopActions = stopActions.map((action, index) => { return action = { ...action, index: index } })
 
 
-        return element = {
-            name: informations.name,
-            auteur: informations.author,
-            date_de_creation: informations.version,
-            type: "PARPRE",
-            Arret: stopActions,
-            Relance: startActions,
-            variables: variables
-        }
+            return element = {
+                name: informations.name,
+                auteur: informations.author,
+                date_de_creation: informations.version,
+                type: "PARPRE",
+                Arret: stopActions,
+                Relance: startActions,
+                variables: variables
+            }
 
-    }).then(element => res.send(element))
+        }).then(element => {
+            allElements.push(element);
+            console.log("Finish element ", file)
+
+            if (index === files.length - 1 && allElements.length === files.length) {
+                console.log("last ", file, " sending datas", allElements.length)
+                res.send(allElements)
+            }
+            if (index !== files.length - 1 && allElements.length === files.length) {
+                console.log("last ", file, " sending datas", allElements.length)
+                res.send(allElements)
+            }
+
+
+        })
+
+
+
+    })
+
 
 })
 
@@ -78,46 +103,46 @@ const WebFormat = (action) => {
             break
         case 'database':
             action = toDatabase(action)
-            console.log("type ", action.type, " found")
+            //console.log("type ", action.type, " found")
 
             break
         case 'invoke':
             action = toScript(action)
-            console.log("type ", action.type, " found")
+            //console.log("type ", action.type, " found")
 
             break
         case 'checkurl':
             action = toCheckUrl(action)
-            console.log("type ", action.type, " found")
+            //console.log("type ", action.type, " found")
 
             break
         case 'checklog':
             action = toCheckLog(action)
-            console.log("type ", action.type, " found")
+            //console.log("type ", action.type, " found")
 
             break
         case 'process':
             action = toProcess(action)
-            console.log("type ", action.type, " found")
+            //console.log("type ", action.type, " found")
 
             break
         case 'checkdisk':
             action = toCheckDisk(action)
-            console.log("type ", action.type, " found")
+            //console.log("type ", action.type, " found")
 
             break
         case 'pool_iis':
             action = toPoolIIS(action)
-            console.log("type ", action.type, " found")
+            //console.log("type ", action.type, " found")
 
             break
         case 'rename':
             action = toRename(action)
-            console.log("type ", action.type, " found")
+            //console.log("type ", action.type, " found")
             break
         default:
             action = toCommand(action)
-            console.log("unknown type ", action.type, " found")
+        //console.log("Unknown type ", action.type, " found")
     }
     //console.log(action)
 
@@ -163,21 +188,27 @@ prends les informations a prtir de la ligne 2 de la colone 1 jusqu'à 8
 const getLine = (sheet) => {
 
     //on compte le nombre de R et A de la column 2(phases) moins deux (titre et nom colonne)
-    var nmbrArret = 0
-    var nmbrRelance = 0
+
     var stopActions = []
     var startActions = []
 
     for (var i = 2; i < sheet.getColumn(2).values.length; i++) {
         var action = {}
+
         action = {
             server: sheet.getRow(i).values[4],
             user: sheet.getRow(i).values[5],
             cmd: sheet.getRow(i).values[6],
             custom: sheet.getRow(i).values[8],
-            type: sheet.getRow(i).values[6].split(' ')[0].toLowerCase()
+            result: sheet.getRow(i).values[7]
 
         }
+        getOS(action).os === "windows"
+            ? action = { ...action, type: (sheet.getRow(i).values[6].split(' ')[0].toLowerCase()) }
+            : action = { ...action, type: "command" }
+
+
+
         sheet.getRow(i).values[3] == 'V'
             ? action = { ...action, result: sheet.getRow(i).values[7] }
             : null
@@ -200,9 +231,20 @@ const editLines = (actions, variables) => {
     return actions.map(action => {
 
         variables.map(variable => {
-            if (variable.name === action.server) {
+            if (variable.name.toLowerCase() === action.server.toLowerCase()) {
                 action = { ...action, prod: variable.prod }
+                //console.log("replacing by ",variable.prod)
             }
+            if (action.user !== undefined && action.user !== "") {
+
+                if ("$" + variable.name.toLowerCase() === action.user.toLowerCase()) {
+                    //console.log("replacing ", action.user, "by ", variable.prod)
+
+                    action = { ...action, user: variable.prod }
+
+                }
+            }
+
         })
         action = getOS(action)
         action = formatCommand(action, variables)
@@ -216,15 +258,18 @@ const editLines = (actions, variables) => {
 
 //determine si c'est une commande linux ou windowws
 const getOS = (action) => {
+    var firstWord = "linux"
+    try {
 
-    var firstWord = action.cmd.split(" ")[0].toLowerCase()
+        firstWord = action.cmd.split(" ")[0].toLowerCase()
 
-    return windowsScripts.includes(firstWord)
+    } finally {
+        return windowsScripts.includes(firstWord)
 
-        ? { ...action, os: "windows" }
+            ? { ...action, os: "windows" }
 
-        : { ...action, os: "linux" }
-
+            : { ...action, os: "linux" }
+    }
 }
 
 //verifies s'il ya une variable dans une commande et la change en valeur prod
@@ -233,7 +278,7 @@ const formatCommand = (action, variables) => {
     var newAction
 
     variables.map(variable => {
-
+        //console.log("cmd",action.cmd)
         action.cmd.split(" ").includes("$" + variable.name)
 
             ? newAction = { ...action, cmd: action.cmd.replace(`$${variable.name}`, variable.prod) }
@@ -292,7 +337,7 @@ const toCommand = (action) => {
         server: action.prod,
         name: action.cmd,
         login: action.user,
-        result: action.resul
+        result: action.result
     }
     return action
 

@@ -132,7 +132,7 @@ const Command = ({ index, initialSTate }) => {
                                 onBlur={saveInformations}
                             />
                     </Grid>
-                    <Grid item md={4} xl={4}>
+                    <Grid item md={5} xl={4}>
                         <TextField
                             value={state.name}
                             className={classes.fields}
@@ -145,7 +145,7 @@ const Command = ({ index, initialSTate }) => {
 
                         />
                     </Grid>
-                    <Grid item md={2} xl={2}>
+                    <Grid item md={1} xl={2}>
                         <TextField
                                 className={classes.fields}
                                 value={state.result}

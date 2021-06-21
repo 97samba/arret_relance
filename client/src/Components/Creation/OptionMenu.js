@@ -1,9 +1,10 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Menu, MenuItem } from "@material-ui/core";
 import {  Comment, Delete, FileCopy, MoreVert } from "@material-ui/icons";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import Service from "../Actions/Service";
 import OptionDialog from "./OptionDialog";
 
-const OptionMenu = ({index,deleteAction,duplicateAction}) => {
+const OptionMenu = ({options, setOptions, onBlur, index,deleteAction,duplicateAction}) => {
 
     const [anchorEl, setAnchor] = useState(null)
 
@@ -64,7 +65,7 @@ const OptionMenu = ({index,deleteAction,duplicateAction}) => {
                 </MenuItem>
             </Menu>
             
-            <OptionDialog openDialog={openDialog} closeDialog={closeDialog} />
+            <OptionDialog options={options} saveInfos={onBlur} setOptions={setOptions} openDialog={openDialog} closeDialog={closeDialog} />
 
         </div>
       );

@@ -34,6 +34,7 @@ const WebAction = ({index,initialSTate}) => {
     const [state, setState] = useState({initialSTate})
     const [actionType, setActionType] = useState("connection")
     const [openDialog, setOpenDialog] = useState(false)
+    const [informations, setInformations] = useState({})
 
 
 
@@ -52,6 +53,7 @@ const WebAction = ({index,initialSTate}) => {
             console.log("action type ",initialSTate.informations.type)
             setActionType(initialSTate.informations.type)
         }
+        setInformations(initialSTate.informations)
 
     },[]
     )
@@ -105,7 +107,8 @@ const WebAction = ({index,initialSTate}) => {
         saveData({
             index:index,
             type:"webAction",
-            url:state.url
+            url:state.url,
+            informations:informations
         
         })
     }
@@ -169,12 +172,11 @@ const WebAction = ({index,initialSTate}) => {
                     
                     (
                         <ConnectionDialog
-                        initState={state}
-                        saveData = {saveData}
-                        setInitState = {setState}
-                        openDialog = {openDialog}
-                        closeDialog = {closeDialog}
-                        key={1}
+                        informations={informations}
+                        setInformations={setInformations}
+                        closeDialog={closeDialog}
+                        openDialog={openDialog}
+                        saveInformations={saveInformations}
                         
                         
                         />
@@ -182,33 +184,33 @@ const WebAction = ({index,initialSTate}) => {
                     /**Dialog deconnexion */
                     (
                         <DisconnectDialog 
-                        state={state}
-                        setState={setState}
-                        saveData={saveData}
+                        informations={informations}
+                        setInformations={setInformations}
                         closeDialog={closeDialog}
                         openDialog={openDialog}
+                        saveInformations={saveInformations}
                         />
                     ): actionType === "click" ?
                     /**Dialog clicke */
 
                     (
                         <ClickDialog 
-                        saveData={saveData}
-                        state={state}
-                        setState={setState}
+                        informations={informations}
+                        setInformations={setInformations}
                         closeDialog={closeDialog}
                         openDialog={openDialog}
+                        saveInformations={saveInformations}
                         />
                     ):
                     /**Dialog remplir */
 
                     (
                         <FormDialog 
-                        state={state}
-                        saveData={saveData}
+                        informations={informations}
+                        setInformations={setInformations}
                         closeDialog={closeDialog}
                         openDialog={openDialog}
-                        setState={setState}
+                        saveInformations={saveInformations}
                         />
                     )
                     }

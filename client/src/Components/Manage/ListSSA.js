@@ -42,8 +42,11 @@ const ListSSA = ({ssa}) => {
             .then(Response=> Response.json())
             .then(result => visitPOS(result))
     }
-    const getAParpreExcel= () =>{
-
+    const testSSA = (ssa) =>{
+        history.push({
+            pathname:'/testSSA',
+            state : ssa
+        })
     }
 
     return ( 
@@ -55,7 +58,15 @@ const ListSSA = ({ssa}) => {
  
                 <Grid container direction="row">
                     <Grid item xs={1} md={1} sm={1} >
-                        <Avatar onClick={()=>console.log("ssa clicked")}>{ssa.name[0]}</Avatar>
+                        <Avatar onClick={()=>console.log("ssa clicked")}>
+                            {
+                                ssa.name.split("_").length > 1 
+                                ?ssa.name.split("_")[1][0]
+                                :ssa.name[0]
+                            }
+                            
+                        
+                        </Avatar>
                     </Grid>
                     
                     <Grid item xs={3} md={3} sm={3}  >
@@ -64,19 +75,19 @@ const ListSSA = ({ssa}) => {
                     <Grid item xs={2} md={1} sm={1}  >
                     <Typography> {ssa.Arret.length} - {ssa.Relance.length}</Typography>
                     </Grid>
-                    <Grid item xs={2} md={3} sm={2}  >
+                    <Grid item xs={2} md={2} sm={2}  >
                     <Typography> {ssa.auteur}</Typography>
                     </Grid>
                     <Grid item xs={2} md={2} sm={2}  >
                     <Typography> {ssa.date_de_creation}</Typography>
                     </Grid>
-                    <Grid item xs={2} md={2} sm={2} >
+                    <Grid item xs={2} md={3} sm={2} >
                         <Grid spacing={1} container justify="space-around" alignContent="center">
                             <Grid item md={5}>
-                                <Button variant="outlined" color="default" onClick={() => visitPOS(ssa)}>PARPRE</Button>
+                                <Button variant="outlined" color="default" onClick={() => visitPOS(ssa)}>PARPRE/POS</Button>
                             </Grid>
                             <Grid item md={4}>
-                                <Button variant="outlined" color="primary" onClick={()=>visitPOS(ssa)}>POS</Button>
+                                <Button variant="outlined" color="primary" onClick={()=>testSSA(ssa)}>Test</Button>
                             </Grid>
                             <Grid item md={3}>
                                     <Button >

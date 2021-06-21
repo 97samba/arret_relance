@@ -7,6 +7,7 @@ import Layout from './Components/Layout'
 import { createMuiTheme, ThemeProvider } from '@material-ui/core'
 import Modify from './Pages/Modify';
 import ViewItem from './Pages/ViewItem';
+import TestSSA from './Pages/TestSSA';
 
 const theme = createMuiTheme({
   typography: {
@@ -44,6 +45,9 @@ function App() {
             </Route>
             <Route  path="/view">
               <ViewItem />
+            </Route>
+            <Route  path="/TestSSA">
+              <TestSSA />
             </Route>
           </Switch>
         </Layout>

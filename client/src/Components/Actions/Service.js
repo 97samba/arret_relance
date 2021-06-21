@@ -1,7 +1,7 @@
 import { Avatar, Box, FormControl, Grid, InputLabel, MenuItem, Paper, Select, TextField, Typography } from "@material-ui/core"
 import { makeStyles } from '@material-ui/core'
-import {  SettingsSharp } from "@material-ui/icons"
-import { useContext, useEffect, useState } from "react"
+import { SettingsSharp } from "@material-ui/icons"
+import { createContext, useContext, useEffect, useState } from "react"
 import ActionContext from "../../Context/ActionContext"
 import OptionMenu from "../Creation/OptionMenu"
 
@@ -27,31 +27,32 @@ const Service = ({ index, type, initialSTate }) => {
 
     const [action, setAction] = useState('STOP')
     //létat du composant
-    const [state, setState] = useState({initialSTate})
+    const [state, setState] = useState({ initialSTate })
     //l'état du server
     const [pingState, setPingState] = useState("ko")
     const [status, setStatus] = useState(type)
     const [OS, SetOS] = useState("")
+    const [options, setOptions] = useState({})
 
     useEffect(() => {
         setState(initialSTate)
-        if(initialSTate.action){
+        if (initialSTate.action) {
             setStatus(initialSTate.action.toLowerCase())
         }
 
     }, []
     )
 
-
+   
     //context pour sauvegarder l'état dans le parent
-    const { deleteAction, duplicateAction, saveData} = useContext(ActionContext)
+    const { deleteAction, duplicateAction, saveData } = useContext(ActionContext)
 
 
     const saveInformations = () => {
         if (state.service === undefined || state.server === undefined) { return }
         saveData(
             {
-                index: index, type: "service", server: state.server, service: state.service, action: status
+                index: index, type: "service", server: state.server, service: state.service, action: status, options:options
             }
         )
     }
@@ -97,7 +98,7 @@ const Service = ({ index, type, initialSTate }) => {
                     spacing={2}
                     alignItems="center"
                 >
-                    <Grid item md={1} xl={1} container alignContent="center" direction="column" >
+                    <Grid item md={1} xl={1}  alignContent="center" direction="column" >
                         <Box display="flex" justifyContent="center">
                             <SettingsSharp color="primary" />
                         </Box>
@@ -144,7 +145,7 @@ const Service = ({ index, type, initialSTate }) => {
                             id={`serviceName- ${index}`}
                             color='primary'
                             label='Service'
-                            onChange={(e) => setState({ ...state, service:e.target.value })}
+                            onChange={(e) => setState({ ...state, service: e.target.value })}
                             onBlur={(e) => saveInformations()}
                         //testService(e.target.value)
 
@@ -153,9 +154,7 @@ const Service = ({ index, type, initialSTate }) => {
                     <Grid item md={1} xl={1}  >
                         <Grid container spacing={3} alignItems="center" >
                             <Grid item md={6} >
-                                <OptionMenu index={index} deleteAction={deleteAction} duplicateAction={duplicateAction}  />
-                                
-                               
+                                    <OptionMenu index={index} onBlur={saveInformations} options = {options} setOptions={setOptions} deleteAction={deleteAction} duplicateAction={duplicateAction} />
                             </Grid>
 
                             <Grid item md={6}>

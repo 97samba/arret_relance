@@ -108,7 +108,7 @@ function webAction($driver, $url, $informations){
 $driver = Start-SeChrome 
 
 
-$json.Arret | ForEach-Object {
+$json.POS | ForEach-Object {
 
     if($_.type -eq "Link")
     {

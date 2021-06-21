@@ -9,7 +9,7 @@ import { useHistory, useLocation } from 'react-router'
 
 const drawerWidthRight = 260
 
-const drawerWidth = 220
+const drawerWidth = 200
 const useStyles = makeStyles((theme) =>{
     return{
         root:{
@@ -24,13 +24,13 @@ const useStyles = makeStyles((theme) =>{
             fontWeight:'bold',
         },
         list:{
-            padding: theme.spacing(2)
+            padding: theme.spacing(1)
         },
         menuItem: {
             display : 'flex'
         },
         button : {
-            margin: theme.spacing(4),
+            margin: theme.spacing(2),
             padding : theme.spacing(1)
         },
         logo : {
@@ -39,12 +39,12 @@ const useStyles = makeStyles((theme) =>{
         active:{
             background:'#F2F2F2',
             borderRightColor:'#3f51b5',
-            paddingInline:theme.spacing(4),
+            paddingInline:theme.spacing(2),
             marginBottom:theme.spacing(2)
 
         },
         nonActive:{
-            paddingInline:theme.spacing(4),
+            paddingInline:theme.spacing(2),
             marginBottom:theme.spacing(2)
 
 
@@ -56,7 +56,7 @@ const useStyles = makeStyles((theme) =>{
         page: {
             background:'F9F9F9',
             width:"100%",
-            padding: theme.spacing(3)
+            padding: theme.spacing(2)
         },
         drawerPaper:{
             width : drawerWidth,
@@ -101,15 +101,15 @@ const Layout = ({children}) => {
             path:'/manage'
         },
         {
-            text: 'Monitoring',
+            text: 'Tests',
             icon: <Timeline color="primary"/>,
-            path:'#'
-        },
+            path:'/TestSSA'
+        },/*
         {
             text: 'Prod h-Prod',
             icon: <FindReplace color="primary"/>,
             path:'#'
-        },
+        },*/
         {
             text: 'Parametres',
             icon:<SettingsSharp color="primary" />,
@@ -164,7 +164,7 @@ const Layout = ({children}) => {
 
 
                         </div>
-                        
+                        {/*
                         <Button
                          
                         variant='contained' 
@@ -174,6 +174,7 @@ const Layout = ({children}) => {
                         >
                             Charger un Excel
                         </Button>
+                        */}
                     </div>
 
                     {/**Les liens du menu */}

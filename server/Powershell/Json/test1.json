@@ -1,0 +1,123 @@
+{
+    "name": "test1",
+    "auteur": "Samba NDIAYE",
+    "date_de_creation": "18/06/2021, 17:45:01",
+    "type": "PARPRE",
+    "Arret": [
+        {
+            "index": 0,
+            "type": "service",
+            "server": "localhost",
+            "service": "bits",
+            "action": "stop",
+            "options": {}
+        },
+        {
+            "index": 1,
+            "type": "service",
+            "server": "localhost",
+            "service": "bits",
+            "action": "status",
+            "options": {}
+        },
+        {
+            "index": 2,
+            "type": "database",
+            "server": "sw11203",
+            "name": "test",
+            "action": "stop",
+            "databaseType": "MSSQL"
+        },
+        {
+            "index": 3,
+            "type": "database",
+            "server": "sw11203",
+            "name": "test",
+            "action": "status",
+            "databaseType": "MSSQL"
+        }
+    ],
+    "Relance": [
+        {
+            "index": 0,
+            "type": "service",
+            "server": "localhost",
+            "service": "bits",
+            "action": "stop",
+            "options": {}
+        },
+        {
+            "index": 1,
+            "type": "service",
+            "server": "localhost",
+            "service": "bits",
+            "action": "status",
+            "options": {}
+        },
+        {
+            "index": 2,
+            "type": "database",
+            "server": "sw11203",
+            "name": "test",
+            "action": "stop",
+            "databaseType": "MSSQL"
+        },
+        {
+            "index": 3,
+            "type": "database",
+            "server": "sw11203",
+            "name": "test",
+            "action": "status",
+            "databaseType": "MSSQL"
+        }
+    ],
+    "POS": [
+        {
+            "index": 0,
+            "type": "webAction",
+            "url": "https://linkedin.com",
+            "informations": {
+                "type": "connection",
+                "login": "samba",
+                "password": "76492d1116743f0423413b16050a5345MgB8AEgAVABJADQANwBhADkAMgBIAG4AagAyAFQAWQBwAFUATQBEAEYAUABPAFEAPQA9AHwAZgAwADYAOQA2ADEANgAyADQANQAwADkANwBmADYAMQAyADgAYwA2ADEANQBlADAAZgAyAGQAYQBkAGUAZABhADQAMQBkADMAZABhADMANwA4ADkAMwBhADUAMwA1ADQAOAA3ADYANgBmADMAZQA4AGUANAA3ADEAOABlAGYAOAA=\r\n",
+                "loginSelector": "#session_key",
+                "passwordSelector": "#session_password"
+            }
+        },
+        {
+            "index": 1,
+            "type": "webAction",
+            "url": "https://linkedin.com",
+            "informations": {
+                "type": "logOut",
+                "login": "samba",
+                "password": "Passer123",
+                "loginSelector": "#session_key",
+                "passwordSelector": "#session_password",
+                "logOutSelector": "#deconnection"
+            }
+        }
+    ],
+    "variables": {
+        "servers": [
+            {
+                "id": 1,
+                "prod": "localhost",
+                "hprod": "definir",
+                "dev": "definir"
+            },
+            {
+                "id": 2,
+                "prod": "test",
+                "hprod": "definir",
+                "dev": "definir"
+            },
+            {
+                "id": 3,
+                "prod": "sw11203",
+                "hprod": "definir",
+                "dev": "definir"
+            }
+        ]
+    }
+}

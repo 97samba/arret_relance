@@ -394,10 +394,10 @@ function main-process($file){
     create-logAndReport 
 
     #Séquence d'arrêt
-    create-relance -actions $json_element.Arret
+    create-relance -actions $json_element.Relance
 
     #Séquence de relance
-    create-arret -actions $json_element.Relance
+    create-arret -actions $json_element.Arret
 
     #Séquence de Tests
     create-tests -actions $json_element

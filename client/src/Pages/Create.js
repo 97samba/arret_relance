@@ -1,19 +1,20 @@
-import { FormControl, FormControlLabel, FormGroup, FormLabel, Grid, makeStyles, Radio, RadioGroup, Switch, TextField, Typography } from "@material-ui/core"
+import { FormControlLabel, FormGroup, FormLabel, Grid, makeStyles, Radio, RadioGroup, Switch, TextField, Typography } from "@material-ui/core"
 import axios from "axios";
 import { useEffect, useState } from "react";
 import ARCard from "../Components/ARCard"
 import RightNav from "../Components/Creation/RightNav";
-import {useHistory} from 'react-router'
+import { useHistory } from 'react-router'
 
-const drawerWidthRight = 260
+var drawerWidthRight = 260
 
-const useStyles = makeStyles((theme) =>{
-    return{
-        root:{
-            width:`calc(100% - ${drawerWidthRight}px)`   
+const useStyles = makeStyles((theme) => {
+    return {
+        root: {
+            width: `calc(100% - ${drawerWidthRight}px)`
         }
 
-}})
+    }
+})
 
 
 const Create = () => {
@@ -40,13 +41,15 @@ const Create = () => {
 
     const history = useHistory()
 
-    //La page de création et la page de modifiation sont les mêmes, la difference est assurée par pageMode
-    useEffect(()=>{
+    const [servers, setServers] = useState([])
 
-        document.title="Création de PARPRE / POS"
-        
-        if(history.location.state !== undefined){
-            document.title=`Modification de ${history.location.state.name}`
+    //La page de création et la page de modifiation sont les mêmes, la difference est assurée par pageMode
+    useEffect(() => {
+
+        document.title = "Création de PARPRE / POS"
+
+        if (history.location.state !== undefined) {
+            document.title = `Modification de ${history.location.state.name}`
 
             console.log("History ", history.location)
             setPageMode("Modification")
@@ -57,177 +60,170 @@ const Create = () => {
             //setPosActions(history.location.state.pos)
             setTitle(history.location.state.name)
 
-            const initialServers = history.location.state.variables.map((variable,index) => {
-                return {
-                    id:index,
-                    prod:variable.prod,
-                    hprod:variable.hprod,
-                    dev:variable.dev
-                }
-            })
-            setServers(initialServers)
+            if (history.location.state.variables !== undefined) {
+
+
+                const initialServers = history.location.state.variables.map((variable, index) => {
+                    return {
+                        id: index,
+                        prod: variable.prod,
+                        hprod: variable.hprod,
+                        dev: variable.dev
+                    }
+                })
+                setServers(initialServers)
+            }
         }
-    },[])
+    }, [])
 
-    const [servers, setServers] = useState([])
 
-    const saveServer = () =>{
-        
+    const saveServer = () => {
+
         //noms des serveurs dans la lste des variables
-        var Allservers = servers.map(server => {return server.prod})
-                
+        var Allservers = servers.map(server => { return server.prod })
+
         var serversInStopActions = new Set()
 
         //on recupere les servers dans les etapes d'arret
         StopActions.map(action => {
-            if(action.server === undefined || action.server === ""){return};
+            if (action.server === undefined || action.server === "") { return };
             serversInStopActions.add(action.server.toLowerCase())
-        })
+            /*
+            if(action.type === "database"){
+                serversInStopActions.add(action.name.toLowerCase())
 
+            }
+            */
+        })
+        
         //on rajoute les serveurs manquants
-        serversInStopActions.forEach(server => {
-            
-            if(!Allservers.includes(server)){
+        serversInStopActions.forEach(server => { 
+
+            if (!Allservers.includes(server)) {
                 Allservers.push(server)
-                setServers([...servers, { id : (servers.length + 1),prod : server,hprod:"definir",dev:"definir"}])
+                setServers([...servers, { id: (servers.length + 1), prod: server, hprod: "definir", dev: "definir" }])
 
             }
         })
 
         //On enleve les serveurs absents dans la liste des actions
         Allservers.map(server => {
-            if(!serversInStopActions.has(server)){
+            if (!serversInStopActions.has(server)) {
                 const newServerState = servers.filter(serverprod => serverprod.prod !== server)
                 setServers(newServerState)
 
             }
-        })        
+        })
     }
 
     const classes = useStyles()
 
-    const saveStart = (object) =>{
+    const saveStart = (object) => {
         setStartActions(object)
-        setAutoStartActions(object)
-        
+        //setAutoStartActions(object)
+
     }
 
 
-    const saveStop = (object) =>{
+    const saveStop = (object) => {
         setStopActions(object)
-        
-       // if(autoRelance)
-            //reverseStopAction(object)
-        
+
+        // if(autoRelance)
+        //reverseStopAction(object)
+
         saveServer(object)
     }
 
-        
 
-    const reverseStopAction = (actions) =>{
+
+    const reverseStopAction = (actions) => {
         var newRelance = actions.slice(0).reverse().map(action => {
-            if(action.type === "service" || action.type === "database" || action.type === "process"){
-                if(action.action === "status"){
-                    action = {...action, action:"start"}
-                }else{
-                    action = {...action, action:"status",options:{result : "running"}}                    
+            if (action.type === "service" || action.type === "database" || action.type === "process") {
+                if (action.action === "status") {
+                    action = { ...action, action: "start" }
+                } else {
+                    action = { ...action, action: "status", options: { result: "running" } }
                 }
-                
+
             }
-            if(action.type === "script"){
-                action = {...action, path:""}
-                
+            if (action.type === "script") {
+                action = { ...action, path: "" }
+
             }
-            if(action.type === "command"){
-                action = {...action, name:"", result:""}
+            if (action.type === "command") {
+                action = { ...action, name: "", result: "" }
             }
             return action
         })
         //console.log("stopAction ",StopActions)
         //console.log("new relance : ",newRelance)
-        console.log("input : ",actions)
-        for( var i=0 ; i < newRelance.length ;i++){
-            if(newRelance[i]){
+        console.log("input : ", actions)
+        for (var i = 0; i < newRelance.length; i++) {
+            if (newRelance[i]) {
                 newRelance[i].index = i
             }
-            
+
         }
         setAutoStartActions(newRelance)
-        console.log("actions ",actions," vs ",newRelance)
+        console.log("actions ", actions, " vs ", newRelance)
     }
 
-    const generateJson =  () => {
+    const generateJson = () => {
 
-        console.log("name ",title)
+        console.log("name ", title)
 
         const parpre = {
-            name : title ,
-            auteur: "Samba NDIAYE", 
-            date_de_creation : new Date().toLocaleString(),
-            type:documentType, 
-            Arret : StopActions, 
-            Relance: autoRelance ?  AutoStartActions :StopActions ,
-            variables:{
-                servers:servers
+            name: title,
+            auteur: "Samba NDIAYE",
+            date_de_creation: new Date().toLocaleString(),
+            type: "PARPRE",
+            Arret: StopActions,
+            Relance: autoRelance ? AutoStartActions : StopActions,
+            POS:posActions,
+            variables: {
+                servers: servers
             }
         }
 
         axios.post(`http://localhost:5000/api/PARPRE/create`, parpre)
             .then(res => console.log(res))
-            
+
         console.log(JSON.stringify(parpre))
     }
-    const generatePOS =  () => {
 
-        const pos = {
-            name : title ,
-            auteur: "Samba NDIAYE", 
-            date_de_creation : new Date().toLocaleString(),
-            type:documentType,             
-            etapes: posActions
-        }
+    return (
 
-        //axios.post(`http://localhost:5000/api/PARPRE/create`, pos)
-        //    .then(res => console.log(res))
-            
-        console.log(JSON.stringify(pos))
-    }
 
-    return ( 
-        
-
-        <div className={classes.root}>   
-            <Grid container spacing={2}>     
+        <div className={classes.root}>
+            <Grid container spacing={2}>
                 <Grid item md={6}>
-                { 
-                    titleOpen ? 
-                    (
-                        <TextField 
-                        placeholder="Changer le titre"
-                        onBlur={() => setTitleOpen(false)}
-                        margin="dense"
-                        onChange={(e) => setTitle(e.target.value)}
-                        autoFocus
-                        value={title}
-                        >
-                            
-                        </TextField>
-                    ) 
-                    : 
-                    (
-                        <div>
-                            <Typography 
-                            variant='h6'
-                            gutterBottom
-                            onClick={() => setTitleOpen(true)}
-                            >
-                                Nom : {title}
+                    {
+                        titleOpen ?
+                            (
+                                <TextField
+                                    placeholder="Changer le titre"
+                                    onBlur={() => setTitleOpen(false)}
+                                    margin="dense"
+                                    onChange={(e) => setTitle(e.target.value)}
+                                    autoFocus
+                                    value={title}
+                                />
+                            )
+                            :
+                            (
+                                <div>
+                                    <Typography
+                                        variant='h6'
+                                        gutterBottom
+                                        onClick={() => setTitleOpen(true)}
+                                    >
+                                        Nom : {title}
 
-                            </Typography>
-                        </div>
-                    )
-                }    
-                </Grid>   
+                                    </Typography>
+                                </div>
+                            )
+                    }
+                </Grid>
 
                 {/**
                  <Grid item md={2}>
@@ -244,100 +240,100 @@ const Create = () => {
                     </FormGroup>
                     </Grid> 
                  */}
-               
-                
+
+
 
                 <Grid item md={3}>
                     <FormGroup>
-                        {documentType === "PARPRE" ? 
-                        (
-                        <FormControlLabel
-                            control = {<Switch onChange={()=> {reverseStopAction(StopActions);setAutoRelance(!autoRelance)}}/>}
-                            checked={autoRelance}
-                            label = "Relance-Auto"
-                        >
-                        </FormControlLabel>
-                        )
-                        :
-                        (
-                            null
-                        )
+                        {documentType === "PARPRE" ?
+                            (
+                                <FormControlLabel
+                                    control={<Switch onChange={() => { reverseStopAction(StopActions); setAutoRelance(!autoRelance) }} />}
+                                    checked={autoRelance}
+                                    label="Relance-Auto"
+                                >
+                                </FormControlLabel>
+                            )
+                            :
+                            (
+                                null
+                            )
                         }
                     </FormGroup>
-                    
-                </Grid>  
+
+                </Grid>
                 <Grid item md={3}>
-                    
+
                     <RadioGroup value={documentType} onChange={(e) => setDocumentType(e.target.value)}>
                         <FormGroup row >
                             <FormControlLabel value="POS" label="POS" control={<Radio color="primary" />} />
                             <FormControlLabel value="PARPRE" label="PARPRE" control={<Radio color="primary" />} />
                         </FormGroup>
-                    </RadioGroup>                       
-                   
-                </Grid>  
-                
+                    </RadioGroup>
+
+                </Grid>
+
             </Grid>
-            
+
             {
                 documentType === "POS" ?
-            
-            (
-                <ARCard 
-                 name="Procédure d'Ouverture de Service" 
-                 type="status" 
-                 actions={posActions} 
-                 SetActions={setPosActions} 
-                 generateJson={generatePOS}
-                 key={4}
-                />
-            ) 
-            :
-            (
-            <div>
-            <ARCard 
-                    name="Arrêt" 
-                    type="stop" 
-                    actions={StopActions} 
-                    SetActions={saveStop} 
-                    autoRelance = {autoRelance}
-                    AddServer={saveServer}
-                    generateJson={generateJson}
-                    key={1}
-                      
-                />
-                {autoRelance ? 
-                (<ARCard 
-                    name="Auto-Relance" 
-                    type="start" 
-                    actions={AutoStartActions} 
-                    SetActions={setAutoStartActions} 
-                    autoRelance = {autoRelance}
-                    AddServer={saveServer}
-                    generateJson={generateJson}
-                    key={2}
-                      
-                />
-                )
-                :
-                (<ARCard 
-                    name="Relance" 
-                    type="start"
-                    actions = {StartActions} 
-                    SetActions = {saveStart} 
-                    AddServer={saveServer} 
-                    key={3}
-                />
-                
-                )
-                }
-            </div>
-            )    
-        }    
-                
-                <RightNav ServerRow={servers} saveRows={setServers} />
+
+                    (
+                        <ARCard
+                            name="Procédure d'Ouverture de Service"
+                            type="status"
+                            actions={posActions}
+                            SetActions={setPosActions}
+                            generateJson={generateJson}
+                            key={4}
+                        />
+                    )
+                    :
+                    (
+                        <div>
+                            <ARCard
+                                name="Arrêt"
+                                type="stop"
+                                actions={StopActions}
+                                SetActions={saveStop}
+                                autoRelance={autoRelance}
+                                AddServer={saveServer}
+                                generateJson={generateJson}
+                                key={1}
+
+                            />
+                            {autoRelance ?
+                                (<ARCard
+                                    name="Auto-Relance"
+                                    type="start"
+                                    actions={AutoStartActions}
+                                    SetActions={setAutoStartActions}
+                                    autoRelance={autoRelance}
+                                    AddServer={saveServer}
+                                    generateJson={generateJson}
+                                    key={2}
+
+                                />
+                                )
+                                :
+                                (<ARCard
+                                    name="Relance"
+                                    type="start"
+                                    actions={StartActions}
+                                    SetActions={saveStart}
+                                    AddServer={saveServer}
+                                    key={3}
+                                />
+
+                                )
+                            }
+                        </div>
+                    )
+            }
+
+            <RightNav ServerRow={servers} saveRows={setServers} />
         </div>
-     );
+    );
 }
- 
+
 export default Create;

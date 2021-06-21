@@ -1,6 +1,6 @@
 import { Button, Grid, IconButton, InputBase, makeStyles, Paper, Typography } from '@material-ui/core'
 import { useEffect, useState } from 'react';
-import { Add, ArrowBack, SearchSharp } from '@material-ui/icons';
+import { Add, ArrowBack, ArrowForward, SearchSharp } from '@material-ui/icons';
 import ListSSA from '../Components/Manage/ListSSA';
 import axios from 'axios';
 
@@ -27,11 +27,10 @@ const Manage = () => {
     const url = "http://localhost:5000/api"
     const [POS, SetPOS] = useState([])
     const [ExcelTab, SetExcelTab] = useState(false)
-    const [allExcel, setAllExcel] = useState({})
+    const [allExcel, setAllExcel] = useState([])
 
     useEffect(() => {
-        document.title = "Modify"
-        
+        document.title = "Modify"        
         getAllPos()
         GetAllExcel()
         
@@ -41,7 +40,7 @@ const Manage = () => {
     const GetAllExcel =() =>{
             
         axios.post(`http://localhost:5000/api/ConvertAll-Excel`)
-            .then(res =>  {setAllExcel(res.data); console.log("data ",res.data.variables)})
+            .then(res =>  {setAllExcel(res.data); console.log("data ",res.data)})
             
     }
 
@@ -66,15 +65,15 @@ const Manage = () => {
                     <Grid item sm={4}>
                         <Button
                             startIcon={
-                                ExcelTab ? <ArrowBack /> : <Add />
+                                ExcelTab ? <ArrowBack /> : <ArrowForward />
                             }
                             variant="contained"
                             elevation={0}
                             onClick={() => SetExcelTab(!ExcelTab)}
 
                         > {!ExcelTab
-                            ? "Importer un Excel"
-                            : "Retour"
+                            ? `Importés depuis Excel ( ${allExcel.length} )`
+                            : `Enregistrés ( ${POS.length} )`
 
                             }
 
@@ -129,7 +128,7 @@ const Manage = () => {
                         <Typography> Etapes</Typography>
                     </Grid>
 
-                    <Grid item xs={3} md={3} sm={2}  >
+                    <Grid item xs={3} md={2} sm={2}  >
                         <Typography> Auteur</Typography>
                     </Grid>
 
@@ -137,14 +136,22 @@ const Manage = () => {
                         <Typography> Date de création </Typography>
                     </Grid>
 
-                    <Grid item xs={3} md={2} sm={3} spacing={1} container justify="center">
+                    <Grid item xs={3} md={3} sm={3} spacing={1} container justify="center">
                         <Typography>Actions</Typography>
                     </Grid>
                 </Grid>
                 {
-                    ExcelTab ?
+                    ExcelTab  ?
                         (
-                            <ListSSA ssa={allExcel} key={allExcel._id} />
+                            allExcel.length > 0 ?
+                            (
+                                allExcel.map(excel => (
+                                <ListSSA ssa={excel} key={excel._id} />
+                            ))  
+                            )  :
+                            (
+                                <Typography>Chargement</Typography>
+                            )                       
 
                         )
                         :
