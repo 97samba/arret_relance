@@ -3,9 +3,9 @@ import { ArrowRight } from "@material-ui/icons";
 import { useEffect } from "react";
 
 const DisconnectDialog = ({ informations, setInformations, saveInformations, openDialog, closeDialog }) => {
-    useEffect(()=>{
-        setInformations({...informations, type:"logOut"})
-    },[])
+    useEffect(() => {
+        setInformations({ ...informations, type: "logOut" })
+    }, [])
 
 
     return (
@@ -13,7 +13,7 @@ const DisconnectDialog = ({ informations, setInformations, saveInformations, ope
             <Dialog
                 open={openDialog}
                 onClose={closeDialog}
-                fullWidth={200}
+
                 onBlur={saveInformations}
             >
                 <DialogTitle id='dialog-title'>Déconnexion </DialogTitle>
@@ -64,16 +64,16 @@ const DisconnectDialog = ({ informations, setInformations, saveInformations, ope
 
                 </DialogContent>
                 <DialogActions>
-                    <Button onclick={() => {closeDialog();saveInformations()}}>
-                    Confirmer
-                            </Button>
-                            
-                        </DialogActions>
+                    <Button onclick={() => { closeDialog(); saveInformations() }}>
+                        Confirmer
+                    </Button>
 
-                    </Dialog>
-                    
+                </DialogActions>
+
+            </Dialog>
+
         </div >
-     );
+    );
 }
 
 export default DisconnectDialog;
