@@ -1,6 +1,6 @@
-import { Avatar, Box, Grid, IconButton, Menu, MenuItem, Paper, TextField, Typography } from "@material-ui/core"
+import { Avatar, Box, Grid, Paper, TextField, Typography } from "@material-ui/core"
 import { makeStyles } from '@material-ui/core'
-import { Delete, FileCopy, MoreVert, Description } from "@material-ui/icons"
+import { Description } from "@material-ui/icons"
 import { useContext, useState, useEffect } from "react"
 import ActionContext from "../../Context/ActionContext"
 import OptionDialog from "../Creation/OptionDialog"

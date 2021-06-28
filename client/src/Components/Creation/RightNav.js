@@ -1,6 +1,5 @@
-import { Avatar, Box, Divider, Drawer, Grid, LinearProgress, makeStyles, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@material-ui/core";
-import { Computer, Rowing, Settings } from "@material-ui/icons";
-import { useEffect, useState } from "react";
+import {  Box, Drawer, makeStyles,Typography } from "@material-ui/core";
+import { useState } from "react";
 import {DataGrid} from '@material-ui/data-grid';
 
 const drawerWidthRight = 280

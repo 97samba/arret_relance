@@ -1,6 +1,6 @@
-import { Avatar, Box, FormControl, Grid, IconButton, InputLabel, Menu, MenuItem, Paper, Select, TextField, Typography } from "@material-ui/core"
+import { Avatar, Box, FormControl, Grid,  InputLabel,  MenuItem, Paper, Select, TextField, Typography } from "@material-ui/core"
 import { makeStyles } from '@material-ui/core'
-import { Delete, FileCopy, MoreVert, Code, Autorenew } from "@material-ui/icons"
+import { Autorenew } from "@material-ui/icons"
 import { useContext, useState, useEffect } from "react"
 import ActionContext from "../../Context/ActionContext"
 import OptionMenu from "../Creation/OptionMenu"

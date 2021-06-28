@@ -1,5 +1,5 @@
-import { Button, CardActionArea, CardActions, IconButton, makeStyles } from '@material-ui/core';
-import { useEffect, useState } from 'react';
+import { Button, CardActionArea, makeStyles } from '@material-ui/core';
+import { useEffect } from 'react';
 import { Avatar, Card, CardContent, Grid, Typography } from '@material-ui/core'
 import { Delete } from '@material-ui/icons';
 import { useHistory } from 'react-router';

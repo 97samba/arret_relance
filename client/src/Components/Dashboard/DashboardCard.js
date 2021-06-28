@@ -1,6 +1,5 @@
 import { Box, makeStyles, Paper, Typography} from '@material-ui/core'
 import { SupervisedUserCircle } from '@material-ui/icons'
-import { useEffect } from 'react'
 
 const useStyles = makeStyles((theme) => ({
     root:{

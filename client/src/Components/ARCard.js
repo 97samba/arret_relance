@@ -1,5 +1,5 @@
 import { Button, Container, makeStyles, Card, CardHeader, CardContent } from '@material-ui/core'
-import { Autorenew, Code, Description, Http, KeyboardArrowRight, Save, SettingsSharp, Storage, Web } from '@material-ui/icons';
+import { Autorenew, Code, Description, Http, KeyboardArrowRight, SettingsSharp, Storage, Web } from '@material-ui/icons';
 import Service from './Actions/Service';
 import Database from './Actions/Database';
 import Process from './Actions/Process';
@@ -8,7 +8,6 @@ import { useEffect, useState } from 'react';
 import SpeedDial from '@material-ui/lab/SpeedDial'
 import { SpeedDialAction, SpeedDialIcon } from '@material-ui/lab';
 import ActionContext from '../Context/ActionContext';
-import { useHistory } from 'react-router';
 import Link from './Actions/Link'
 import WebAction from './Actions/WebAction';
 import Command from './Actions/Command';
@@ -43,10 +42,15 @@ const ARCard = ({ name, actions, SetActions, autoRelance, type, AddServer, gener
             ...actions, {
                 index: second,
                 type: _type,
-                action:type,
+                action: type,
                 informations: {
                 },
                 options: {
+                    block: true,
+                    prod: true,
+                    hprod: true,
+                    inte: true,
+                    dev: true,
 
                 }
             }
@@ -85,23 +89,23 @@ const ARCard = ({ name, actions, SetActions, autoRelance, type, AddServer, gener
         var actionToDuplicateIndex = actionID
         var clone = actions[actionToDuplicateIndex]
 
-        
+
         console.log("action to duplicate", clone, "index ", actionToDuplicateIndex, " actionId ", actionID)
 
-        var newClone = { ...clone, action: "status",duplicated:"duplicated" }
+        var newClone = { ...clone, action: "status", duplicated: "duplicated" }
         actionToDuplicateIndex = actionToDuplicateIndex + 1
-        console.log("before splice ",actions)
+        console.log("before splice ", actions)
 
         actions.splice(actionToDuplicateIndex, 0, newClone)
 
-        console.log("new array ",actions)
+        console.log("new array ", actions)
 
 
-        for ( var i = 0; i < actions.length; i++) {
+        for (var i = 0; i < actions.length; i++) {
             actions[i].index = i;
             //console.log(actions[i].server)
         }
-        console.log("after array ",actions)
+        console.log("after array ", actions)
 
 
 

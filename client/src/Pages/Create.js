@@ -1,4 +1,4 @@
-import { FormControlLabel, FormGroup, FormLabel, Grid, makeStyles, Radio, RadioGroup, Switch, TextField, Typography } from "@material-ui/core"
+import { FormControlLabel, FormGroup,  Grid, makeStyles, Radio, RadioGroup, Switch, TextField, Typography } from "@material-ui/core"
 import axios from "axios";
 import { useEffect, useState } from "react";
 import ARCard from "../Components/ARCard"
@@ -58,6 +58,7 @@ const Create = () => {
             setDocumentType(history.location.state.type)
             setStopActions(history.location.state.Arret)
             setStartActions(history.location.state.Relance)
+            setPosActions(history.location.state.POS)
             //setDocumentType(history.location.state.type || "PARPRE")
             //setPosActions(history.location.state.pos)
             setTitle(history.location.state.name)

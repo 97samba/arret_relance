@@ -8,3 +8,15 @@ Arret_App(){
     $url=http://www.github.com
     $type=webAction
 }
+Arret_App(){
+$url=
+$type=
+}
+Arret_App(){
+$url=
+$type=
+}
+Arret_App(){
+$url=
+$type=
+}

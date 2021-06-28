@@ -5,6 +5,9 @@ import { useEffect, useState } from "react";
 
 const OptionDialog = ({ options, saveInfos, setOptions, openDialog, setOpenDialog }) => {
 
+    useEffect(()=>{
+        setOptions(options)
+    })
     const [block, setBlock] = useState(true)
 
 

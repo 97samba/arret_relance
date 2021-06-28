@@ -1,9 +1,9 @@
 import React from 'react'
 
-import { AppBar, Box, Button,  List, ListItem, ListItemIcon, ListItemText,  Toolbar } from '@material-ui/core'
+import { AppBar, Box,  List, ListItem, ListItemIcon, ListItemText,  Toolbar } from '@material-ui/core'
 import Drawer from '@material-ui/core/Drawer'
 import Typography from '@material-ui/core/Typography'
-import { AppsSharp, Code,  DashboardSharp, FindReplace, FolderOpenSharp, SettingsSharp, Timeline } from '@material-ui/icons'
+import { AppsSharp,  DashboardSharp, FolderOpenSharp, SettingsSharp, Timeline } from '@material-ui/icons'
 import {makeStyles} from '@material-ui/core'
 import { useHistory, useLocation } from 'react-router'
 

@@ -1,6 +1,6 @@
-import { Avatar, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, IconButton, InputLabel, Menu, MenuItem, Paper, Select, TextField, Typography } from "@material-ui/core"
+import { Avatar, Box, Button,FormControl, Grid,  InputLabel,  MenuItem, Paper, Select, TextField, Typography } from "@material-ui/core"
 import { makeStyles } from '@material-ui/core'
-import { AccountCircle, Add, ArrowRight, Comment, Delete, FileCopy, Link, Lock, MoreVert, Mouse, Web } from "@material-ui/icons"
+import {  Web } from "@material-ui/icons"
 import { useContext, useEffect, useState } from "react"
 import ActionContext from "../../Context/ActionContext"
 import ClickDialog from "../Creation/ClickDialog"
@@ -164,11 +164,11 @@ const WebAction = ({ index, initialSTate }) => {
                     <Grid item md={2} xl={3} >
                         <FormControl className={classes.dropDown}>
                             <InputLabel>Action</InputLabel>
-                            <Select value={actionType} onChange={(e) => (setActionType(e.target.value))}>
+                            <Select value={actionType} onChange={(e) => {setActionType(e.target.value);setInformations({...informations,type:e.target.value})}}>
                                 <MenuItem value="connection" >Connexion</MenuItem>
                                 <MenuItem value="logOut" >Déconnexion</MenuItem>
                                 <MenuItem value="click">Click</MenuItem>
-                                <MenuItem value="field">Remplir champ(s)</MenuItem>
+                                <MenuItem value="form">Remplir champ(s)</MenuItem>
                                 <MenuItem value="verify">Vérifier un contenu</MenuItem>
                             </Select>
                         </FormControl>
@@ -219,8 +219,16 @@ const WebAction = ({ index, initialSTate }) => {
                                     />
                                 ) :
                                 /**Dialog remplir */
-
+                                 actionType === "form" ?
                                 (
+                                    <FormDialog
+                                        informations={informations}
+                                        setInformations={setInformations}
+                                        closeDialog={closeDialog}
+                                        openDialog={openDialog}
+                                        saveInformations={saveInformations}
+                                    />
+                                ):(
                                     <FormDialog
                                         informations={informations}
                                         setInformations={setInformations}

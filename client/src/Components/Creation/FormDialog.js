@@ -5,9 +5,11 @@ import { useEffect } from "react";
 
 const FormDialog = ({ informations, setInformations, saveInformations, openDialog, closeDialog }) => {
 
-    useEffect(()=>{
+    useEffect(() => {
         setInformations({...informations, type:"form"})
-    },[])
+        console.log("updated de dialog form")
+    }, [])
+
     return (
         <div>
             <Dialog
@@ -29,14 +31,14 @@ const FormDialog = ({ informations, setInformations, saveInformations, openDialo
 
                                 <Grid item>
                                     <TextField
-                                        value={informations.fields}
+                                        value={informations.field}
                                         variant="outlined"
                                         autoFocus
                                         margin="dense"
-                                        label="champ"
-                                        autoComplete={false}
+                                        label="Valeur"
+                                        autoComplete={true}
 
-                                        onChange={(e) => (setInformations({ ...informations, fields: e.target.value }))}
+                                        onChange={(e) => (setInformations({ ...informations, field: e.target.value }))}
                                     />
                                 </Grid>
                             </Grid>
@@ -49,6 +51,7 @@ const FormDialog = ({ informations, setInformations, saveInformations, openDialo
                                         variant="outlined"
                                         margin="dense"
                                         label="sélecteur"
+                                        autoComplete
                                         onChange={(e) => (setInformations({ ...informations, fieldSelector: e.target.value }))}
                                     />
                                 </Grid>

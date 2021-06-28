@@ -33,7 +33,7 @@ function get-driver($navigator){
     {
         return Start-SeEdge 
     }
-    if($navigator -eq $null)
+    if($null -eq $navigator)
     {
         return $null
     }
@@ -68,44 +68,69 @@ function click-element($driver, $url,$informations){
 
 }
 
+# fonction pour l'authentification
+function init-connection($driver, $url, $informations){
+   
+    if($url -ne $CURRENT_URL){
+        Enter-SeUrl -Url $url -Target $driver
+        write-host Lien different $url current $CURRENT_URL`n
+    }
+    
+
+    $loginSelector = Find-SeElement -Target $driver -By CssSelector $informations.loginSelector
+    $passwordSelector = Find-SeElement -target $driver -By CssSelector $informations.passwordSelector
+
+    Send-SeKeys -Element $loginSelector -Keys $informations.login 
+
+    $password = convert-password -login $informations.login -password $informations.password
+    
+    Send-SeKeys -Element $passwordSelector -Keys $password
+
+    Start-Sleep -s 2
+
+    $screenshot = Invoke-SeScreenshot -Target $driver 
+    
+    $filename = Join-Path (Get-Location).Path "$($json.name)-1$.png"
+    $bytes = [Convert]::FromBase64String($screenshot)
+
+    [IO.File]::WriteAllBytes($filename, $bytes)
+}
+
+function set-field($driver, $url, $informations){
+    if($url -ne $CURRENT_URL){
+        write-host Lien different $url current $CURRENT_URL`n
+        Enter-SeUrl -Url $url -Target $driver
+    }
+
+    write-host selecteur $($informations.fieldSelector)
+
+    $fieldElement = Find-SeElement -Target $driver -By CssSelector $($informations.fieldSelector)
+
+    Send-SeKeys -Element $fieldElement -Keys $($informations.field) 
+    Start-Sleep -s 2
+}
+
+
 function webAction($driver, $url, $informations){
     
     if($informations.type -eq "connection"){
-        
-        if($url -ne $CURRENT_URL){
-            Enter-SeUrl -Url $url -Target $driver
-            write-host Lien different $url current $CURRENT_URL`n
-        }
-        
-
-        $loginSelector = Find-SeElement -Target $driver -By CssSelector $informations.loginSelector
-        $passwordSelector = Find-SeElement -target $driver -By CssSelector $informations.passwordSelector
-
-        Send-SeKeys -Element $loginSelector -Keys $informations.login 
-
-        $password = convert-password -login $informations.login -password $informations.password
-        
-        Send-SeKeys -Element $passwordSelector -Keys $password
-
-        Start-Sleep -s 2
-
-        $screenshot = Invoke-SeScreenshot -Target $driver 
-        
-        $filename = Join-Path (Get-Location).Path "$($json.name)-1$.png"
-        $bytes = [Convert]::FromBase64String($screenshot)
-
-        [IO.File]::WriteAllBytes($filename, $bytes)
-
+     
+        init-connection -driver $driver -url $url -informations $informations
     }
     if($informations.type -eq "click"){
 
         click-element -driver $driver -url $url -informations $informations
+    }
+    if($informations.type -eq "form"){
+
+        set-field -driver $driver -url $url -informations $informations
     }
     
 }
 
 ######################## Main ######################
 $driver = Start-SeChrome 
+
 
 
 $json.POS | ForEach-Object {
@@ -120,7 +145,7 @@ $json.POS | ForEach-Object {
     if($_.type -eq "webAction"){
 
         
-        Write-Host "Web action found type : " $_.informations.type
+        Write-Host "Web action found type : " $($_.informations.type)
         webAction -driver $driver -informations $_.informations -url $_.url
                 
     }
@@ -129,4 +154,3 @@ $json.POS | ForEach-Object {
 
 }
 Stop-SeDriver -Target $driver
-#>
