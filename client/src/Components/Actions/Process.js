@@ -1,9 +1,11 @@
 import { Avatar, Box, FormControl, Grid, IconButton, InputLabel, Menu, MenuItem, Paper, Select, TextField, Typography } from "@material-ui/core"
 import { makeStyles } from '@material-ui/core'
 import { Delete, FileCopy, MoreVert, Code, Autorenew } from "@material-ui/icons"
-import { useContext, useState,useEffect } from "react"
+import { useContext, useState, useEffect } from "react"
 import ActionContext from "../../Context/ActionContext"
 import OptionMenu from "../Creation/OptionMenu"
+import OptionDialog from "../Creation/OptionDialog"
+
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -21,17 +23,27 @@ const useStyles = makeStyles((theme) => ({
         height: theme.spacing(2.5)
     }
 }))
-const Process = ({ index, type,initialSTate }) => {
+const Process = ({ index, type, initialSTate }) => {
     const classes = useStyles()
-    const [state, setState] = useState({initialSTate})
-    const [status, setStatus] = useState(type)
-    const [OS, SetOS] = useState("")
+    const [state, setState] = useState(initialSTate)
+    const [status, setStatus] = useState(initialSTate.action)
+    const [openDialog, setOpenDialog] = useState(false)
 
-    useEffect(() =>{
+    const [options, setOptions] = useState({
+        block: true,
+        prod: true,
+        hprod: true,
+        inte: true,
+        dev: true,
+
+    })
+
+    useEffect(() => {
         setState(initialSTate)
-        if(initialSTate.action){
-            setStatus(initialSTate.action)
-        }
+        setOptions(initialSTate.options)
+
+        setStatus(initialSTate.action)
+        
     },[]
     )
 
@@ -42,7 +54,10 @@ const Process = ({ index, type,initialSTate }) => {
 
         saveData(
             {
-                index: index, type: "process", server: state.server, name: state.name, action: status
+                index: index, type: "process", server: state.server, name: state.name, action: status, options: options,
+
+                os: "windows"
+
             }
         )
     }
@@ -100,7 +115,19 @@ const Process = ({ index, type,initialSTate }) => {
                     <Grid item xs={1} sm={1} md={1} xl={1}>
                         <Grid container spacing={3} alignItems="center" >
                             <Grid item md={6} >
-                                <OptionMenu index={index} deleteAction={deleteAction} duplicateAction={duplicateAction} />
+                                <OptionMenu
+                                    index={index}
+                                    deleteAction={deleteAction}
+                                    duplicateAction={duplicateAction}
+                                    setOpenDialog={setOpenDialog}
+                                />
+                                <OptionDialog
+                                    options={options}
+                                    saveInfos={saveInformations}
+                                    setOptions={setOptions}
+                                    openDialog={openDialog}
+                                    setOpenDialog={setOpenDialog}
+                                />
 
                             </Grid>
 

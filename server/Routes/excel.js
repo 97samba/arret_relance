@@ -39,7 +39,7 @@ router.post('/ConvertAll-Excel', (req, res) => {
         var filePath = `./excel/${file}`
 
         wb.xlsx.readFile(filePath).then(function () {
-        console.log("Start  element ", file)
+            console.log("Start  element ", file)
 
             var sh = wb.getWorksheet("Accueil")
 
@@ -63,11 +63,11 @@ router.post('/ConvertAll-Excel', (req, res) => {
             return element = {
                 name: informations.name,
                 auteur: informations.author,
-                date_de_creation: informations.version,
+                createdAt: informations.version,
                 type: "PARPRE",
                 Arret: stopActions,
                 Relance: startActions,
-                variables: variables
+                variables: { servers: variables }
             }
 
         }).then(element => {
@@ -82,15 +82,8 @@ router.post('/ConvertAll-Excel', (req, res) => {
                 console.log("last ", file, " sending datas", allElements.length)
                 res.send(allElements)
             }
-
-
         })
-
-
-
     })
-
-
 })
 
 //Applique le formatage web sur les actions
@@ -249,8 +242,6 @@ const editLines = (actions, variables) => {
         action = getOS(action)
         action = formatCommand(action, variables)
 
-        //console.log(action)
-
         return action
     })
 
@@ -306,8 +297,16 @@ const toService = (action) => {
     action = {
         type: "service",
         server: action.prod,
-        service: action.cmd.split(" ").slice(2).join(" "),
-        action: action.cmd.split(" ")[1]
+        name: action.cmd.split(" ").slice(2).join(" "),
+        action: action.cmd.split(" ")[1],
+        os: action.os,
+        options: {
+            block: true,
+            prod: true,
+            hprod: true,
+            inte: true,
+            dev: true,
+        }
 
     }
     return action
@@ -316,8 +315,16 @@ const toProcess = (action) => {
     action = {
         type: "process",
         server: action.prod,
-        name: action.cmd.split(" ").slice(2),
-        action: action.cmd.split(" ")[1]
+        name: action.cmd.split(" ").slice(2).join(" "),
+        action: action.cmd.split(" ")[1],
+        os: action.os,
+        options: {
+            block: true,
+            prod: true,
+            hprod: true,
+            inte: true,
+            dev: true,
+        }
 
     }
     return action
@@ -326,7 +333,15 @@ const toScript = (action) => {
     action = {
         type: "script",
         server: action.prod,
-        path: action.cmd.split(" ").splice(1)
+        path: action.cmd.split(" ").slice(1),
+        os: action.os,
+        options: {
+            block: true,
+            prod: true,
+            hprod: true,
+            inte: true,
+            dev: true,
+        }
 
     }
     return action
@@ -337,7 +352,16 @@ const toCommand = (action) => {
         server: action.prod,
         name: action.cmd,
         login: action.user,
-        result: action.result
+        result: action.result,
+        os: action.os,
+        options: {
+            block: true,
+            prod: true,
+            hprod: true,
+            inte: true,
+            dev: true,
+        }
+
     }
     return action
 
@@ -349,13 +373,26 @@ const toCheckUrl = (action) => {
         informations:
         {
             urlState: action.cmd.split(" ")[1],
+        },
+        options: {
+            block: true,
+            prod: true,
+            hprod: true,
+            inte: true,
+            dev: true,
         }
     }
     return action
 }
 const toCheckLog = (action) => {
     action = {
-
+        options: {
+            block: true,
+            prod: true,
+            hprod: true,
+            inte: true,
+            dev: true,
+        }
     }
     return action
 }
@@ -384,7 +421,16 @@ const toDatabase = (action) => {
         action: action.cmd.split(" ")[1],
         type: "database",
         name: action.cmd.split(" ")[2],
-        databaseType: action.cmd.split(" ")[3]
+        databaseType: action.cmd.split(" ")[3],
+        os: action.os,
+        options: {
+            block: true,
+            prod: true,
+            hprod: true,
+            inte: true,
+            dev: true,
+        }
+
     }
     return action
 }

@@ -146,7 +146,7 @@ const Manage = () => {
                             allExcel.length > 0 ?
                             (
                                 allExcel.map(excel => (
-                                <ListSSA ssa={excel} key={excel._id} />
+                                <ListSSA ssa={excel} fromExcel={true} key={excel._id} />
                             ))  
                             )  :
                             (
@@ -157,7 +157,7 @@ const Manage = () => {
                         :
                         (
                             POS.map(pos => (
-                                <ListSSA ssa={pos} key={pos._id} />
+                                <ListSSA ssa={pos} key={pos._id} fromExcel={false}/>
                             ))
                         )
 

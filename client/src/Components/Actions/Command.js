@@ -1,9 +1,11 @@
-import { Avatar, Box,Grid,Paper,TextField, Typography } from "@material-ui/core"
+import { Avatar, Box, Grid, Paper, TextField, Typography } from "@material-ui/core"
 import { makeStyles } from '@material-ui/core'
-import { Code} from "@material-ui/icons"
+import { Code } from "@material-ui/icons"
 import { useContext, useEffect, useState } from "react"
 import ActionContext from "../../Context/ActionContext"
 import OptionMenu from "../Creation/OptionMenu"
+import OptionDialog from "../Creation/OptionDialog"
+
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -26,33 +28,47 @@ const Command = ({ index, initialSTate }) => {
     //css
     const classes = useStyles()
 
-    const [state, setState] = useState({initialSTate})
+    const [state, setState] = useState({ initialSTate })
     //l'état du server
     const [pingState, setPingState] = useState("ko")
-    const [OS, SetOS] = useState("")
+    const [openDialog, setOpenDialog] = useState(false)
+
+    const [options, setOptions] = useState({
+        block: true,
+        prod: true,
+        hprod: true,
+        inte: true,
+        dev: true,
+
+    })
 
     useEffect(() => {
         setState(initialSTate)
+        setOptions(initialSTate.options)
+
 
     }, []
     )
 
 
     //context pour sauvegarder l'état dans le parent
-    const { deleteAction, duplicateAction, saveData} = useContext(ActionContext)
+    const { deleteAction, duplicateAction, saveData } = useContext(ActionContext)
 
     const saveInformations = () => {
-        
+
         if (state.server === undefined || state.name === undefined) { return }
 
         saveData(
             {
-                index: index, 
-                type: "command", 
-                server: state.server, 
-                name: state.name, 
-                login : state.login,
-                result : state.result
+                index: index,
+                type: "command",
+                server: state.server,
+                name: state.name,
+                login: state.login,
+                result: state.result,
+                options: options,
+                os: state.server.toUpperCase().startsWith("SW") ? "windows" : "linux"
+
             }
         )
     }
@@ -97,7 +113,7 @@ const Command = ({ index, initialSTate }) => {
                     spacing={2}
                     alignItems="center"
                 >
-                    <Grid item md={1} xl={1} container alignContent="center" direction="column" >
+                    <Grid item md={1} xl={1} >
                         <Box display="flex" justifyContent="center">
                             <Code color="primary" />
                         </Box>
@@ -112,25 +128,29 @@ const Command = ({ index, initialSTate }) => {
                             color='primary'
                             label='Serveur'
                             onChange={(e) => setState({ ...state, server: e.target.value })}
-                            onBlur={() => {
-                                saveInformations()
-
-                                //testPing(e.target.value)
-
-                            }
-                            }
+                            onBlur={saveInformations}
+                            inputProps={{
+                                style: {
+                                    fontSize:
+                                        state.server && state.server.split("").length > 20 && state.server.split("").length < 65 ? 13 :
+                                            state.server && state.server.split("").length > 65 ? 13 : "1rem"
+                                }
+                            }}
                         />
                     </Grid>
                     <Grid item md={2} xl={2}>
                         <TextField
-                                className={classes.fields}
-                                value={state.login}
-                                id={`login- ${index}`}
-                                color='primary'
-                                label='Login'
-                                onChange={(e) => setState({ ...state, login: e.target.value })}
-                                onBlur={saveInformations}
-                            />
+                            className={classes.fields}
+                            value={state.login}
+                            id={`login- ${index}`}
+                            color='primary'
+                            label='Login'
+                            onChange={(e) => setState({ ...state, login: e.target.value })}
+                            onBlur={saveInformations}
+                            inputProps={{
+                                style: { fontSize: state.login && state.login.split("").length > 60 ? 14 : "1rem" }
+                            }}
+                        />
                     </Grid>
                     <Grid item md={5} xl={4}>
                         <TextField
@@ -139,29 +159,47 @@ const Command = ({ index, initialSTate }) => {
                             id={`command- ${index}`}
                             color='primary'
                             label='Commande'
-                            onChange={(e) => setState({ ...state, name:e.target.value })}
+                            onChange={(e) => setState({ ...state, name: e.target.value })}
                             onBlur={saveInformations}
                             error={state.name === ""}
+                            inputProps={{
+                                style: {
+                                    fontSize:
+                                        state.name && state.name.split("").length > 40 && state.name.split("").length < 65 ? 14 :
+                                            state.name && state.name.split("").length > 65 ? 13 : "1rem"
+                                }
+                            }}
 
                         />
                     </Grid>
                     <Grid item md={1} xl={2}>
                         <TextField
-                                className={classes.fields}
-                                value={state.result}
-                                id={`result- ${index}`}
-                                color='primary'
-                                label='Résultat'
-                                onChange={(e) => setState({ ...state, result: e.target.value })}
-                                onBlur={saveInformations}
+                            className={classes.fields}
+                            value={state.result}
+                            id={`result- ${index}`}
+                            color='primary'
+                            label='Résultat'
+                            onChange={(e) => setState({ ...state, result: e.target.value })}
+                            onBlur={saveInformations}
 
-                            />
+                        />
                     </Grid>
                     <Grid item md={1} xl={1}  >
-                        <Grid container spacing={3} alignItems="center" >
+                        <Grid container spacing={2} alignItems="center" >
                             <Grid item md={6} >
-                                <OptionMenu index={index} deleteAction={deleteAction} duplicateAction={duplicateAction}  />                               
-                               
+                                <OptionMenu
+                                    index={index}
+                                    deleteAction={deleteAction}
+                                    duplicateAction={duplicateAction}
+                                    setOpenDialog={setOpenDialog}
+                                />
+                                <OptionDialog
+                                    options={options}
+                                    saveInfos={saveInformations}
+                                    setOptions={setOptions}
+                                    openDialog={openDialog}
+                                    setOpenDialog={setOpenDialog}
+                                />
                             </Grid>
 
                             <Grid item md={6}>

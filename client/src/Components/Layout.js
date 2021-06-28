@@ -149,9 +149,7 @@ const Layout = ({children}) => {
                             fontWeight={800}
                             
                            >
-                                <Box my='auto'>
-                                  <Code color='primary'/>  
-                                </Box>
+                                
                                 <Typography 
                                 variant="h6" 
                                 className={classes.title}

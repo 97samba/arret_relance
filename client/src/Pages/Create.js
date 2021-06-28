@@ -46,33 +46,38 @@ const Create = () => {
     //La page de création et la page de modifiation sont les mêmes, la difference est assurée par pageMode
     useEffect(() => {
 
-        document.title = "Création de PARPRE / POS"
-
         if (history.location.state !== undefined) {
             document.title = `Modification de ${history.location.state.name}`
 
             console.log("History ", history.location)
-            setPageMode("Modification")
+
+            history.location.fromExcel
+                ? setPageMode("Création")
+                : setPageMode("Modification")
+
             setDocumentType(history.location.state.type)
             setStopActions(history.location.state.Arret)
             setStartActions(history.location.state.Relance)
-            setDocumentType(history.location.state.type || "PARPRE")
+            //setDocumentType(history.location.state.type || "PARPRE")
             //setPosActions(history.location.state.pos)
             setTitle(history.location.state.name)
 
-            if (history.location.state.variables !== undefined) {
+            if (history.location.state.variables.servers !== undefined) {
 
-
-                const initialServers = history.location.state.variables.map((variable, index) => {
+                const initialServers = history.location.state.variables.servers.map((variable, index) => {
                     return {
                         id: index,
                         prod: variable.prod,
                         hprod: variable.hprod,
-                        dev: variable.dev
+                        dev: variable.dev,
+                        name: variable.name
                     }
                 })
                 setServers(initialServers)
             }
+        } else {
+            document.title = "Création de PARPRE / POS"
+            setPageMode("Création")
         }
     }, [])
 
@@ -80,40 +85,56 @@ const Create = () => {
     const saveServer = () => {
 
         //noms des serveurs dans la lste des variables
-        var Allservers = servers.map(server => { return server.prod })
+        var Allservers = servers.map(server => { return server.prod.toUpperCase() })
 
         var serversInStopActions = new Set()
+        var databasesInStopActions = new Set()
 
         //on recupere les servers dans les etapes d'arret
         StopActions.map(action => {
             if (action.server === undefined || action.server === "") { return };
-            serversInStopActions.add(action.server.toLowerCase())
-            /*
+            serversInStopActions.add(action.server.toUpperCase())
+            
             if(action.type === "database"){
-                serversInStopActions.add(action.name.toLowerCase())
+                databasesInStopActions.add(action.name.toUpperCase())
 
             }
-            */
+            
         })
-        
+
         //on rajoute les serveurs manquants
-        serversInStopActions.forEach(server => { 
+        serversInStopActions.forEach(server => {
 
             if (!Allservers.includes(server)) {
                 Allservers.push(server)
-                setServers([...servers, { id: (servers.length + 1), prod: server, hprod: "definir", dev: "definir" }])
+                var name =""
+                server.startsWith("sw")
+                    ? name = server.replace("sw", "SRV_WIN_")
+                    : name = server
+                setServers([...servers, { id: (servers.length + 1), prod: server.toUpperCase(), hprod: "definir", dev: "definir", name:name }])
+
+            }
+        })
+        
+        databasesInStopActions.forEach(database => {
+
+            if (!Allservers.includes(database)) {
+                Allservers.push(database)
+                var name = `BDD_${database}`
+                setServers([...servers, { id: (servers.length + 1), prod: database.toUpperCase(), hprod: "definir", dev: "definir", name:name }])
 
             }
         })
 
         //On enleve les serveurs absents dans la liste des actions
         Allservers.map(server => {
-            if (!serversInStopActions.has(server)) {
+            if (!serversInStopActions.has(server) && !databasesInStopActions.has(server)) {
                 const newServerState = servers.filter(serverprod => serverprod.prod !== server)
                 setServers(newServerState)
 
             }
         })
+        
     }
 
     const classes = useStyles()
@@ -178,14 +199,14 @@ const Create = () => {
             date_de_creation: new Date().toLocaleString(),
             type: "PARPRE",
             Arret: StopActions,
-            Relance: autoRelance ? AutoStartActions : StopActions,
-            POS:posActions,
+            Relance: autoRelance ? AutoStartActions : StartActions,
+            POS: posActions,
             variables: {
                 servers: servers
             }
         }
 
-        axios.post(`http://localhost:5000/api/PARPRE/create`, parpre)
+        axios.post(`http://localhost:5000/api/PARPRE/create`, { data: parpre, mode: pageMode })
             .then(res => console.log(res))
 
         console.log(JSON.stringify(parpre))

@@ -1,46 +1,21 @@
 import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, FormControlLabel, FormGroup, Grid, TextField, Typography } from "@material-ui/core";
-import { FormControl, InputLabel, MenuItem,  Select } from "@material-ui/core"
+import { FormControl, InputLabel, MenuItem, Select } from "@material-ui/core"
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-const OptionDialog = ({ options, saveInfos, setOptions, openDialog, closeDialog }) => {
+const OptionDialog = ({ options, saveInfos, setOptions, openDialog, setOpenDialog }) => {
 
     const [block, setBlock] = useState(true)
-    const [envs, setEnvs] = useState([
-        { name: "Production", checked: true },
-        { name: "Validation", checked: true },
-        { name: "Intégration", checked: true },
-        { name: "Développement", checked: true }
-    ])
 
-    const checkEnv = (environnement) => {
-        var newEnvs = envs.map(env => {
-            env.name === environnement
-                ? env.checked = !env.checked
-                : env.checked = env.checked
-            return env
-        })
-        setEnvs(newEnvs)
-    }
-
-    const save=()=>{
-        setOptions({
-            ...options,
-            block:block,
-            environnements:{
-                prod:envs[0].checked,
-                hprod:envs[1].checked,
-                inte:envs[2].checked,
-                dev:envs[3].checked,
-            }
-        })
-    }
 
     return (
         <div>
             <Dialog
                 open={openDialog}
-                onClose={() => {closeDialog();save();saveInfos()}}
+                onClose={() => {
+                    setOpenDialog(false);
+                    saveInfos()
+                }}
                 fullWidth
             >
                 <DialogTitle id='dialog-option' >Options </DialogTitle>
@@ -57,17 +32,42 @@ const OptionDialog = ({ options, saveInfos, setOptions, openDialog, closeDialog 
                                 </Grid>
                                 <Grid item>
                                     <FormGroup row>
-                                        {envs.map(env => (
-                                            <FormControlLabel
-                                                control={<Checkbox
-                                                    key={env.name}
-                                                    name={env.name}
-                                                    checked={env.checked}
-                                                    onClick={(e) => checkEnv(e.target.name)}
-                                                />}
-                                                label={env.name}
-                                            />
-                                        ))}
+                                        <FormControlLabel
+                                            control={<Checkbox
+                                                key="prod"
+                                                name="prod"
+                                                checked={options.prod}
+                                                onClick={(e) => setOptions({ ...options, prod: e.target.checked })}
+                                            />}
+                                            label="Production"
+                                        />
+                                        <FormControlLabel
+                                            control={<Checkbox
+                                                key="hprod"
+                                                name="hprod"
+                                                checked={options.hprod}
+                                                onClick={(e) => setOptions({ ...options, hprod: e.target.checked })}
+                                            />}
+                                            label="Validation"
+                                        />
+                                        <FormControlLabel
+                                            control={<Checkbox
+                                                key="prod"
+                                                name="prod"
+                                                checked={options.inte}
+                                                onClick={(e) => setOptions({ ...options, inte: e.target.checked })}
+                                            />}
+                                            label="Intégration"
+                                        />
+                                        <FormControlLabel
+                                            control={<Checkbox
+                                                key="prod"
+                                                name="prod"
+                                                checked={options.dev}
+                                                onClick={(e) => setOptions({ ...options, dev: e.target.checked })}
+                                            />}
+                                            label="Développement"
+                                        />
 
                                     </FormGroup>
 
@@ -155,7 +155,7 @@ const OptionDialog = ({ options, saveInfos, setOptions, openDialog, closeDialog 
 
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={save}>
+                    <Button >
                         Confirmer
                     </Button>
 

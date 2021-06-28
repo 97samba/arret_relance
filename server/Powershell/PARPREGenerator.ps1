@@ -1,40 +1,40 @@
 ﻿
 $SCRIPT_DIRECTORY = ".\scripts"
 
-function verify-args($parameters){
+function verify-args($parameters) {
     
-    if($parameters -ne 1){
+    if ($parameters -ne 1) {
         write-host ERROR pas de fichier trouvé en argument
         exit
     }   
 
 }
 
-function write-line($line, $tab = 0){
+function write-line($line, $tab = 0) {
 
     $symbole = ""
     
-    if($tab -gt 0){
+    if ($tab -gt 0) {
 
         $symbole = "`t"
 
-        for($i = 0 ; $i -lt $tab ; $i++){
+        for ($i = 0 ; $i -lt $tab ; $i++) {
      
-            $symbole+=$symbole
+            $symbole += $symbole
         }
     }
     Add-Content -Value $symbole$line -Path $SCRIPT_DIRECTORY\$FILE_NAME
 }
 
-function init($file){
+function init($file) {
     
-    if(!(Test-Path -Path $file)){
+    if (!(Test-Path -Path $file)) {
         
         write-host Le fichier $file n`'existe pas
         
     }
 
-    if(!(Test-Path -Path $SCRIPT_DIRECTORY)){
+    if (!(Test-Path -Path $SCRIPT_DIRECTORY)) {
         
         Write-Host "Création du dossier Scripts"
         
@@ -43,11 +43,12 @@ function init($file){
     }
     
         
-    if(!(Test-Path -Path $SCRIPT_DIRECTORY\$FILE_NAME )){
+    if (!(Test-Path -Path $SCRIPT_DIRECTORY\$FILE_NAME )) {
 
         New-item -ItemType File -Name $FILE_NAME -Path $SCRIPT_DIRECTORY   | Out-Null
 
-    }else{
+    }
+    else {
 
         Write-Host ce fichier $FILE_NAME existe
 
@@ -60,7 +61,7 @@ function init($file){
 #
 ####### Créer les Variables
 #
-function create-variable($Variables){
+function create-variable($Variables) {
 
     write-line -line "TYPE_ACTION=`$1"
     write-line -line "TYPE_ENVIRONNEMENT=`$2"
@@ -76,15 +77,23 @@ function create-variable($Variables){
     write-line -line "case `$TYPE_ENVIRONNEMENT in "
     write-line -line "PROD)" -tab 1
 
+    $variables | ForEach-Object {
+        write-line -line "$($_.prod)=$($_.prod)" -tab 2
+    }
     write-line -line "REBOND_WIN=sw15298" -tab 2
     write-line -line ";;" -tab 2
-    write-line -line "HPROD)" -tab 1
 
+    write-line -line "HPROD)" -tab 1
+    $variables | ForEach-Object {
+        write-line -line "$($_.prod)=$($_.hprod)" -tab 2
+    }
     write-line -line "REBOND_WIN=sw15272" -tab 2
     write-line -line ";;" -tab 2
 
     write-line -line "HPROD2)"-tab 1
-
+    $variables | ForEach-Object {
+        write-line -line "$($_.prod)=$($_.dev)" -tab 2
+    }
     write-line -line "REBOND_WIN=sw15272" -tab 2
     write-line -line ";;" -tab 2
 
@@ -107,7 +116,7 @@ function create-variable($Variables){
 #
 ####### Créer les fonctions de logs et report
 #
-function create-logAndReport(){
+function create-logAndReport() {
 
     write-line -line "if [ ! -d `$LOCAL_DIR ] "
     write-line -line "then"
@@ -207,7 +216,7 @@ function create-logAndReport(){
 #
 ####### Créer les étapes de relance
 #
-function create-relance($actions){
+function create-relance($actions) {
     
     write-line -line " "
     write-line -line "######################################## RELANCE ########################################"
@@ -229,7 +238,7 @@ function create-relance($actions){
 #
 ####### Créer les étapes d'Arrêt
 #
-function create-arret($actions){
+function create-arret($actions) {
     
     write-line -line " "
     write-line -line "######################################## RELANCE ########################################"
@@ -250,58 +259,138 @@ function create-arret($actions){
 #
 ####### Créer une étape 
 #
-function create-etape($step){
+function create-etape($step) {
     
+    $envs = @()
 
-    write-line -line "ETAPE=Etape$($step.index+1)" -tab 1
+    if ($($step.options.prod) -eq $true) {
+        $envs += "PROD"
+        Write-Host envs $envs prod $($step.options.prod) 
+    }
+    if ($($step.options.hprod) -eq $true) {
+        $envs += "HPROD"
+        Write-Host envs $envs hprod $($step.options.hprod) 
 
-    write-line -line "SRV=$($step.server)" -tab 1
+
+    }
+    if ($($step.options.inte) -eq $true) {
+        $envs += "HPROD2"
+        Write-Host envs $envs inte $($step.options.inte) 
+
+    }
+    if ($($step.options.dev) -eq $true) {
+        $envs += "DEV"
+        Write-Host envs $envs dev $($step.options.dev) 
+
+    }
+
+    write-line -line "#Les environnements sur lesquels vont s`'executer la commande" -tab 1
+    write-line -line "`$ENVS=`($envs`)" -tab 1
+    write-line -line "" -tab 1
     
-    write-line -line "USER=$($step.user)" -tab 1
+    write-line -line "if [[ `${ENVS[@]} =~ `$TYPE_ENVIRONNEMENT ]] " -tab 1
+    write-line -line "then" -tab 1
     
-    write-line -line "CMD=`"$($step.type) $($step.action) $($step.name)$($step.service) $($step.databaseType) $($step.server)`" " -tab 1
-
+    write-line -line "ETAPE=Etape$($step.index+1)" -tab 2
     
-    write-line -line "CMD_WIN=`"powershell ./$($step.type).ps1 $($step.action) $($step.name)$($step.service) $($step.databaseType) $($step.server)`" " -tab 1
-
-    write-line -line "echo" -tab 1
-    write-line -line "echo `"DEBUT : `$`(date +`'%d/%m/%Y %H:%M:%S`'`)`"" -tab 1
-    write-line -line "echo `"Serveur `"`$SRV`" - [`"`$TYPE_ACTION`":`"`$APPLI`":`"`$ETAPE`"/`"`$NB_ETAPE`"]`" " -tab 1
-
-    write-line -line "echo `"Commande : `"`$CMD" -tab 1
-    write-line -line "echo `"Commande : `"`$CMD_WIN" -tab 1
-    write-line -line "res=`$`(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q adm-deploy@`$REBOND_WIN `"`$CMD_WIN`"`)" -tab 1
+    write-line -line "SRV=$($step.server)" -tab 2
     
-    write-line -line "retval=`$?" -tab 1
+    write-line -line "USER=$($step.user)" -tab 2
     
-    if($($step.action) -eq "status"){
-
-        write-line -line "echo `$res > `$FIC_TMP" -tab 1
-        write-line -line "if grep -c `"`$RES_ATTENDU`" `$FIC_TMP > /dev/null; then" -tab 1
-        write-line -line "echo `"Serveur `"`$SRV`" - [`"`$TYPE_ACTION`":`"`$APPLI`":`"`$ETAPE`"/`"`$NB_ETAPE`"]  / OK `(RES`(`"`$res`"`)` / RES_ATTENDU`(`"`$RES_ATTENDU`"`)`)`"" -tab 2
-        write-line -line "else" -tab 1
-        write-line -line "echo `"Serveur `"`$SRV`" - [`"`$TYPE_ACTION`":`"`$APPLI`":`"`$ETAPE`"/`"`$NB_ETAPE`"]  / ERREUR `"`$NUM_ERR`" : RESULTAT `(`"`$res`"`) DIFFERENT DU RESULTAT ATTENDU `(`"`$RES_ATTENDU`"`)`"" -tab 2
-        write-line -line "exit `$NUM_ERR" -tab 2
-        write-line -line "fi" -tab 1
-    
-
-    }else{
+    if ($($step.os) -eq "windows") {
         
-        write-line -line "echo `"Serveur `"`$SRV`" - [`"`$TYPE_ACTION`":`"`$APPLI`":`"`$ETAPE`"/`"`$NB_ETAPE`"]`" " -tab 1
-        write-line -line "echo `"FIN : `$`(date +`'%d/%m/%Y %H:%M:%S`'`)`"" -tab 1
+        create-windowsStep -step $step
+        
+    }
+    else {
+        
+        create-linuxStep -step $step
+        
     }
     
-    write-line -line "echo" -tab 1
-    write-line -line " "
+    write-line -line "echo" -tab 2    
+    
+    write-line -line "fi" -tab 1
+    write-line -line "" -tab 1
+}
+
+########### Créer une étape windows
+function create-windowsStep($step) {
+
+    write-line -line "CMD=`"$($step.type) $($step.action) $($step.name)$($step.service) $($step.databaseType) $($step.server)`" " -tab 2
+
+    
+    write-line -line "CMD_WIN=`"powershell ./$($step.type).ps1 $($step.action) $($step.name)$($step.service) $($step.databaseType) $($step.server)`" " -tab 2
+
+    write-line -line "echo" -tab 2
+    write-line -line "echo `"DEBUT : `$`(date +`'%d/%m/%Y %H:%M:%S`'`)`"" -tab 2
+    write-line -line "echo `"Serveur `"`$SRV`" - [`"`$TYPE_ACTION`":`"`$APPLI`":`"`$ETAPE`"/`"`$NB_ETAPE`"]`" " -tab 2
+
+    #write-line -line "echo `"Commande : `"`$CMD" -tab 2
+    write-line -line "echo `"Commande : `"`$CMD_WIN" -tab 2
+    write-line -line "res=`$`(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q adm-deploy@`$REBOND_WIN `"`$CMD_WIN`"`)" -tab 2
+    
+    write-line -line "retval=`$?" -tab 2
+    
+    if ($($step.action) -eq "status") {
+
+        write-line -line "echo `$res > `$FIC_TMP" -tab 2
+        write-line -line "if grep -c `"`$RES_ATTENDU`" `$FIC_TMP > /dev/null; then" -tab 2
+        write-line -line "echo `"Serveur `"`$SRV`" - [`"`$TYPE_ACTION`":`"`$APPLI`":`"`$ETAPE`"/`"`$NB_ETAPE`"]  / OK `(RES`(`"`$res`"`)` / RES_ATTENDU`(`"`$RES_ATTENDU`"`)`)`"" -tab 3
+        write-line -line "else" -tab 2
+        write-line -line "echo `"Serveur `"`$SRV`" - [`"`$TYPE_ACTION`":`"`$APPLI`":`"`$ETAPE`"/`"`$NB_ETAPE`"]  / ERREUR `"`$NUM_ERR`" : RESULTAT `(`"`$res`"`) DIFFERENT DU RESULTAT ATTENDU `(`"`$RES_ATTENDU`"`)`"" -tab 3
+        write-line -line "exit `$NUM_ERR" -tab 3
+        write-line -line "fi" -tab 2
     
 
+    }
+    else {
+        
+        write-line -line "echo `"Serveur `"`$SRV`" - [`"`$TYPE_ACTION`":`"`$APPLI`":`"`$ETAPE`"/`"`$NB_ETAPE`"]`" " -tab 2
+        write-line -line "echo `"FIN : `$`(date +`'%d/%m/%Y %H:%M:%S`'`)`"" -tab 2
+    }
 }
- 
+
+########### Créer une étape linux
+function create-linuxStep($step) {
+
+    write-line -line "CMD=`"$($step.name)`" " -tab 2
+
+    write-line -line "CMD=`"su - `$USER -c `$CMD `" " -tab 2
+
+   
+    write-line -line "echo" -tab 2
+    write-line -line "echo `"DEBUT : `$`(date +`'%d/%m/%Y %H:%M:%S`'`)`"" -tab 2
+    write-line -line "echo `"Serveur `"`$SRV`" - [`"`$TYPE_ACTION`":`"`$APPLI`":`"`$ETAPE`"/`"`$NB_ETAPE`"]`" " -tab 2
+
+    write-line -line "echo `"Commande : `"`$CMD" -tab 2
+    write-line -line "res=`$`(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q root@`$SRV `"`$CMD`"`)" -tab 2
+    
+    write-line -line "retval=`$?" -tab 2
+    
+    if ($($step.action) -eq "status") {
+
+        write-line -line "echo `$res > `$FIC_TMP" -tab 2
+        write-line -line "if grep -c `"`$RES_ATTENDU`" `$FIC_TMP > /dev/null; then" -tab 2
+        write-line -line "echo `"Serveur `"`$SRV`" - [`"`$TYPE_ACTION`":`"`$APPLI`":`"`$ETAPE`"/`"`$NB_ETAPE`"]  / OK `(RES`(`"`$res`"`)` / RES_ATTENDU`(`"`$RES_ATTENDU`"`)`)`"" -tab 3
+        write-line -line "else" -tab 2
+        write-line -line "echo `"Serveur `"`$SRV`" - [`"`$TYPE_ACTION`":`"`$APPLI`":`"`$ETAPE`"/`"`$NB_ETAPE`"]  / ERREUR `"`$NUM_ERR`" : RESULTAT `(`"`$res`"`) DIFFERENT DU RESULTAT ATTENDU `(`"`$RES_ATTENDU`"`)`"" -tab 3
+        write-line -line "exit `$NUM_ERR" -tab 3
+        write-line -line "fi" -tab 2
+    
+
+    }
+    else {
+        
+        write-line -line "echo `"Serveur `"`$SRV`" - [`"`$TYPE_ACTION`":`"`$APPLI`":`"`$ETAPE`"/`"`$NB_ETAPE`"]`" " -tab 2
+        write-line -line "echo `"FIN : `$`(date +`'%d/%m/%Y %H:%M:%S`'`)`"" -tab 2
+    }
+}
 
 #
 ####### Créer les étapes d'Arrêt
 #
-function create-tests($actions){
+function create-tests($actions) {
     
     write-line -line " "
     write-line -line "######################################## Tests ########################################"
@@ -310,7 +399,7 @@ function create-tests($actions){
 
     
     #Toutes les étapes d'arret avec vérification
-    $actions.Arret | where-Object {$_.action -eq "status"} | ForEach-Object {
+    $actions.Arret | where-Object { $_.action -eq "status" } | ForEach-Object {
         
         write-line -line "echo" -tab 1
         write-line -line "SRV=`"$($_.server)`"" -tab 1
@@ -327,7 +416,7 @@ function create-tests($actions){
 
     }   
     #Toutes les étapes de relance avec vérification
-    $actions.Relance | where-Object {$_.action -eq "status"} | ForEach-Object {
+    $actions.Relance | where-Object { $_.action -eq "status" } | ForEach-Object {
         
         write-line -line "echo" -tab 1
         write-line -line "SRV=`"$($_.server)`"" -tab 1
@@ -348,8 +437,8 @@ function create-tests($actions){
 
 #
 ####### Créer le main 
-#
-function create-main(){
+
+function create-main() {
 
     write-line -line " "
     write-line -line "######################################## MAIN ########################################"
@@ -379,43 +468,43 @@ function create-main(){
 
 }
 
-function main-process($file){
-
-    $json_element = gc $file | ConvertFrom-Json
 
 
-    Write-Host Processing parpre $file name : $PARPRE_NAME as: $FILE_NAME
+function main-process($file) {
+
+    $json_element = Get-Content $file | ConvertFrom-Json
+
+    Write-Host Processing parpre $file name : $PARPRE_NAME as: $FILE_NAME  
     
-
     #Création de variables
-    create-variable
-
+    create-variable $($json_element.variables.servers)
+    
     #Création des logs et reports
     create-logAndReport 
 
     #Séquence d'arrêt
     create-relance -actions $json_element.Relance
-
+    
     #Séquence de relance
     create-arret -actions $json_element.Arret
-
+    
     #Séquence de Tests
     create-tests -actions $json_element
 
     #création du MAIN
-    create-main 
+    create-main     
     
-
 }
 
 ############################### Main #############################
 verify-args -parameters $args.Count
 
+#On reupere le nom du fichier Json
 $PARPRE_NAME = (Split-Path $args[0] -Leaf)
 
 $PARPRE_NAME = [io.path]::GetFileNameWithoutExtension($PARPRE_NAME)
 
-$FILE_NAME = $PARPRE_NAME+".sh"
+$FILE_NAME = $PARPRE_NAME + ".sh"
 
 init -file $args[0]
 

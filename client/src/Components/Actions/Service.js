@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core'
 import { SettingsSharp } from "@material-ui/icons"
 import { createContext, useContext, useEffect, useState } from "react"
 import ActionContext from "../../Context/ActionContext"
+import OptionDialog from "../Creation/OptionDialog"
 import OptionMenu from "../Creation/OptionMenu"
 
 const useStyles = makeStyles((theme) => ({
@@ -31,28 +32,45 @@ const Service = ({ index, type, initialSTate }) => {
     //l'état du server
     const [pingState, setPingState] = useState("ko")
     const [status, setStatus] = useState(type)
-    const [OS, SetOS] = useState("")
-    const [options, setOptions] = useState({})
+    //menu options
+    const [openDialog, setOpenDialog] = useState(false)
+
+    const [options, setOptions] = useState({
+        block: true,
+        prod: true,
+        hprod: true,
+        inte: true,
+        dev: true,
+
+    })
 
     useEffect(() => {
+        console.log("index ",index, " initial state ",initialSTate)
         setState(initialSTate)
         if (initialSTate.action) {
             setStatus(initialSTate.action.toLowerCase())
+            setOptions(initialSTate.options)
         }
 
-    }, []
+    },[]
     )
 
-   
+
     //context pour sauvegarder l'état dans le parent
     const { deleteAction, duplicateAction, saveData } = useContext(ActionContext)
 
 
     const saveInformations = () => {
-        if (state.service === undefined || state.server === undefined) { return }
+        if (state.name === undefined || state.server === undefined) { return }
         saveData(
             {
-                index: index, type: "service", server: state.server, service: state.service, action: status, options:options
+                index: index,
+                type: "service",
+                server: state.server,
+                name: state.name,
+                action: status,
+                options: options,
+                os: "windows"
             }
         )
     }
@@ -98,7 +116,7 @@ const Service = ({ index, type, initialSTate }) => {
                     spacing={2}
                     alignItems="center"
                 >
-                    <Grid item md={1} xl={1}  alignContent="center" direction="column" >
+                    <Grid item md={1} xl={1} >
                         <Box display="flex" justifyContent="center">
                             <SettingsSharp color="primary" />
                         </Box>
@@ -128,10 +146,8 @@ const Service = ({ index, type, initialSTate }) => {
                             <Select
                                 fullWidth
                                 value={status}
-                                onChange={(e) => setStatus(e.target.value)} onBlur={() => saveInformations()}
-
+                                onChange={(e) => setStatus(e.target.value )} onBlur={() => saveInformations()}
                             >
-
                                 <MenuItem value="stop">Stop</MenuItem>
                                 <MenuItem value="start">Start</MenuItem>
                                 <MenuItem value="status" >Status</MenuItem>
@@ -140,12 +156,12 @@ const Service = ({ index, type, initialSTate }) => {
                     </Grid>
                     <Grid item md={6} xl={6}>
                         <TextField
-                            value={state.service}
+                            value={state.name}
                             className={classes.fields}
                             id={`serviceName- ${index}`}
                             color='primary'
                             label='Service'
-                            onChange={(e) => setState({ ...state, service: e.target.value })}
+                            onChange={(e) => setState({ ...state, name: e.target.value })}
                             onBlur={(e) => saveInformations()}
                         //testService(e.target.value)
 
@@ -154,7 +170,20 @@ const Service = ({ index, type, initialSTate }) => {
                     <Grid item md={1} xl={1}  >
                         <Grid container spacing={3} alignItems="center" >
                             <Grid item md={6} >
-                                    <OptionMenu index={index} onBlur={saveInformations} options = {options} setOptions={setOptions} deleteAction={deleteAction} duplicateAction={duplicateAction} />
+                                <OptionMenu
+                                    index={index}
+                                    deleteAction={deleteAction}
+                                    duplicateAction={duplicateAction}
+                                    setOpenDialog={setOpenDialog}
+                                />
+                                <OptionDialog
+                                    options={options}
+                                    saveInfos={saveInformations}
+                                    setOptions={setOptions}
+                                    openDialog={openDialog}
+                                    setOpenDialog={setOpenDialog}
+                                />
+
                             </Grid>
 
                             <Grid item md={6}>

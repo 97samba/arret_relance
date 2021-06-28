@@ -1,9 +1,10 @@
 import { Avatar, Box, FormControl, Grid, IconButton, InputLabel, Menu, MenuItem, Paper, Select, TextField, Typography } from "@material-ui/core"
 import { makeStyles } from '@material-ui/core'
 import { Delete, FileCopy, MoreVert, Storage } from "@material-ui/icons"
-import { useContext, useState,useEffect } from "react"
+import { useContext, useState, useEffect } from "react"
 import ActionContext from "../../Context/ActionContext"
 import OptionMenu from "../Creation/OptionMenu"
+import OptionDialog from "../Creation/OptionDialog"
 
 
 const useStyles = makeStyles((theme) => ({
@@ -23,44 +24,59 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-const Database = ({ index, type,initialSTate }) => {
+const Database = ({ index, type, initialSTate }) => {
     const classes = useStyles()
-    const { deleteAction, duplicateAction, saveData, AddServer } = useContext(ActionContext)
+    const { deleteAction, duplicateAction, saveData } = useContext(ActionContext)
 
-    const [state, setState] = useState({initialSTate})
+    const [state, setState] = useState({ initialSTate })
     const [status, setStatus] = useState(type)
     const [databaseType, setDatabaseType] = useState("MSSQL")
-    const [OS, SetOS] = useState("")
+    const [openDialog, setOpenDialog] = useState(false)
 
-    useEffect(() =>{
+    const [options, setOptions] = useState({
+        block: true,
+        prod: true,
+        hprod: true,
+        inte: true,
+        dev: true,
+
+    })
+
+    useEffect(() => {
         setState(initialSTate)
-        if(initialSTate.action){
+        if (initialSTate.action) {
             setStatus(initialSTate.action.toLowerCase())
-        }            
-        initialSTate.databaseType !== undefined 
-            ?   setDatabaseType(initialSTate.databaseType.toUpperCase())
-            :   setDatabaseType("MSSQL")
+            setOptions(initialSTate.options)
+        }
 
-    },[]
+        initialSTate.databaseType !== undefined
+            ? setDatabaseType(initialSTate.databaseType.toUpperCase())
+            : setDatabaseType("MSSQL")
+
+    }, []
     )
 
     const saveInformations = () => {
 
         if (state.name === undefined || state.server === undefined) { return }
-        
+
         let result
-        if(status ==="status"){
-            type === "stop" ?  result = "stopped": result = "running"
+        if (status === "status") {
+            type === "stop" ? result = "stopped" : result = "running"
         }
 
         saveData(
             {
-                index: index, 
-                type: "database", 
-                server: state.server, 
-                name: state.name, 
-                action: status, 
-                databaseType: databaseType
+                index: index,
+                type: "database",
+                server: state.server,
+                name: state.name,
+                action: status,
+                databaseType: databaseType,
+                options: options,
+
+                os: state.server.toUpperCase().startsWith("SW") ? "windows" : "linux"
+
             }
         )
     }
@@ -84,22 +100,29 @@ const Database = ({ index, type,initialSTate }) => {
 
                     <Grid item xs={2} md={2} xl={2}>
                         <TextField
-                        value={state.server}
+                            value={state.server}
                             className={classes.fields}
                             id='server'
                             color='primary'
                             label='Serveur'
                             onChange={(e) => setState({ ...state, server: e.target.value })}
                             onBlur={saveInformations}
+                            inputProps={{
+                                style: {
+                                    fontSize:
+                                        state.server && state.server.split("").length > 20 && state.server.split("").length < 65 ? 13 :
+                                            state.server && state.server.split("").length > 65 ? 13 : "1rem"
+                                }
+                            }}
 
                         />
                     </Grid>
                     <Grid item xs={2} md={2} xl={2}>
                         <FormControl className={classes.fields}>
                             <InputLabel>Action</InputLabel>
-                            <Select value={status} 
-                            onChange={(e) => setStatus(e.target.value)} 
-                            onBlur={saveInformations} >
+                            <Select value={status}
+                                onChange={(e) => setStatus(e.target.value)}
+                                onBlur={saveInformations} >
                                 <MenuItem value="stop">Stop</MenuItem>
                                 <MenuItem value="start">Start</MenuItem>
                                 <MenuItem value="status" >Status</MenuItem>
@@ -134,7 +157,19 @@ const Database = ({ index, type,initialSTate }) => {
                     <Grid item md={1} xl={1}  >
                         <Grid container spacing={3} alignItems="center" >
                             <Grid item md={6} >
-                                <OptionMenu index={index} deleteAction={deleteAction} duplicateAction={duplicateAction} />
+                                <OptionMenu
+                                    index={index}
+                                    deleteAction={deleteAction}
+                                    duplicateAction={duplicateAction}
+                                    setOpenDialog={setOpenDialog}
+                                />
+                                <OptionDialog
+                                    options={options}
+                                    saveInfos={saveInformations}
+                                    setOptions={setOptions}
+                                    openDialog={openDialog}
+                                    setOpenDialog={setOpenDialog}
+                                />
                             </Grid>
 
                             <Grid item md={6}>
