@@ -1,0 +1,30 @@
+{
+    "name": "APPXXXX_SSA",
+    "auteur": "Samba NDIAYE",
+    "date_de_creation": "28/06/2021, 18:30:31",
+    "type": "PARPRE",
+    "Arret": [
+        {
+            "index": 0,
+            "type": "webAction",
+            "url": "https://linkedin.com",
+            "informations": {
+                "type": "form",
+                "field": "recherche",
+                "fieldSelector": "#session_password"
+            },
+            "options": {
+                "block": true,
+                "prod": true,
+                "hprod": true,
+                "inte": true,
+                "dev": true
+            }
+        }
+    ],
+    "Relance": [],
+    "POS": [],
+    "variables": {
+        "servers": []
+    }
+}

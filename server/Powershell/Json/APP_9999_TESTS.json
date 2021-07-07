@@ -1,0 +1,210 @@
+{
+    "name": "APP_9999_TESTS",
+    "auteur": "Samba NDIAYE",
+    "date_de_creation": "07/07/2021, 13:44:37",
+    "type": "PARPRE",
+    "Arret": [
+        {
+            "index": 0,
+            "type": "service",
+            "server": "localhost",
+            "name": "bits",
+            "action": "stop",
+            "options": {
+                "block": true,
+                "prod": true,
+                "hprod": true,
+                "inte": true,
+                "dev": true
+            },
+            "os": "windows"
+        },
+        {
+            "index": 1,
+            "type": "service",
+            "server": "localhost",
+            "name": "bits",
+            "action": "status",
+            "options": {
+                "block": true,
+                "prod": true,
+                "hprod": true,
+                "inte": true,
+                "dev": true
+            },
+            "os": "windows",
+            "duplicated": "duplicated"
+        },
+        {
+            "index": 2,
+            "type": "database",
+            "server": "sw11203",
+            "name": "instance",
+            "action": "stop",
+            "databaseType": "MSSQL",
+            "options": {
+                "block": true,
+                "prod": true,
+                "hprod": true,
+                "inte": true,
+                "dev": true
+            },
+            "os": "windows"
+        },
+        {
+            "index": 3,
+            "type": "database",
+            "server": "sw11203",
+            "name": "instance",
+            "action": "status",
+            "databaseType": "MSSQL",
+            "options": {
+                "block": true,
+                "prod": true,
+                "hprod": true,
+                "inte": true,
+                "dev": true
+            },
+            "os": "windows",
+            "duplicated": "duplicated"
+        },
+        {
+            "index": 4,
+            "type": "script",
+            "server": "sw11204",
+            "path": "c:\\temp\\stop.bat",
+            "options": {
+                "block": true,
+                "prod": true,
+                "hprod": false,
+                "inte": false,
+                "dev": false
+            },
+            "os": "windows"
+        }
+    ],
+    "Relance": [
+        {
+            "index": 0,
+            "type": "script",
+            "server": "sw11204",
+            "path": "c:\\temp\\start.bat",
+            "options": {
+                "block": true,
+                "prod": true,
+                "hprod": false,
+                "inte": false,
+                "dev": false
+            },
+            "os": "windows"
+        },
+        {
+            "index": 1,
+            "type": "database",
+            "server": "sw11203",
+            "name": "instance",
+            "action": "start",
+            "databaseType": "MSSQL",
+            "options": {
+                "block": true,
+                "prod": true,
+                "hprod": true,
+                "inte": true,
+                "dev": true
+            },
+            "os": "windows"
+        },
+        {
+            "index": 2,
+            "type": "database",
+            "server": "sw11203",
+            "name": "instance",
+            "action": "status",
+            "databaseType": "MSSQL",
+            "options": {
+                "result": "running"
+            },
+            "os": "windows"
+        },
+        {
+            "index": 3,
+            "type": "service",
+            "server": "localhost",
+            "name": "bits",
+            "action": "start",
+            "options": {
+                "block": true,
+                "prod": true,
+                "hprod": true,
+                "inte": true,
+                "dev": true
+            },
+            "os": "windows",
+            "duplicated": "duplicated"
+        },
+        {
+            "index": 4,
+            "type": "service",
+            "server": "localhost",
+            "name": "bits",
+            "action": "status",
+            "options": {
+                "result": "running"
+            },
+            "os": "windows"
+        }
+    ],
+    "POS": [
+        {
+            "index": 0,
+            "type": "webAction",
+            "url": "http://linkedin.com",
+            "informations": {
+                "type": "form",
+                "login": "samba",
+                "password": "passer123@",
+                "loginSelector": "#session_key",
+                "passwordSelector": "#session_password"
+            },
+            "options": {
+                "block": true,
+                "prod": true,
+                "hprod": true,
+                "inte": true,
+                "dev": true
+            }
+        }
+    ],
+    "variables": {
+        "servers": [
+            {
+                "id": 0,
+                "prod": "LOCALHOST",
+                "hprod": "localhost",
+                "dev": "localhost",
+                "name": "LOCALHOST"
+            },
+            {
+                "id": 1,
+                "prod": "INSTANCE",
+                "hprod": "definir",
+                "dev": "definir",
+                "name": "BDD_INSTANCE"
+            },
+            {
+                "id": 2,
+                "prod": "SW11203",
+                "hprod": "definir",
+                "dev": "definir",
+                "name": "SW11203"
+            },
+            {
+                "id": 3,
+                "prod": "SW11204",
+                "hprod": "definir",
+                "dev": "definir",
+                "name": "SW11204"
+            }
+        ]
+    }
+}

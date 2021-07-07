@@ -1,0 +1,35 @@
+name: ARES
+auteur: Samba NDIAYE
+date_de_creation: 26/05/2021, 23:52:45
+Arret:
+  - index: 0
+    type: webAction
+    url: https://linkedin.com
+    informations:
+      type: connection
+      login: 97samba@gmail.com
+      loginSelector: "#session_key"
+      password: "76492d1116743f0423413b16050a5345MgB8ADEAcQBCAEcATQBIAEMAeABaAHEALwBE\
+        AE4AeQByAHkAZgBvAFQAeQA2AFEAPQA9AHwAOAAyADQANwAwAGYAZQAwADEAMQA5ADIAYwA\
+        yADgAOQBmADcAYwA0ADAAMgBmADYANwAxADIAZgBhADUAMQA5ADcAMQBjADIAMQBmADUAYw\
+        AzADUAZgAwADMANQA3ADkAYwA3ADEANwBiADcANgAyAGUAOQBmADUAZABkADUAMAA=\r\n"
+      passwordSelector: "#session_password"
+      navigator: Chrome
+      navigatorMode: normal
+  - index: 1
+    type: webAction
+    url: https://linkedin.com
+    informations:
+      type: click
+      clickSelector: "#ember455 > button"
+  - index: 2
+    type: webAction
+    informations:
+      type: click
+      clickSelector: "#ember41"
+  - index: 3
+    type: link
+    url: https://linkedin.com/m/logout
+    informations:
+      urlState: UP
+      navigationMode: normal

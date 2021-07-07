@@ -1,0 +1,40 @@
+{
+  "PARPRE": [
+    {
+      "name": "ARES",
+      "procedure": [
+        {
+          "state": {
+            "server": "sw11203",
+            "id": "8994fcba-7784-469a-88f6-f9c566417f8d",
+            "index": 0,
+            "login": "mimi",
+            "service": "sa"
+          },
+          "index": 0
+        },
+        {
+          "state": {
+            "server": "sw11204",
+            "id": "c84aaf5b-2297-4c37-96c0-96a98543c0db",
+            "index": 1,
+            "login": "20186804",
+            "service": "TEST"
+          },
+          "index": 1
+        },
+        {
+          "state": {
+            "server": "sw11205",
+            "id": "16b83be7-ddcf-4c69-85bf-51d0cef952b3",
+            "index": 2,
+            "login": "webadm",
+            "service": "BITS"
+          },
+          "index": 2
+        }
+      ],
+      "id": 1
+    }
+  ]
+}
