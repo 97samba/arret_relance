@@ -39,6 +39,7 @@ router.post('/ConvertAll-Excel', (req, res) => {
         var filePath = `./excel/${file}`
 
         wb.xlsx.readFile(filePath).then(function () {
+            
             console.log("Start  element ", file)
 
             var sh = wb.getWorksheet("Accueil")
@@ -67,6 +68,7 @@ router.post('/ConvertAll-Excel', (req, res) => {
                 type: "PARPRE",
                 Arret: stopActions,
                 Relance: startActions,
+                POS:[],
                 variables: { servers: variables }
             }
 

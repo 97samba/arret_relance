@@ -265,22 +265,18 @@ function create-etape($step) {
 
     if ($($step.options.prod) -eq $true) {
         $envs += "PROD"
-        Write-Host envs $envs prod $($step.options.prod) 
     }
     if ($($step.options.hprod) -eq $true) {
         $envs += "HPROD"
-        Write-Host envs $envs hprod $($step.options.hprod) 
 
 
     }
     if ($($step.options.inte) -eq $true) {
         $envs += "HPROD2"
-        Write-Host envs $envs inte $($step.options.inte) 
 
     }
     if ($($step.options.dev) -eq $true) {
         $envs += "DEV"
-        Write-Host envs $envs dev $($step.options.dev) 
 
     }
 

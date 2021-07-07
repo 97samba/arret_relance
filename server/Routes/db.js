@@ -13,14 +13,13 @@ const Parpre = require('../models/parpre')
 const { ObjectId } = require('bson');
 
 const DB_NAME = 'AR'
-
-//const url = 'mongodb+srv://admin:admin@cluster0.9aecc.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
-//const url = `mongodb+srv://admin:admin@cluster0.rpq6d.mongodb.net/${dbname}?retryWrites=true&w=majority`
 const url = `mongodb://127.0.0.1:27017/${DB_NAME}`
 
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
     .then((result) => console.log("Connected to the database via mongoose ", result.connection.name))
     .catch((err) => console.log(err))
+
+
 
 /*
     Création de parpre et de pos
@@ -28,8 +27,7 @@ mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
 router.post('/PARPRE/create', async (req, res) => {
 
     let element = req.body.data
-    let mode = req.body.mode
-    
+    let mode = req.body.mode    
     
     await treatWebAction(element)
 

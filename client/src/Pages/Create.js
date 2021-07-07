@@ -59,7 +59,7 @@ const Create = () => {
             setStopActions(history.location.state.Arret)
             setStartActions(history.location.state.Relance)
             setPosActions(history.location.state.POS)
-            //setDocumentType(history.location.state.type || "PARPRE")
+            setDocumentType("PARPRE")
             //setPosActions(history.location.state.pos)
             setTitle(history.location.state.name)
 
@@ -303,7 +303,7 @@ const Create = () => {
                     (
                         <ARCard
                             name="Procédure d'Ouverture de Service"
-                            type="status"
+                            type="pos"
                             actions={posActions}
                             SetActions={setPosActions}
                             generateJson={generateJson}

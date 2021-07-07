@@ -1,17 +1,21 @@
 {
     "name": "APPXXXX_SSA",
     "auteur": "Samba NDIAYE",
-    "date_de_creation": "28/06/2021, 18:30:31",
+    "date_de_creation": "06/07/2021, 12:30:36",
     "type": "PARPRE",
-    "Arret": [
+    "Arret": [],
+    "Relance": [],
+    "POS": [
         {
             "index": 0,
             "type": "webAction",
             "url": "https://linkedin.com",
             "informations": {
-                "type": "form",
-                "field": "recherche",
-                "fieldSelector": "#session_password"
+                "type": "connection",
+                "login": "augustin",
+                "password": "76492d1116743f0423413b16050a5345MgB8AHAASQBHADcARQBmAG0ARABQAGQAagAvAGgAcQBuADMATABIAE8AaAArAEEAPQA9AHwANAA0AGUAMgBkAGIAYwA5AGMAYQAwADQAMwBhADcAZgBhADcAMQA1AGIAMABjAGEANgBkADMAYQBlAGMAMQAxADgAMABjADQAYgBiAGIAMAA4ADkAMwA2ADcANgAxAGQAZgA0ADEANQA1ADcAZAA5ADIAOQA3AGQAMwA3AGUAMwA=\r\n",
+                "loginSelector": "#session_key",
+                "passwordSelector": "#session_password"
             },
             "options": {
                 "block": true,
@@ -22,8 +26,6 @@
             }
         }
     ],
-    "Relance": [],
-    "POS": [],
     "variables": {
         "servers": []
     }

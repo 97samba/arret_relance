@@ -208,6 +208,13 @@ const ARCard = ({ name, actions, SetActions, autoRelance, type, AddServer, gener
                                 endIcon={<KeyboardArrowRight />}>
                                 Save
                             </Button>
+                            <Button
+                                color="primary"
+                                variant="contained"
+                                style={{marginLeft:"10px"}}
+                            >
+                               Généré un Excel 
+                            </Button>
                         </form>
                     </ActionContext.Provider>
                 </CardContent>
