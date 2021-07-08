@@ -44,7 +44,22 @@ const ARScript = ({ index, initialSTate }) => {
 
     }, []
     )
+    const testPing = async (server) => {
 
+
+        await fetch(`http://localhost:5000/api/PARPRE?server=${server}`)
+            .then(res => res.json())
+            .then(result => {
+                console.log(result.state)
+                //saveInformations()
+
+                if (result.state === "ok") {
+
+                }
+
+            }
+            )
+    }
     const saveInformations = () => {
         if (state.path === undefined || state.server === undefined) { return }
         saveData(
@@ -56,6 +71,14 @@ const ARScript = ({ index, initialSTate }) => {
             }
         )
     }
+
+    const testPath = (path) =>{
+        if(state.server === ""){return}
+        fetch(`http://localhost:5000/api/PARPRE/testPath?path=${path}&server=${state.server}`)
+            .then(result => result.json())
+            .then(res => console.log("resultat ",res))
+    }
+
     return (
         <div>
             <Paper
@@ -80,7 +103,10 @@ const ARScript = ({ index, initialSTate }) => {
                             value={state.server}
 
                             onChange={(e) => setState({ ...state, server: e.target.value })}
-                            onBlur={saveInformations}
+                            onBlur={(e)=>{
+                                saveInformations()
+                                testPing(e.target.value)
+                            }}
                             className={classes.fields}
                             id='server'
                             color='primary'
@@ -93,7 +119,11 @@ const ARScript = ({ index, initialSTate }) => {
                     <Grid item sm={8} md={8} xl={8}>
                         <TextField
                             onChange={(e) => setState({ ...state, path: e.target.value })}
-                            onBlur={saveInformations}
+                            onBlur={(e) => {
+                                saveInformations()
+                                testPath(e.target.value)
+                            }
+                            }
                             value={state.path}
                             className={classes.fields}
                             id='Path'

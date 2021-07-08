@@ -51,6 +51,8 @@ function init($file) {
     else {
 
         Write-Host ce fichier $FILE_NAME existe
+        Remove-Item -Path $SCRIPT_DIRECTORY\$FILE_NAME
+        New-item -ItemType File -Name $FILE_NAME -Path $SCRIPT_DIRECTORY   | Out-Null
 
     }
     

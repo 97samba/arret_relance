@@ -45,14 +45,14 @@ const Service = ({ index, type, initialSTate }) => {
     })
 
     useEffect(() => {
-        console.log("index ",index, " initial state ",initialSTate)
+        console.log("index ", index, " initial state ", initialSTate)
         setState(initialSTate)
         if (initialSTate.action) {
             setStatus(initialSTate.action.toLowerCase())
             setOptions(initialSTate.options)
         }
 
-    },[]
+    }, []
     )
 
 
@@ -146,7 +146,7 @@ const Service = ({ index, type, initialSTate }) => {
                             <Select
                                 fullWidth
                                 value={status}
-                                onChange={(e) => setStatus(e.target.value )} onBlur={() => saveInformations()}
+                                onChange={(e) => setStatus(e.target.value)} onBlur={() => saveInformations()}
                             >
                                 <MenuItem value="stop">Stop</MenuItem>
                                 <MenuItem value="start">Start</MenuItem>
@@ -162,7 +162,11 @@ const Service = ({ index, type, initialSTate }) => {
                             color='primary'
                             label='Service'
                             onChange={(e) => setState({ ...state, name: e.target.value })}
-                            onBlur={(e) => saveInformations()}
+                            onBlur={(e) => {
+                                saveInformations()
+                                testService(e.target.value)
+                            }
+                            }
                         //testService(e.target.value)
 
                         />

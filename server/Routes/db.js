@@ -27,17 +27,17 @@ mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
 router.post('/PARPRE/create', async (req, res) => {
 
     let element = req.body.data
-    let mode = req.body.mode    
-    
+    let mode = req.body.mode
+
     await treatWebAction(element)
 
-    await treatParpre(element,mode)
+    await treatParpre(element, mode)
 
     res.send("file inserted")
 
 })
 
-const treatParpre = async (element,mode) => {
+const treatParpre = async (element, mode) => {
 
     console.log("Enregistrement de la PARPRE ", element.name)
 
@@ -63,14 +63,14 @@ const treatParpre = async (element,mode) => {
             POS: element.POS,
             variables: element.variables
         })
-        console.log("mode ",mode)
-        mode !== "Modification" 
-        ? parpre.save().then(result => console.log(result.name, " is saved"))
-        : Parpre.updateOne({name : parpre.name},element,null,(err,result)=>{
-            err && console.log(err)
-            console.log(result)
-            console.log(parpre.name," is updated")
-        })
+        console.log("mode ", mode)
+        mode !== "Modification"
+            ? parpre.save().then(result => console.log(result.name, " is saved"))
+            : Parpre.updateOne({ name: parpre.name }, element, null, (err, result) => {
+                err && console.log(err)
+                console.log(result)
+                console.log(parpre.name, " is updated")
+            })
     })
 }
 
@@ -86,18 +86,20 @@ async function treatWebAction(parpre) {
         //console.log("working for ", i)
         if (webActions[i].informations.type === "connection") {
 
-            console.log("Chiffrement du mot de passe de ", webActions[i].informations.login)
-            const password = JSON.stringify(webActions[i].informations.password)
-            var hashedPassword = ""
-            //console.log(webActions[i].informations.password)
+            if (webActions[i].informations.password.length < 30) {
+                
+                console.log("Chiffrement du mot de passe de ", webActions[i].informations.login)
+                const password = JSON.stringify(webActions[i].informations.password)
+                var hashedPassword = ""
+                //console.log(webActions[i].informations.password)
+                await exec(`./Powershell/PassHasher.ps1 ${password}`, { 'shell': 'powershell.exe' }).then((result) => {
 
-            await exec(`./Powershell/PassHasher.ps1 ${password}`, { 'shell': 'powershell.exe' }).then((result) => {
+                    hashedPassword = result.stdout
+                    console.log("Chiffré ", hashedPassword.replace(/(\r\n|\n|\r)/gm, ""))
+                    webActions[i].informations = { ...webActions[i].informations, password: hashedPassword }
 
-                hashedPassword = result.stdout
-                console.log(hashedPassword.replace(/(\r\n|\n|\r)/gm, ""))
-                webActions[i].informations = { ...webActions[i].informations, password: hashedPassword }
-
-            })
+                })
+            }
         }
 
     }

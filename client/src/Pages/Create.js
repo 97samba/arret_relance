@@ -164,7 +164,7 @@ const Create = () => {
                 if (action.action === "status") {
                     action = { ...action, action: "start" }
                 } else {
-                    action = { ...action, action: "status", options: { result: "running" } }
+                    action = { ...action, action: "status"}
                 }
 
             }

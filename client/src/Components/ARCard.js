@@ -213,7 +213,7 @@ const ARCard = ({ name, actions, SetActions, autoRelance, type, AddServer, gener
                                 variant="contained"
                                 style={{marginLeft:"10px"}}
                             >
-                               Généré un Excel 
+                               Générer un Excel 
                             </Button>
                         </form>
                     </ActionContext.Provider>
