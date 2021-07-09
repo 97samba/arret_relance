@@ -46,7 +46,7 @@ function init($file) {
     if (!(Test-Path -Path $SCRIPT_DIRECTORY\$FILE_NAME )) {
 
         New-item -ItemType File -Name $FILE_NAME -Path $SCRIPT_DIRECTORY   | Out-Null
-
+         
     }
     else {
 

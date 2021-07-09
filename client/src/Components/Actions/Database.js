@@ -1,4 +1,4 @@
-import { Avatar, Box, FormControl, Grid, InputLabel,  MenuItem, Paper, Select, TextField, Typography } from "@material-ui/core"
+import { Avatar, Box, FormControl, Grid, InputLabel, MenuItem, Paper, Select, TextField, Typography } from "@material-ui/core"
 import { makeStyles } from '@material-ui/core'
 import { Storage } from "@material-ui/icons"
 import { useContext, useState, useEffect } from "react"
@@ -33,6 +33,10 @@ const Database = ({ index, type, initialSTate }) => {
     const [databaseType, setDatabaseType] = useState("MSSQL")
     const [openDialog, setOpenDialog] = useState(false)
 
+    //true donc erreur donc rouge
+    const [databaseError, setDatabaseError] = useState(false)
+    const [serverError, setServerError] = useState(false)
+
     const [options, setOptions] = useState({
         block: true,
         prod: true,
@@ -55,6 +59,37 @@ const Database = ({ index, type, initialSTate }) => {
 
     }, []
     )
+
+    //Fait un ping
+    const testPing = async (server) => {
+
+
+        await fetch(`http://localhost:5000/api/PARPRE/ping?server=${server}`)
+            .then(res => res.json())
+            .then(result => {
+                console.log(result)
+                //saveInformations()
+
+                result.state === "True"
+                    ? setServerError(false)
+                    : setServerError(true)
+
+            }
+            )
+    }
+
+    const testDataBase = async (database) => {
+
+        if (state.server === "") { return }
+
+        fetch(`http://localhost:5000/api/PARPRE/database?database=${database}&server=${state.server}`)
+            .then(res => res.json())
+            .then(result => {
+                result.state === ""
+                    ? setDatabaseError(true)
+                    : setDatabaseError(false)
+            })
+    }
 
     const saveInformations = () => {
 
@@ -105,8 +140,19 @@ const Database = ({ index, type, initialSTate }) => {
                             id='server'
                             color='primary'
                             label='Serveur'
-                            onChange={(e) => setState({ ...state, server: e.target.value })}
-                            onBlur={saveInformations}
+                            error={serverError}
+                            onChange={(e) => {
+                                setState({ ...state, server: e.target.value })
+                                e.target.value.toLocaleLowerCase().startsWith("sw") || e.target.value.length < 2
+                                    ? setDatabaseType("MSSQL")
+                                    : setDatabaseType("Oracle")
+                            }
+                            }
+                            onBlur={(e) => {
+                                saveInformations()
+                                testPing(e.target.value)
+                            }
+                            }
                             inputProps={{
                                 style: {
                                     fontSize:
@@ -136,9 +182,14 @@ const Database = ({ index, type, initialSTate }) => {
                             value={state.name}
                             id='DBName'
                             color='primary'
-                            label='Instance'
+                            label={databaseError ? 'Instance non retrouvée' : 'Instance'}
+                            error={databaseError}
                             onChange={(e) => setState({ ...state, name: e.target.value })}
-                            onBlur={saveInformations}
+                            onBlur={(e) => {
+                                saveInformations()
+                                testDataBase(e.target.value)
+
+                            }}
 
                         />
                     </Grid>

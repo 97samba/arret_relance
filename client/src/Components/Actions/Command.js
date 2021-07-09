@@ -5,6 +5,7 @@ import { useContext, useEffect, useState } from "react"
 import ActionContext from "../../Context/ActionContext"
 import OptionMenu from "../Creation/OptionMenu"
 import OptionDialog from "../Creation/OptionDialog"
+import checker from "../Checker"
 
 
 const useStyles = makeStyles((theme) => ({
@@ -32,6 +33,8 @@ const Command = ({ index, initialSTate }) => {
     //l'état du server
     const [pingState, setPingState] = useState("ko")
     const [openDialog, setOpenDialog] = useState(false)
+    const [serverError, setServerError] = useState(false)
+
 
     const [options, setOptions] = useState({
         block: true,
@@ -72,34 +75,8 @@ const Command = ({ index, initialSTate }) => {
             }
         )
     }
-    //test si le service existe
-    const testService = async (service) => {
-
-        if (state.server === null || pingState === "ko") { return }
-
-        console.log("Testing service : ", service, "server ", state.server)
-        fetch(`http://localhost:5000/api/PARPRE/service?name=${service}&server=${state.server}`)
-            .then(res => res.json())
-            .then(result => console.log(result))
-    }
-    //Fait un ping
-    const testPing = async (server) => {
 
 
-        await fetch(`http://localhost:5000/api/PARPRE?server=${server}`)
-            .then(res => res.json())
-            .then(result => {
-                setPingState(result)
-                console.log(result.state)
-                //saveInformations()
-
-                if (result.state === "ok") {
-
-                }
-
-            }
-            )
-    }
 
 
 
@@ -127,8 +104,13 @@ const Command = ({ index, initialSTate }) => {
                             id={`server- ${index}`}
                             color='primary'
                             label='Serveur'
+                            error={serverError}
                             onChange={(e) => setState({ ...state, server: e.target.value })}
-                            onBlur={saveInformations}
+                            onBlur={(e) =>{
+                                saveInformations()
+                                checker.ping(e.target.value,setServerError)
+                                
+                            }}
                             inputProps={{
                                 style: {
                                     fontSize:

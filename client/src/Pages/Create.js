@@ -303,7 +303,7 @@ const Create = () => {
                     (
                         <ARCard
                             name="Procédure d'Ouverture de Service"
-                            type="pos"
+                            type="status"
                             actions={posActions}
                             SetActions={setPosActions}
                             generateJson={generateJson}

@@ -5,6 +5,7 @@ import { useContext, useEffect, useState } from "react"
 import ActionContext from "../../Context/ActionContext"
 import OptionDialog from "../Creation/OptionDialog"
 import OptionMenu from "../Creation/OptionMenu"
+import checker from "../Checker"
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -34,6 +35,9 @@ const Service = ({ index, type, initialSTate }) => {
     const [status, setStatus] = useState(type)
     //menu options
     const [openDialog, setOpenDialog] = useState(false)
+
+    const [serviceError, setServiceError] = useState(false)
+    const [serverError, setServerError] = useState(false)
 
     const [options, setOptions] = useState({
         block: true,
@@ -74,36 +78,6 @@ const Service = ({ index, type, initialSTate }) => {
             }
         )
     }
-    //test si le service existe
-    const testService = async (service) => {
-
-        if (state.server === null || pingState === "ko") { return }
-
-        console.log("Testing service : ", service, "server ", state.server)
-        fetch(`http://localhost:5000/api/PARPRE/service?name=${service}&server=${state.server}`)
-            .then(res => res.json())
-            .then(result => console.log(result))
-        //.then(() => saveInformations())
-    }
-    //Fait un ping
-    const testPing = async (server) => {
-
-
-        await fetch(`http://localhost:5000/api/PARPRE?server=${server}`)
-            .then(res => res.json())
-            .then(result => {
-                setPingState(result)
-                console.log(result.state)
-                //saveInformations()
-
-                if (result.state === "ok") {
-
-                }
-
-            }
-            )
-    }
-
 
 
     return (
@@ -129,13 +103,13 @@ const Service = ({ index, type, initialSTate }) => {
                             value={state.server}
                             id={`server- ${index}`}
                             color='primary'
-                            label='Serveur'
+                            error={serverError}
+                            label={serverError ? 'Injoignable' : 'Serveur'}
                             onChange={(e) => setState({ ...state, server: e.target.value })}
                             onBlur={(e) => {
+
                                 saveInformations()
-
-                                testPing(e.target.value)
-
+                                checker.ping(e.target.value, setServerError)
                             }
                             }
                         />
@@ -160,11 +134,12 @@ const Service = ({ index, type, initialSTate }) => {
                             className={classes.fields}
                             id={`serviceName- ${index}`}
                             color='primary'
-                            label='Service'
+                            label={serviceError ? 'Service non retrouvé sur ' + state.server : 'Service'}
+                            error={serviceError}
                             onChange={(e) => setState({ ...state, name: e.target.value })}
                             onBlur={(e) => {
                                 saveInformations()
-                                testService(e.target.value)
+                                checker.testService(e.target.value, state.server, setServiceError)
                             }
                             }
                         //testService(e.target.value)

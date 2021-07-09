@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core'
 import { Description } from "@material-ui/icons"
 import { useContext, useState, useEffect } from "react"
 import ActionContext from "../../Context/ActionContext"
+import checker from "../Checker"
 import OptionDialog from "../Creation/OptionDialog"
 import OptionMenu from "../Creation/OptionMenu"
 
@@ -27,6 +28,9 @@ const ARScript = ({ index, initialSTate }) => {
 
     const [state, setState] = useState({ initialSTate })
     const [openDialog, setOpenDialog] = useState(false)
+    //true donc erreur donc rouge
+    const [scriptError, setScriptError] = useState('false')
+    const [serverError, setServerError] = useState(false)
 
     const [options, setOptions] = useState({
         block: true,
@@ -44,22 +48,6 @@ const ARScript = ({ index, initialSTate }) => {
 
     }, []
     )
-    const testPing = async (server) => {
-
-
-        await fetch(`http://localhost:5000/api/PARPRE?server=${server}`)
-            .then(res => res.json())
-            .then(result => {
-                console.log(result.state)
-                //saveInformations()
-
-                if (result.state === "ok") {
-
-                }
-
-            }
-            )
-    }
     const saveInformations = () => {
         if (state.path === undefined || state.server === undefined) { return }
         saveData(
@@ -72,12 +60,7 @@ const ARScript = ({ index, initialSTate }) => {
         )
     }
 
-    const testPath = (path) =>{
-        if(state.server === ""){return}
-        fetch(`http://localhost:5000/api/PARPRE/testPath?path=${path}&server=${state.server}`)
-            .then(result => result.json())
-            .then(res => console.log("resultat ",res))
-    }
+
 
     return (
         <div>
@@ -103,14 +86,15 @@ const ARScript = ({ index, initialSTate }) => {
                             value={state.server}
 
                             onChange={(e) => setState({ ...state, server: e.target.value })}
-                            onBlur={(e)=>{
+                            onBlur={(e) => {
                                 saveInformations()
-                                testPing(e.target.value)
+                                checker.ping(e.target.value,setServerError)
                             }}
                             className={classes.fields}
                             id='server'
                             color='primary'
                             label='Serveur'
+                            error={serverError}
 
                         />
 
@@ -121,15 +105,16 @@ const ARScript = ({ index, initialSTate }) => {
                             onChange={(e) => setState({ ...state, path: e.target.value })}
                             onBlur={(e) => {
                                 saveInformations()
-                                testPath(e.target.value)
+                                checker.testPath(e.target.value,state.server,setScriptError)
                             }
                             }
                             value={state.path}
                             className={classes.fields}
                             id='Path'
                             color='primary'
-                            label='Path'
-                            error={state.path === ""}
+                            label={scriptError === "true" ? 'Script non retrouvé sur le serveur' : scriptError==="dossier" ? 'Dossier ? ': 'Path'}
+                            error={state.path === "" || scriptError==="true" || scriptError === "dossier"}
+
 
 
                         />

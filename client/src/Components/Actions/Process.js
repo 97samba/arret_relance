@@ -5,6 +5,7 @@ import { useContext, useState, useEffect } from "react"
 import ActionContext from "../../Context/ActionContext"
 import OptionMenu from "../Creation/OptionMenu"
 import OptionDialog from "../Creation/OptionDialog"
+import checker from "../Checker"
 
 
 const useStyles = makeStyles((theme) => ({
@@ -28,6 +29,8 @@ const Process = ({ index, type, initialSTate }) => {
     const [state, setState] = useState(initialSTate)
     const [status, setStatus] = useState(initialSTate.action)
     const [openDialog, setOpenDialog] = useState(false)
+    const [serverError, setServerError] = useState(false)
+
 
     const [options, setOptions] = useState({
         block: true,
@@ -81,12 +84,17 @@ const Process = ({ index, type, initialSTate }) => {
                     <Grid item xs={2} sm={2} md={2} xl={2}>
                         <TextField
                             onChange={(e) => setState({ ...state, server: e.target.value })}
-                            onBlur={saveInformations}
+                            onBlur={(e)=>{
+                                saveInformations()
+                                checker.ping(e.target.value,setServerError)
+                            }
+                            }
                             value={state.server}
 
                             className={classes.fields}
                             id='server'
                             color='primary'
+                            error={serverError}
                             label='Serveur' />
                     </Grid>
                     <Grid item xs={2} sm={2} md={2} xl={2}>
