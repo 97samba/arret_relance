@@ -124,6 +124,12 @@ router.get('/getAPOS', (req, res) => {
     })
 })
 
+router.get('/PARPRE/testTitle', (req,res) => {
+    Parpre.findOne({"name":req.query.title}, (err,results)=>{
+        res.send(results !== null)
+    })
+})
+
 
 
 module.exports = router

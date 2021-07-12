@@ -1,7 +1,7 @@
-import { Avatar, Box, Grid, Paper, TextField, Typography } from "@material-ui/core"
+import { Avatar, Box, FormControl, Grid, InputLabel, MenuItem, Paper, Select, TextField, Typography } from "@material-ui/core"
 import { makeStyles } from '@material-ui/core'
-import { Code } from "@material-ui/icons"
-import { useContext, useEffect, useState } from "react"
+import { AccountTree } from "@material-ui/icons"
+import { useContext, useState, useEffect } from "react"
 import ActionContext from "../../Context/ActionContext"
 import OptionMenu from "../Creation/OptionMenu"
 import OptionDialog from "../Creation/OptionDialog"
@@ -16,8 +16,8 @@ const useStyles = makeStyles((theme) => ({
 
     },
     fields: {
-        //marginRight:theme.spacing(2),
         width: "100%"
+
     },
     smallAvatar: {
         width: theme.spacing(2.5),
@@ -25,16 +25,18 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-const Command = ({ index, initialSTate }) => {
-    //css
+const PoolIIS = ({ index, type, initialSTate }) => {
     const classes = useStyles()
+    const { deleteAction, duplicateAction, saveData } = useContext(ActionContext)
 
     const [state, setState] = useState({ initialSTate })
-    //l'état du server
-    const [pingState, setPingState] = useState("ko")
+    const [status, setStatus] = useState(type)
+    const [elementType, setElementType] = useState("pool")
     const [openDialog, setOpenDialog] = useState(false)
-    const [serverError, setServerError] = useState(false)
 
+    //true donc erreur donc rouge
+    const [elementError, setElementError] = useState(false)
+    const [serverError, setServerError] = useState(false)
 
     const [options, setOptions] = useState({
         block: true,
@@ -47,39 +49,40 @@ const Command = ({ index, initialSTate }) => {
 
     useEffect(() => {
         setState(initialSTate)
-        setOptions(initialSTate.options)
+        if (initialSTate.action) {
+            setStatus(initialSTate.action.toLowerCase())
+            setOptions(initialSTate.options)
+        }
 
 
     }, []
     )
 
 
-    //context pour sauvegarder l'état dans le parent
-    const { deleteAction, duplicateAction, saveData } = useContext(ActionContext)
-
     const saveInformations = () => {
 
-        if (state.server === undefined || state.name === undefined) { return }
+        if (state.name === undefined || state.server === undefined) { return }
+
+        let result
+        if (status === "status") {
+            type === "stop" ? result = "stopped" : result = "running"
+        }
 
         saveData(
             {
                 index: index,
-                type: "command",
+                type: "IIS",
                 server: state.server,
                 name: state.name,
-                login: state.login,
-                result: state.result,
+                elementType:elementType,
+                action: status,
                 options: options,
+
                 //os: state.server.toUpperCase().startsWith("SW") ? "windows" : "linux"
 
             }
         )
     }
-
-
-
-
-
     return (
         <div>
             <Paper
@@ -89,28 +92,29 @@ const Command = ({ index, initialSTate }) => {
                     container
                     spacing={2}
                     alignItems="center"
+
                 >
-                    <Grid item md={1} xl={1} >
+                    <Grid item md={1} xl={1}  >
                         <Box display="flex" justifyContent="center">
-                            <Code color="primary" />
+                            <AccountTree color="primary" />
                         </Box>
 
-
                     </Grid>
-                    <Grid item md={2} xl={2}>
+
+                    <Grid item xs={2} md={2} xl={2}>
                         <TextField
-                            className={classes.fields}
                             value={state.server}
-                            id={`server- ${index}`}
+                            className={classes.fields}
+                            id='server'
                             color='primary'
                             label='Serveur'
                             error={serverError}
                             onChange={(e) => setState({ ...state, server: e.target.value })}
-                            onBlur={(e) =>{
+                            onBlur={(e) => {
                                 saveInformations()
                                 checker.ping(e.target.value,setServerError)
-                                
-                            }}
+                            }
+                            }
                             inputProps={{
                                 style: {
                                     fontSize:
@@ -118,56 +122,51 @@ const Command = ({ index, initialSTate }) => {
                                             state.server && state.server.split("").length > 65 ? 13 : "1rem"
                                 }
                             }}
+
                         />
                     </Grid>
-                    <Grid item md={2} xl={2}>
+                    <Grid item xs={2} md={2} xl={2}>
+                        <FormControl className={classes.fields}>
+                            <InputLabel>Action</InputLabel>
+                            <Select value={status}
+                                onChange={(e) => setStatus(e.target.value)}
+                                onBlur={saveInformations} >
+                                <MenuItem value="stop">Stop</MenuItem>
+                                <MenuItem value="start">Start</MenuItem>
+                                <MenuItem value="status" >Status</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={3} md={3} xl={3}>
                         <TextField
+                            autoComplete="false"
                             className={classes.fields}
-                            value={state.login}
-                            id={`login- ${index}`}
-                            color='primary'
-                            label='Login'
-                            onChange={(e) => setState({ ...state, login: e.target.value })}
-                            onBlur={saveInformations}
-                            inputProps={{
-                                style: { fontSize: state.login && state.login.split("").length > 60 ? 14 : "1rem" }
-                            }}
-                        />
-                    </Grid>
-                    <Grid item md={5} xl={4}>
-                        <TextField
                             value={state.name}
-                            className={classes.fields}
-                            id={`command- ${index}`}
+                            id='DBName'
                             color='primary'
-                            label='Commande'
+                            label={elementError ? 'Pool ou Site Web non retrouvé' : 'Pool ou Site Web'}
+                            error={elementError}
                             onChange={(e) => setState({ ...state, name: e.target.value })}
-                            onBlur={saveInformations}
-                            error={state.name === ""}
-                            inputProps={{
-                                style: {
-                                    fontSize:
-                                        state.name && state.name.split("").length > 40 && state.name.split("").length < 65 ? 14 :
-                                            state.name && state.name.split("").length > 65 ? 13 : "1rem"
-                                }
+                            onBlur={(e) => {
+                                saveInformations()
+
                             }}
 
                         />
                     </Grid>
-                    <Grid item md={1} xl={2}>
-                        <TextField
-                            className={classes.fields}
-                            value={state.result}
-                            id={`result- ${index}`}
-                            color='primary'
-                            label='Résultat'
-                            onChange={(e) => setState({ ...state, result: e.target.value })}
-                            onBlur={saveInformations}
-
-                        />
+                    <Grid item xs={3} md={3} xl={3}>
+                        <FormControl className={classes.fields}>
+                            <InputLabel>Type</InputLabel>
+                            <Select value={elementType} onChange={(e) => setElementType(e.target.value)} onBlur={saveInformations} >
+                                <MenuItem value="pool">Pool</MenuItem>
+                                <MenuItem value="site">Site</MenuItem>
+                            </Select>
+                        </FormControl>
                     </Grid>
+
+
                     <Grid item md={1} xl={1}  >
-                        <Grid container spacing={2} alignItems="center" >
+                        <Grid container spacing={3} alignItems="center" >
                             <Grid item md={6} >
                                 <OptionMenu
                                     index={index}
@@ -187,7 +186,6 @@ const Command = ({ index, initialSTate }) => {
                             <Grid item md={6}>
                                 <Box my="auto" >
                                     <Avatar className={classes.smallAvatar} >
-
                                         <Typography>
                                             {index + 1}
                                         </Typography>
@@ -204,4 +202,4 @@ const Command = ({ index, initialSTate }) => {
     );
 }
 
-export default Command;
+export default PoolIIS;

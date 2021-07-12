@@ -5,21 +5,21 @@ LOCAL_DIR=/tmp
 LOG_DIR=/tmp
 TIME_OUT=600
 ################################ VARIABLES ################################
-APPLI=APPXXXX_SSA
+APPLI=test2
 case $TYPE_ENVIRONNEMENT in 
 		PROD)
 				LOCALHOST=LOCALHOST
-				INSTANCE=INSTANCE
+				TEST=TEST
 				REBOND_WIN=sw15298
 				;;
 		HPROD)
-				LOCALHOST=definir
-				INSTANCE=definir
+				LOCALHOST=loc1
+				TEST=loc1
 				REBOND_WIN=sw15272
 				;;
 		HPROD2)
-				LOCALHOST=definir
-				INSTANCE=definir
+				LOCALHOST=loc2
+				TEST=loc2
 				REBOND_WIN=sw15272
 				;;
 		*)
@@ -109,7 +109,7 @@ logReport(){
 ######################################## RELANCE ########################################
 Relance_App()
 {
-		NB_ETAPE=8
+		NB_ETAPE=4
  
 		#Les environnements sur lesquels vont s'executer la commande
 		$ENVS=(PROD HPROD HPROD2 DEV)
@@ -119,12 +119,13 @@ Relance_App()
 				ETAPE=Etape1
 				SRV=localhost
 				USER=
-				CMD_WIN="powershell ./rename.ps1 c:\temp\docker\windows\dockerfile test localhost" 
+				CMD="test" 
+				CMD="su - $USER -c $CMD " 
 				echo
 				echo "DEBUT : $(date +'%d/%m/%Y %H:%M:%S')"
 				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
-				echo "Commande : "$CMD_WIN
-				res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q adm-deploy@$REBOND_WIN "$CMD_WIN")
+				echo "Commande : "$CMD
+				res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q root@$SRV "$CMD")
 				retval=$?
 				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
 				echo "FIN : $(date +'%d/%m/%Y %H:%M:%S')"
@@ -147,8 +148,13 @@ Relance_App()
 				echo "Commande : "$CMD
 				res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q root@$SRV "$CMD")
 				retval=$?
-				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
-				echo "FIN : $(date +'%d/%m/%Y %H:%M:%S')"
+				echo $res > $FIC_TMP
+				if grep -c "$RES_ATTENDU" $FIC_TMP > /dev/null; then
+								echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]  / OK (RES("$res") / RES_ATTENDU("$RES_ATTENDU"))"
+				else
+								echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]  / ERREUR "$NUM_ERR" : RESULTAT ("$res") DIFFERENT DU RESULTAT ATTENDU ("$RES_ATTENDU")"
+								exit $NUM_ERR
+				fi
 				echo
 		fi
 		
@@ -160,7 +166,8 @@ Relance_App()
 				ETAPE=Etape3
 				SRV=localhost
 				USER=
-				CMD_WIN="powershell ./checkDisk.ps1 C d localhost" 
+				CMD="service start bits  localhost" 
+				CMD_WIN="powershell ./service.ps1 start bits  localhost" 
 				echo
 				echo "DEBUT : $(date +'%d/%m/%Y %H:%M:%S')"
 				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
@@ -180,99 +187,8 @@ Relance_App()
 				ETAPE=Etape4
 				SRV=localhost
 				USER=
-				CMD_WIN="powershell ./checkLog.ps1 test c:\temp\docker\windows\dockerfile localhost" 
-				echo
-				echo "DEBUT : $(date +'%d/%m/%Y %H:%M:%S')"
-				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
-				echo "Commande : "$CMD_WIN
-				res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q adm-deploy@$REBOND_WIN "$CMD_WIN")
-				retval=$?
-				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
-				echo "FIN : $(date +'%d/%m/%Y %H:%M:%S')"
-				echo
-		fi
-		
-		#Les environnements sur lesquels vont s'executer la commande
-		$ENVS=(PROD HPROD HPROD2 DEV)
-		
-		if [[ ${ENVS[@]} =~ $TYPE_ENVIRONNEMENT ]] 
-		then
-				ETAPE=Etape5
-				SRV=localhost
-				USER=
-				CMD="instance" 
-				CMD="su - $USER -c $CMD " 
-				echo
-				echo "DEBUT : $(date +'%d/%m/%Y %H:%M:%S')"
-				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
-				echo "Commande : "$CMD
-				res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q root@$SRV "$CMD")
-				retval=$?
-				echo $res > $FIC_TMP
-				if grep -c "$RES_ATTENDU" $FIC_TMP > /dev/null; then
-								echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]  / OK (RES("$res") / RES_ATTENDU("$RES_ATTENDU"))"
-				else
-								echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]  / ERREUR "$NUM_ERR" : RESULTAT ("$res") DIFFERENT DU RESULTAT ATTENDU ("$RES_ATTENDU")"
-								exit $NUM_ERR
-				fi
-				echo
-		fi
-		
-		#Les environnements sur lesquels vont s'executer la commande
-		$ENVS=(PROD HPROD HPROD2 DEV)
-		
-		if [[ ${ENVS[@]} =~ $TYPE_ENVIRONNEMENT ]] 
-		then
-				ETAPE=Etape6
-				SRV=localhost
-				USER=
-				CMD="" 
-				CMD="su - $USER -c $CMD " 
-				echo
-				echo "DEBUT : $(date +'%d/%m/%Y %H:%M:%S')"
-				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
-				echo "Commande : "$CMD
-				res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q root@$SRV "$CMD")
-				retval=$?
-				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
-				echo "FIN : $(date +'%d/%m/%Y %H:%M:%S')"
-				echo
-		fi
-		
-		#Les environnements sur lesquels vont s'executer la commande
-		$ENVS=(PROD HPROD HPROD2 DEV)
-		
-		if [[ ${ENVS[@]} =~ $TYPE_ENVIRONNEMENT ]] 
-		then
-				ETAPE=Etape7
-				SRV=localhost
-				USER=
-				CMD_WIN="powershell ./process.ps1 status test localhost" 
-				echo
-				echo "DEBUT : $(date +'%d/%m/%Y %H:%M:%S')"
-				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
-				echo "Commande : "$CMD_WIN
-				res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q adm-deploy@$REBOND_WIN "$CMD_WIN")
-				retval=$?
-				echo $res > $FIC_TMP
-				if grep -c "$RES_ATTENDU" $FIC_TMP > /dev/null; then
-								echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]  / OK (RES("$res") / RES_ATTENDU("$RES_ATTENDU"))"
-				else
-								echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]  / ERREUR "$NUM_ERR" : RESULTAT ("$res") DIFFERENT DU RESULTAT ATTENDU ("$RES_ATTENDU")"
-								exit $NUM_ERR
-				fi
-				echo
-		fi
-		
-		#Les environnements sur lesquels vont s'executer la commande
-		$ENVS=(PROD HPROD HPROD2 DEV)
-		
-		if [[ ${ENVS[@]} =~ $TYPE_ENVIRONNEMENT ]] 
-		then
-				ETAPE=Etape8
-				SRV=localhost
-				USER=
-				CMD_WIN="powershell ./service.ps1 status bits localhost" 
+				CMD="service status bits  localhost" 
+				CMD_WIN="powershell ./service.ps1 status bits  localhost" 
 				echo
 				echo "DEBUT : $(date +'%d/%m/%Y %H:%M:%S')"
 				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
@@ -294,7 +210,7 @@ Relance_App()
 ######################################## RELANCE ########################################
 Arret_App()
 {
-		NB_ETAPE=8
+		NB_ETAPE=4
  
 		#Les environnements sur lesquels vont s'executer la commande
 		$ENVS=(PROD HPROD HPROD2 DEV)
@@ -304,7 +220,8 @@ Arret_App()
 				ETAPE=Etape1
 				SRV=localhost
 				USER=
-				CMD_WIN="powershell ./service.ps1 stop bits localhost" 
+				CMD="service stop bits  localhost" 
+				CMD_WIN="powershell ./service.ps1 stop bits  localhost" 
 				echo
 				echo "DEBUT : $(date +'%d/%m/%Y %H:%M:%S')"
 				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
@@ -324,15 +241,21 @@ Arret_App()
 				ETAPE=Etape2
 				SRV=localhost
 				USER=
-				CMD_WIN="powershell ./process.ps1 stop test localhost" 
+				CMD="service status bits  localhost" 
+				CMD_WIN="powershell ./service.ps1 status bits  localhost" 
 				echo
 				echo "DEBUT : $(date +'%d/%m/%Y %H:%M:%S')"
 				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
 				echo "Commande : "$CMD_WIN
 				res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q adm-deploy@$REBOND_WIN "$CMD_WIN")
 				retval=$?
-				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
-				echo "FIN : $(date +'%d/%m/%Y %H:%M:%S')"
+				echo $res > $FIC_TMP
+				if grep -c "$RES_ATTENDU" $FIC_TMP > /dev/null; then
+								echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]  / OK (RES("$res") / RES_ATTENDU("$RES_ATTENDU"))"
+				else
+								echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]  / ERREUR "$NUM_ERR" : RESULTAT ("$res") DIFFERENT DU RESULTAT ATTENDU ("$RES_ATTENDU")"
+								exit $NUM_ERR
+				fi
 				echo
 		fi
 		
@@ -342,88 +265,6 @@ Arret_App()
 		if [[ ${ENVS[@]} =~ $TYPE_ENVIRONNEMENT ]] 
 		then
 				ETAPE=Etape3
-				SRV=localhost
-				USER=
-				CMD="" 
-				CMD="su - $USER -c $CMD " 
-				echo
-				echo "DEBUT : $(date +'%d/%m/%Y %H:%M:%S')"
-				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
-				echo "Commande : "$CMD
-				res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q root@$SRV "$CMD")
-				retval=$?
-				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
-				echo "FIN : $(date +'%d/%m/%Y %H:%M:%S')"
-				echo
-		fi
-		
-		#Les environnements sur lesquels vont s'executer la commande
-		$ENVS=(PROD HPROD HPROD2 DEV)
-		
-		if [[ ${ENVS[@]} =~ $TYPE_ENVIRONNEMENT ]] 
-		then
-				ETAPE=Etape4
-				SRV=localhost
-				USER=
-				CMD="instance" 
-				CMD="su - $USER -c $CMD " 
-				echo
-				echo "DEBUT : $(date +'%d/%m/%Y %H:%M:%S')"
-				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
-				echo "Commande : "$CMD
-				res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q root@$SRV "$CMD")
-				retval=$?
-				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
-				echo "FIN : $(date +'%d/%m/%Y %H:%M:%S')"
-				echo
-		fi
-		
-		#Les environnements sur lesquels vont s'executer la commande
-		$ENVS=(PROD HPROD HPROD2 DEV)
-		
-		if [[ ${ENVS[@]} =~ $TYPE_ENVIRONNEMENT ]] 
-		then
-				ETAPE=Etape4
-				SRV=localhost
-				USER=
-				CMD_WIN="powershell ./checkLog.ps1 test c:\temp\docker\windows\dockerfile localhost" 
-				echo
-				echo "DEBUT : $(date +'%d/%m/%Y %H:%M:%S')"
-				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
-				echo "Commande : "$CMD_WIN
-				res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q adm-deploy@$REBOND_WIN "$CMD_WIN")
-				retval=$?
-				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
-				echo "FIN : $(date +'%d/%m/%Y %H:%M:%S')"
-				echo
-		fi
-		
-		#Les environnements sur lesquels vont s'executer la commande
-		$ENVS=(PROD HPROD HPROD2 DEV)
-		
-		if [[ ${ENVS[@]} =~ $TYPE_ENVIRONNEMENT ]] 
-		then
-				ETAPE=Etape3
-				SRV=localhost
-				USER=
-				CMD_WIN="powershell ./checkDisk.ps1 C d localhost" 
-				echo
-				echo "DEBUT : $(date +'%d/%m/%Y %H:%M:%S')"
-				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
-				echo "Commande : "$CMD_WIN
-				res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q adm-deploy@$REBOND_WIN "$CMD_WIN")
-				retval=$?
-				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
-				echo "FIN : $(date +'%d/%m/%Y %H:%M:%S')"
-				echo
-		fi
-		
-		#Les environnements sur lesquels vont s'executer la commande
-		$ENVS=(PROD HPROD HPROD2 DEV)
-		
-		if [[ ${ENVS[@]} =~ $TYPE_ENVIRONNEMENT ]] 
-		then
-				ETAPE=Etape2
 				SRV=localhost
 				USER=
 				CMD="test" 
@@ -444,18 +285,24 @@ Arret_App()
 		
 		if [[ ${ENVS[@]} =~ $TYPE_ENVIRONNEMENT ]] 
 		then
-				ETAPE=Etape1
+				ETAPE=Etape4
 				SRV=localhost
 				USER=
-				CMD_WIN="powershell ./rename.ps1 c:\temp\docker\windows\dockerfile test localhost" 
+				CMD="test" 
+				CMD="su - $USER -c $CMD " 
 				echo
 				echo "DEBUT : $(date +'%d/%m/%Y %H:%M:%S')"
 				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
-				echo "Commande : "$CMD_WIN
-				res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q adm-deploy@$REBOND_WIN "$CMD_WIN")
+				echo "Commande : "$CMD
+				res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q root@$SRV "$CMD")
 				retval=$?
-				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
-				echo "FIN : $(date +'%d/%m/%Y %H:%M:%S')"
+				echo $res > $FIC_TMP
+				if grep -c "$RES_ATTENDU" $FIC_TMP > /dev/null; then
+								echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]  / OK (RES("$res") / RES_ATTENDU("$RES_ATTENDU"))"
+				else
+								echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]  / ERREUR "$NUM_ERR" : RESULTAT ("$res") DIFFERENT DU RESULTAT ATTENDU ("$RES_ATTENDU")"
+								exit $NUM_ERR
+				fi
 				echo
 		fi
 		
@@ -467,8 +314,8 @@ Tests_App()
 		echo
 		SRV="localhost"
 		USER=
-		CMD="database status instance Oracle localhost" 
-		CMD_WIN="powershell ./database.ps1 status instance Oracle localhost" 
+		CMD="service status bits  localhost" 
+		CMD_WIN="powershell ./service.ps1 status bits  localhost" 
 		SSA : "$APPLI"
 		Serveur : "$SRV"
 		Commande : "$CMD_WIN"
@@ -479,8 +326,20 @@ Tests_App()
 		echo
 		SRV="localhost"
 		USER=
-		CMD="process status test  localhost" 
-		CMD_WIN="powershell ./process.ps1 status test  localhost" 
+		CMD="database status test Oracle localhost" 
+		CMD_WIN="powershell ./database.ps1 status test Oracle localhost" 
+		SSA : "$APPLI"
+		Serveur : "$SRV"
+		Commande : "$CMD_WIN"
+		res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q adm-deploy@$REBOND_WIN "$CMD_WIN")
+		Resultat : "$res"
+		echo
+
+		echo
+		SRV="localhost"
+		USER=
+		CMD="database status test Oracle localhost" 
+		CMD_WIN="powershell ./database.ps1 status test Oracle localhost" 
 		SSA : "$APPLI"
 		Serveur : "$SRV"
 		Commande : "$CMD_WIN"

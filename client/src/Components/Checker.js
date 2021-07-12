@@ -32,7 +32,8 @@ const testPing = async (server, setServerError) => {
 }
 
 //verifie l'existence d'un chemin
-const testPath = (path, server, setScriptError) => {
+const testPath = async (path, server, setScriptError) => {
+    console.log("test path ",path,server)
     if (server === "") { return }
     fetch(`http://localhost:5000/api/PARPRE/testPath?path=${path}&server=${server}`)
         .then(result => result.json())
@@ -42,6 +43,27 @@ const testPath = (path, server, setScriptError) => {
             res.state === "true"
                 ? setScriptError('false')
                 : res.state === "dossier" ? setScriptError('dossier') : setScriptError('true')
+        })
+}
+
+const testDisk = async (server,setDiskSelection) =>{
+
+    fetch(`http://localhost:5000/api/PARPRE/testDisk?server=${server}`)
+        .then(result => result.json())
+        .then(res => {
+            console.log("les disques ",res.disks)
+            setDiskSelection(res.disks)
+        })
+}
+
+// Vérifie si le titre saisi existe
+const testTitle = async (title,setTitleError,setTitleOpen) => {
+    fetch(`http://localhost:5000/api/PARPRE/testTitle?title=${title}`)
+        .then(res => res.json())
+        .then(result => {
+            console.log("Titre existe :",result)
+            setTitleError(result)
+            setTitleOpen(result)
         })
 }
 
@@ -67,11 +89,14 @@ const checker = {
     testProcess: (process, server) => {
 
     },
-    testDisk: (disk, server) => {
-
+    testDisk: (server,setDiskSelection) => {
+        testDisk(server,setDiskSelection)
     },
     testIIS: (element, server) => {
 
+    },
+    testTitle: (title,setTitleError,setTitleOpen) => {
+        testTitle(title,setTitleError,setTitleOpen)
     }
 }
 

@@ -295,16 +295,18 @@ function create-etape($step) {
     
     write-line -line "USER=$($step.user)" -tab 2
     
-    if ($($step.os) -eq "windows") {
+    if ($($step.os) -ne "linux") {
         
-        create-windowsStep -step $step
+        #create-windowsStep -step $step
         
     }
     else {
         
-        create-linuxStep -step $step
+        #create-linuxStep -step $step
         
     }
+    create-windowsStep -step $step
+
     
     write-line -line "echo" -tab 2    
     
@@ -315,10 +317,12 @@ function create-etape($step) {
 ########### Créer une étape windows
 function create-windowsStep($step) {
 
-    write-line -line "CMD=`"$($step.type) $($step.action) $($step.name)$($step.service) $($step.databaseType) $($step.server)`" " -tab 2
+    #write-line -line "CMD=`"$($step.type) $($step.action) $($step.name)$($step.service) $($step.databaseType) $($step.server)`" " -tab 2
 
-    
-    write-line -line "CMD_WIN=`"powershell ./$($step.type).ps1 $($step.action) $($step.name)$($step.service) $($step.databaseType) $($step.server)`" " -tab 2
+    $commande = Create-Command -step $step
+    write-host $commande
+
+    write-line -line "CMD_WIN=`"$commande`" " -tab 2
 
     write-line -line "echo" -tab 2
     write-line -line "echo `"DEBUT : `$`(date +`'%d/%m/%Y %H:%M:%S`'`)`"" -tab 2
@@ -334,10 +338,10 @@ function create-windowsStep($step) {
 
         write-line -line "echo `$res > `$FIC_TMP" -tab 2
         write-line -line "if grep -c `"`$RES_ATTENDU`" `$FIC_TMP > /dev/null; then" -tab 2
-        write-line -line "echo `"Serveur `"`$SRV`" - [`"`$TYPE_ACTION`":`"`$APPLI`":`"`$ETAPE`"/`"`$NB_ETAPE`"]  / OK `(RES`(`"`$res`"`)` / RES_ATTENDU`(`"`$RES_ATTENDU`"`)`)`"" -tab 3
+        write-line -line    "echo `"Serveur `"`$SRV`" - [`"`$TYPE_ACTION`":`"`$APPLI`":`"`$ETAPE`"/`"`$NB_ETAPE`"]  / OK `(RES`(`"`$res`"`)` / RES_ATTENDU`(`"`$RES_ATTENDU`"`)`)`"" -tab 3
         write-line -line "else" -tab 2
-        write-line -line "echo `"Serveur `"`$SRV`" - [`"`$TYPE_ACTION`":`"`$APPLI`":`"`$ETAPE`"/`"`$NB_ETAPE`"]  / ERREUR `"`$NUM_ERR`" : RESULTAT `(`"`$res`"`) DIFFERENT DU RESULTAT ATTENDU `(`"`$RES_ATTENDU`"`)`"" -tab 3
-        write-line -line "exit `$NUM_ERR" -tab 3
+        write-line -line    "echo `"Serveur `"`$SRV`" - [`"`$TYPE_ACTION`":`"`$APPLI`":`"`$ETAPE`"/`"`$NB_ETAPE`"]  / ERREUR `"`$NUM_ERR`" : RESULTAT `(`"`$res`"`) DIFFERENT DU RESULTAT ATTENDU `(`"`$RES_ATTENDU`"`)`"" -tab 3
+        write-line -line    "exit `$NUM_ERR" -tab 3
         write-line -line "fi" -tab 2
     
 
@@ -370,10 +374,10 @@ function create-linuxStep($step) {
 
         write-line -line "echo `$res > `$FIC_TMP" -tab 2
         write-line -line "if grep -c `"`$RES_ATTENDU`" `$FIC_TMP > /dev/null; then" -tab 2
-        write-line -line "echo `"Serveur `"`$SRV`" - [`"`$TYPE_ACTION`":`"`$APPLI`":`"`$ETAPE`"/`"`$NB_ETAPE`"]  / OK `(RES`(`"`$res`"`)` / RES_ATTENDU`(`"`$RES_ATTENDU`"`)`)`"" -tab 3
+        write-line -line    "echo `"Serveur `"`$SRV`" - [`"`$TYPE_ACTION`":`"`$APPLI`":`"`$ETAPE`"/`"`$NB_ETAPE`"]  / OK `(RES`(`"`$res`"`)` / RES_ATTENDU`(`"`$RES_ATTENDU`"`)`)`"" -tab 3
         write-line -line "else" -tab 2
-        write-line -line "echo `"Serveur `"`$SRV`" - [`"`$TYPE_ACTION`":`"`$APPLI`":`"`$ETAPE`"/`"`$NB_ETAPE`"]  / ERREUR `"`$NUM_ERR`" : RESULTAT `(`"`$res`"`) DIFFERENT DU RESULTAT ATTENDU `(`"`$RES_ATTENDU`"`)`"" -tab 3
-        write-line -line "exit `$NUM_ERR" -tab 3
+        write-line -line    "echo `"Serveur `"`$SRV`" - [`"`$TYPE_ACTION`":`"`$APPLI`":`"`$ETAPE`"/`"`$NB_ETAPE`"]  / ERREUR `"`$NUM_ERR`" : RESULTAT `(`"`$res`"`) DIFFERENT DU RESULTAT ATTENDU `(`"`$RES_ATTENDU`"`)`"" -tab 3
+        write-line -line    "exit `$NUM_ERR" -tab 3
         write-line -line "fi" -tab 2
     
 
@@ -385,6 +389,39 @@ function create-linuxStep($step) {
     }
 }
 
+# Créer une ligne de commande
+function Create-Command ($step) {
+
+    switch ($($step.type)) {
+        "service" { 
+            return "powershell ./$($step.type).ps1 $($step.action) $($step.name) $($step.server)"
+        }
+        "process" { 
+            return "powershell ./$($step.type).ps1 $($step.action) $($step.name) $($step.server)"
+        }
+        "database" { 
+            return "powershell ./$($step.type).ps1 $($step.action) $($step.name) $($step.databaseType) $($step.server)"
+        }
+        "script" { 
+            return "powershell ./invoke.ps1 $($step.path) $($step.server)"
+        }
+        "log" { 
+            return "powershell ./checkLog.ps1 $($step.name) $($step.path) $($step.server)"
+        }
+        "disk" { 
+            return "powershell ./checkDisk.ps1 $($step.disks) $($step.server)"
+        }
+        "IIS" { 
+            return "powershell ./Pool_iis.ps1 $($step.action) $($step.name) $($step.elementType) $($step.server)"
+        }
+        "rename" { 
+            return "powershell ./$($step.type).ps1 $($step.path) $($step.name) $($step.server)"
+        }
+        Default {
+            return "powershell write-host Commande par défaut"
+        }
+    }
+}
 #
 ####### Créer les étapes d'Arrêt
 #

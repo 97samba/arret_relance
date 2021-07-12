@@ -1,7 +1,7 @@
 //Les routes pour les fonctions qui executent du code windows
 const router = require('express').Router()
 const { exec } = require('child_process');
-const { stderr } = require('process');
+const { stderr, stdout, stdin } = require('process');
 
 
 //ping from react
@@ -62,12 +62,12 @@ router.get('/PARPRE/testPath', (req, res) => {
     $remotePath = "\\\\" + req.query.server + "\\" + req.query.path.replace(":", "$")
 
     exec(`
-    $result = test-path '${$remotePath}'; 
-    if($result -and (test-path '${$remotePath}' -PathType container)){
-        write-host dossier
-        exit
-    }
-    return $result
+        $result = test-path '${$remotePath}'; 
+        if($result -and (test-path '${$remotePath}' -PathType container)){
+            write-host dossier
+            exit
+        }
+        return $result
     `
     ,{ 'shell': 'powershell.exe' },(error, stdout, stderr) => {
 
@@ -80,6 +80,20 @@ router.get('/PARPRE/testPath', (req, res) => {
 
     })
 
+})
+
+router.get('/PARPRE/testDisk',(req,res) =>{
+    
+    console.log('testing disk ',req.query.server)
+
+    //exec(`./../Powershell/scripts/testDisk.ps1 ${req.query.server}`,{shell:'powershell.exe'},(error,stdout,stderr) =>{
+    exec(`(get-psdrive -PSProvider FileSystem ).name -join ","`,{shell:'powershell.exe'},(error,stdout,stderr) =>{
+        
+        console.log('out ',stdout.trim())
+
+        stderr && console.log('Erreur ',stderr)
+        res.send({disks:stdout.replace(/(\r\n|\n|\r)/gm, "").split(",")})
+    })
 })
 
 module.exports = router

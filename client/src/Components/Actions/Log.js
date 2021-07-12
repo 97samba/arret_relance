@@ -1,7 +1,7 @@
-import { Avatar, Box, Grid, Paper, TextField, Typography } from "@material-ui/core"
+import { Avatar, Box, FormControl, Grid, InputLabel, MenuItem, Paper, Select, TextField, Typography } from "@material-ui/core"
 import { makeStyles } from '@material-ui/core'
-import { Code } from "@material-ui/icons"
-import { useContext, useEffect, useState } from "react"
+import { Autorenew, Search } from "@material-ui/icons"
+import { useContext, useState, useEffect } from "react"
 import ActionContext from "../../Context/ActionContext"
 import OptionMenu from "../Creation/OptionMenu"
 import OptionDialog from "../Creation/OptionDialog"
@@ -16,24 +16,20 @@ const useStyles = makeStyles((theme) => ({
 
     },
     fields: {
-        //marginRight:theme.spacing(2),
         width: "100%"
+
     },
     smallAvatar: {
         width: theme.spacing(2.5),
         height: theme.spacing(2.5)
     }
 }))
-
-const Command = ({ index, initialSTate }) => {
-    //css
+const Log = ({ index, type, initialSTate }) => {
     const classes = useStyles()
-
-    const [state, setState] = useState({ initialSTate })
-    //l'état du server
-    const [pingState, setPingState] = useState("ko")
+    const [state, setState] = useState(initialSTate)
     const [openDialog, setOpenDialog] = useState(false)
     const [serverError, setServerError] = useState(false)
+    const [scriptError, setScriptError] = useState('false')
 
 
     const [options, setOptions] = useState({
@@ -53,33 +49,20 @@ const Command = ({ index, initialSTate }) => {
     }, []
     )
 
-
-    //context pour sauvegarder l'état dans le parent
-    const { deleteAction, duplicateAction, saveData } = useContext(ActionContext)
+    const { deleteAction, duplicateAction, saveData, AddServer } = useContext(ActionContext)
 
     const saveInformations = () => {
-
-        if (state.server === undefined || state.name === undefined) { return }
+        if (state.name === undefined || state.server === undefined) { return }
 
         saveData(
             {
-                index: index,
-                type: "command",
-                server: state.server,
-                name: state.name,
-                login: state.login,
-                result: state.result,
-                options: options,
-                //os: state.server.toUpperCase().startsWith("SW") ? "windows" : "linux"
+                index: index, type: "log", server: state.server, name: state.name, path: state.path, options: options,
+
+                //os: "windows"
 
             }
         )
     }
-
-
-
-
-
     return (
         <div>
             <Paper
@@ -87,87 +70,79 @@ const Command = ({ index, initialSTate }) => {
                 className={classes.root}>
                 <Grid
                     container
-                    spacing={2}
                     alignItems="center"
+                    spacing={2}
                 >
-                    <Grid item md={1} xl={1} >
+
+                    <Grid item md={1} xl={1}  >
                         <Box display="flex" justifyContent="center">
-                            <Code color="primary" />
+                            <Search color="primary" />
                         </Box>
 
-
                     </Grid>
-                    <Grid item md={2} xl={2}>
+                    <Grid item xs={2} sm={2} md={2} xl={2}>
                         <TextField
-                            className={classes.fields}
-                            value={state.server}
-                            id={`server- ${index}`}
-                            color='primary'
-                            label='Serveur'
-                            error={serverError}
                             onChange={(e) => setState({ ...state, server: e.target.value })}
-                            onBlur={(e) =>{
+                            onBlur={(e) => {
                                 saveInformations()
-                                checker.ping(e.target.value,setServerError)
-                                
-                            }}
-                            inputProps={{
-                                style: {
-                                    fontSize:
-                                        state.server && state.server.split("").length > 20 && state.server.split("").length < 65 ? 13 :
-                                            state.server && state.server.split("").length > 65 ? 13 : "1rem"
-                                }
-                            }}
-                        />
+                                checker.ping(e.target.value, setServerError)
+                            }
+                            }
+                            value={state.server}
+
+                            className={classes.fields}
+                            id='server'
+                            color='primary'
+                            error={serverError}
+                            label='Serveur' />
                     </Grid>
-                    <Grid item md={2} xl={2}>
+                    <Grid item xs={4} sm={4} md={4} xl={4}>
                         <TextField
                             className={classes.fields}
-                            value={state.login}
-                            id={`login- ${index}`}
-                            color='primary'
-                            label='Login'
-                            onChange={(e) => setState({ ...state, login: e.target.value })}
-                            onBlur={saveInformations}
-                            inputProps={{
-                                style: { fontSize: state.login && state.login.split("").length > 60 ? 14 : "1rem" }
-                            }}
-                        />
-                    </Grid>
-                    <Grid item md={5} xl={4}>
-                        <TextField
+                            id='log'
                             value={state.name}
-                            className={classes.fields}
-                            id={`command- ${index}`}
                             color='primary'
-                            label='Commande'
+                            label='Log'
                             onChange={(e) => setState({ ...state, name: e.target.value })}
                             onBlur={saveInformations}
-                            error={state.name === ""}
                             inputProps={{
                                 style: {
                                     fontSize:
-                                        state.name && state.name.split("").length > 40 && state.name.split("").length < 65 ? 14 :
-                                            state.name && state.name.split("").length > 65 ? 13 : "1rem"
+                                        state.name && state.name.split("").length > 35 && state.name.split("").length < 50 ? 13 :
+                                            state.name && state.name.split("").length > 50 ? 12 : "1rem"
                                 }
                             }}
 
                         />
                     </Grid>
-                    <Grid item md={1} xl={2}>
+                    <Grid item xs={4} sm={4} md={4} xl={4}>
                         <TextField
+                            onChange={(e) => setState({ ...state, path: e.target.value })}
+                            onBlur={(e) => {
+                                saveInformations()
+                                checker.testPath(e.target.value, state.server, setScriptError)
+                            }
+                            }
+                            value={state.path}
                             className={classes.fields}
-                            value={state.result}
-                            id={`result- ${index}`}
+                            id='Path'
                             color='primary'
-                            label='Résultat'
-                            onChange={(e) => setState({ ...state, result: e.target.value })}
-                            onBlur={saveInformations}
+                            label={scriptError === "true" ? 'Fichier non retrouvé sur le serveur' : scriptError === "dossier" ? 'Dossier ? ' : 'Path'}
+                            error={state.path === "" || scriptError === "true" || scriptError === "dossier"}
+
+                            inputProps={{
+                                style: {
+                                    fontSize:
+                                        state.path && state.path.split("").length > 35 && state.path.split("").length < 50 ? 13 :
+                                            state.path && state.path.split("").length > 50 ? 12 : "1rem"
+                                }
+                            }}
 
                         />
                     </Grid>
-                    <Grid item md={1} xl={1}  >
-                        <Grid container spacing={2} alignItems="center" >
+
+                    <Grid item xs={1} sm={1} md={1} xl={1}>
+                        <Grid container spacing={3} alignItems="center" >
                             <Grid item md={6} >
                                 <OptionMenu
                                     index={index}
@@ -182,6 +157,7 @@ const Command = ({ index, initialSTate }) => {
                                     openDialog={openDialog}
                                     setOpenDialog={setOpenDialog}
                                 />
+
                             </Grid>
 
                             <Grid item md={6}>
@@ -195,7 +171,6 @@ const Command = ({ index, initialSTate }) => {
 
                                 </Box>
                             </Grid>
-
                         </Grid>
                     </Grid>
                 </Grid>
@@ -204,4 +179,4 @@ const Command = ({ index, initialSTate }) => {
     );
 }
 
-export default Command;
+export default Log;

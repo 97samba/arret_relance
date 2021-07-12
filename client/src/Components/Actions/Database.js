@@ -110,7 +110,7 @@ const Database = ({ index, type, initialSTate }) => {
                 databaseType: databaseType,
                 options: options,
 
-                os: state.server.toUpperCase().startsWith("SW") ? "windows" : "linux"
+                //os: state.server.toUpperCase().startsWith("SW") ? "windows" : "linux"
 
             }
         )

@@ -54,7 +54,7 @@ const ARScript = ({ index, initialSTate }) => {
             {
                 index: index, type: "script", server: state.server, path: state.path, options: options,
 
-                os: state.server.toUpperCase().startsWith("SW") ? "windows" : "linux"
+                //os: state.server.toUpperCase().startsWith("SW") ? "windows" : "linux"
 
             }
         )

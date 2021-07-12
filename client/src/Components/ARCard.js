@@ -1,5 +1,5 @@
 import { Button, Container, makeStyles, Card, CardHeader, CardContent } from '@material-ui/core'
-import { Autorenew, Code, Description, Http, KeyboardArrowRight, SettingsSharp, Storage, Web } from '@material-ui/icons';
+import { Autorenew, Code, Description, Http, KeyboardArrowRight, Save, Search, SettingsSharp, Storage, Web, AccountTree, WrapText } from '@material-ui/icons';
 import Service from './Actions/Service';
 import Database from './Actions/Database';
 import Process from './Actions/Process';
@@ -11,6 +11,10 @@ import ActionContext from '../Context/ActionContext';
 import Link from './Actions/Link'
 import WebAction from './Actions/WebAction';
 import Command from './Actions/Command';
+import Log from './Actions/Log';
+import PoolIIS from './Actions/IIS';
+import Rename from './Actions/Rename';
+import Disk from './Actions/Disk';
 
 const cardWidth = 850
 const useStyles = makeStyles(theme => ({
@@ -144,30 +148,32 @@ const ARCard = ({ name, actions, SetActions, autoRelance, type, AddServer, gener
 
 
     const iconsAction = [
-        { icon: <Http />, name: 'Url', action: () => addAction("link") },
+        { icon: <Http />, name: 'Vérifier un Url', action: () => addAction("link") },
         { icon: <Web />, name: 'Action Web', action: () => addAction("webAction") },
         { icon: <SettingsSharp />, name: 'Service', action: () => addAction("service") },
         { icon: <Autorenew />, name: 'Processus', action: () => addAction("process") },
         { icon: <Description />, name: 'Script', action: () => addAction("script") },
         { icon: <Storage />, name: 'Base de données', action: () => addAction("database") },
-        { icon: <Code />, name: 'Commande', action: () => addAction("command") }
+        { icon: <Code />, name: 'Commande', action: () => addAction("command") },
+        { icon: <Search />, name: 'Rechercher un Log', action: () => addAction("log") },
+        { icon: <Save />, name: 'Vérifier Disque(s)', action: () => addAction("disk") },
+        { icon: <AccountTree />, name: 'Pool IIS', action: () => addAction("IIS") },
+        { icon: <WrapText />, name: 'Renommer un fichier', action: () => addAction("rename") }
     ]
-    //{icon : <Save />, name: 'Disque', action: () => addAction("disk")},
-    //{icon : <AccountTree />, name: 'Disque', action: () => addAction("Pool")}
     return (
         <Container>
             <Card className={classes.root}>
                 <CardHeader
                     title={name}
-                    subheader="hybride"
+                    subheader="Windows"
                     action={
                         <SpeedDial
                             ariaLabel="SpeedDial"
-                            icon={<SpeedDialIcon />}
+                            icon={<SpeedDialIcon onClick={() => setOpen(!open)} />}
                             open={open}
                             direction='left'
-                            onOpen={() => setOpen(true)}
-                            onMouseLeave={() => setOpen(false)}
+                            onMouseEnter={() => setOpen(true)}
+
                         >
                             {iconsAction.map((action) => (
                                 <SpeedDialAction
@@ -187,7 +193,7 @@ const ARCard = ({ name, actions, SetActions, autoRelance, type, AddServer, gener
                     <ActionContext.Provider value={{ actions, deleteAction, duplicateAction, saveData, testPing, AddServer }}>
                         <form noValidate autoComplete='on'>
                             {actions.map((item, index) => (
-                                (
+                                (                                    
                                     item.type === "service" ? <Service key={item.index} index={item.index} type={type} initialSTate={item} /> :
                                         item.type === "script" ? <ARScript key={item.index} index={item.index} initialSTate={item} /> :
                                             item.type === "database" ? <Database key={item.index} index={item.index} type={type} initialSTate={item} /> :
@@ -195,8 +201,11 @@ const ARCard = ({ name, actions, SetActions, autoRelance, type, AddServer, gener
                                                     item.type === "link" ? <Link key={item.index} index={item.index} initialSTate={item} /> :
                                                         item.type === "webAction" ? <WebAction key={item.index} index={item.index} initialSTate={item} /> :
                                                             item.type === "command" ? <Command key={item.index} index={item.index} initialSTate={item} /> :
-                                                                item.type === "disk" ? <Service key={item.index} index={item.index} type={type} initialSTate={item} /> :
-                                                                    null
+                                                                item.type === "log" ? <Log key={item.index} index={item.index} type={type} initialSTate={item} /> :
+                                                                    item.type === "IIS" ? <PoolIIS key={item.index} index={item.index} type={type} initialSTate={item} /> :
+                                                                        item.type === "rename" ? <Rename key={item.index} index={item.index} type={type} initialSTate={item} /> :
+                                                                            item.type === "disk" ? <Disk key={item.index} index={item.index} type={type} initialSTate={item} /> :
+                                                                                null
                                 )
                             ))}
                             <Button
@@ -208,13 +217,7 @@ const ARCard = ({ name, actions, SetActions, autoRelance, type, AddServer, gener
                                 endIcon={<KeyboardArrowRight />}>
                                 Save
                             </Button>
-                            <Button
-                                color="primary"
-                                variant="contained"
-                                style={{marginLeft:"10px"}}
-                            >
-                               Générer un Excel 
-                            </Button>
+                           
                         </form>
                     </ActionContext.Provider>
                 </CardContent>

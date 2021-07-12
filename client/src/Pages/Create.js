@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import ARCard from "../Components/ARCard"
 import RightNav from "../Components/Creation/RightNav";
 import { useHistory } from 'react-router'
+import checker from "../Components/Checker";
 
 var drawerWidthRight = 260
 
@@ -22,6 +23,7 @@ const Create = () => {
     const [titleOpen, setTitleOpen] = useState(false)
     //titre de la parpre ou de la POS
     const [title, setTitle] = useState("APPXXXX_SSA")
+    const [titleError, setTitleError] = useState(false)
     //les actions d'arrêt
     const [StopActions, setStopActions] = useState([])
     //les Actions de relance
@@ -213,6 +215,13 @@ const Create = () => {
         console.log(JSON.stringify(parpre))
     }
 
+    const handleTitle = (title) =>{
+        console.log("Changing title to ",title)
+        pageMode === "Création" 
+        ? checker.testTitle(title,setTitleError,setTitleOpen)
+        : setTitleOpen(false)
+    }
+
     return (
 
 
@@ -224,11 +233,15 @@ const Create = () => {
                             (
                                 <TextField
                                     placeholder="Changer le titre"
-                                    onBlur={() => setTitleOpen(false)}
+                                    onBlur={(e) => handleTitle(e.target.value)}
                                     margin="dense"
                                     onChange={(e) => setTitle(e.target.value)}
                                     autoFocus
                                     value={title}
+                                    error={titleError}
+                                    label={titleError ? "Ce document existe déja":"Titre du document"}
+                                    style={{width:"60%",margin:"10px"}}
+
                                 />
                             )
                             :

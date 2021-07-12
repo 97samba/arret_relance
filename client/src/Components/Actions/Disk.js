@@ -1,6 +1,6 @@
-import { Avatar, Box, FormControl, Grid,  InputLabel,  MenuItem, Paper, Select, TextField, Typography } from "@material-ui/core"
+import { Avatar, Box, Chip, FormControl, Grid, InputLabel, MenuItem, Paper, Select, TextField, Typography, Button, Menu } from "@material-ui/core"
 import { makeStyles } from '@material-ui/core'
-import { Autorenew } from "@material-ui/icons"
+import { Autorenew, Save, Search } from "@material-ui/icons"
 import { useContext, useState, useEffect } from "react"
 import ActionContext from "../../Context/ActionContext"
 import OptionMenu from "../Creation/OptionMenu"
@@ -24,12 +24,16 @@ const useStyles = makeStyles((theme) => ({
         height: theme.spacing(2.5)
     }
 }))
-const Process = ({ index, type, initialSTate }) => {
+const Disk = ({ index, type, initialSTate }) => {
     const classes = useStyles()
-    const [state, setState] = useState(initialSTate)
-    const [status, setStatus] = useState(initialSTate.action)
+    const [state, setState] = useState({ initialSTate })
     const [openDialog, setOpenDialog] = useState(false)
     const [serverError, setServerError] = useState(false)
+    const [diskError, setDiskError] = useState(false)
+    const [diskMenuAnchor, setDiskMenuAnchor] = useState(null)
+    const [diskSelection, setDiskSelection] = useState([])
+    const openDiskMenu = Boolean(diskMenuAnchor)
+
 
 
     const [options, setOptions] = useState({
@@ -41,28 +45,46 @@ const Process = ({ index, type, initialSTate }) => {
 
     })
 
+
     useEffect(() => {
         setState(initialSTate)
         setOptions(initialSTate.options)
 
-        setStatus(initialSTate.action)
-        
-    },[]
+    }, []
     )
 
-    const { deleteAction, duplicateAction, saveData, AddServer } = useContext(ActionContext)
+    const { deleteAction, duplicateAction, saveData } = useContext(ActionContext)
 
     const saveInformations = () => {
-        if (state.name === undefined || state.server === undefined) { return }
-
+        if (state.server === undefined) { return }
+        console.log("Saving Informations ", state.disks)
         saveData(
             {
-                index: index, type: "process", server: state.server, name: state.name, action: status, options: options,
-
+                index: index,
+                type: "disk",
+                server: state.server,
+                disks: state.disks,
+                options: options,
                 //os: "windows"
 
             }
         )
+    }
+
+    const handleClick = (e) => {
+
+        setDiskMenuAnchor(e.currentTarget)
+    }
+
+    const saveDisks = (e) => {
+
+        var notFound = e.target.value.split(" ").filter(element => !diskSelection.includes(element.toUpperCase()))
+        console.log("not found ", notFound.length)
+        notFound.length > 0
+            ? setDiskError(true)
+            : setDiskError(false)
+
+        saveInformations()
     }
     return (
         <div>
@@ -77,16 +99,19 @@ const Process = ({ index, type, initialSTate }) => {
 
                     <Grid item md={1} xl={1}  >
                         <Box display="flex" justifyContent="center">
-                            <Autorenew color="primary" />
+                            <Save color="primary" />
                         </Box>
 
                     </Grid>
                     <Grid item xs={2} sm={2} md={2} xl={2}>
                         <TextField
                             onChange={(e) => setState({ ...state, server: e.target.value })}
-                            onBlur={(e)=>{
+                            onBlur={(e) => {
                                 saveInformations()
-                                checker.ping(e.target.value,setServerError)
+                                if (e.target.value) {
+                                    checker.ping(e.target.value, setServerError)
+                                    checker.testDisk(e.target.value, setDiskSelection)
+                                }
                             }
                             }
                             value={state.server}
@@ -97,25 +122,56 @@ const Process = ({ index, type, initialSTate }) => {
                             error={serverError}
                             label='Serveur' />
                     </Grid>
-                    <Grid item xs={2} sm={2} md={2} xl={2}>
-                        <FormControl className={classes.fields}>
-                            <InputLabel>Action</InputLabel>
-                            <Select value={status} onChange={(e) => setStatus(e.target.value)} onBlur={saveInformations} >
-                                <MenuItem value="stop">Stop</MenuItem>
-                                <MenuItem value="start">Start</MenuItem>
-                                <MenuItem value="status" >Status</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                    <Grid item xs={6} sm={6} md={6} xl={6}>
-                        <TextField
-                            className={classes.fields}
-                            id='processus'
-                            value={state.name}
-                            color='primary'
-                            label='Processus'
-                            onChange={(e) => setState({ ...state, name: e.target.value })}
+                    <Grid item xs={3} sm={3} md={3} xl={3}>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            fullWidth
+                            onClick={handleClick}
+
+                        >
+                            Voir les disques ({diskSelection.length})
+                        </Button>
+                        <Menu
+                            id="diskMenu"
+                            open={openDiskMenu}
+                            anchorEl={diskMenuAnchor}
                             onBlur={saveInformations}
+                            style={{ minWidth: 200 }}
+                            onClose={() => setDiskMenuAnchor(null)}
+
+                        >
+                            {
+                                diskSelection.length
+                                    ? diskSelection.map((disk, index) => (
+                                        <MenuItem
+                                            key={index}
+                                            style={{ minWidth: 200 }}
+
+
+                                        >
+                                            {disk}
+                                        </MenuItem>
+                                    ))
+                                    : <MenuItem> Veuillez renseigner le serveur SVP</MenuItem>
+                            }
+
+                        </Menu>
+
+                    </Grid>
+
+                    <Grid item xs={5} sm={5} md={5} xl={5}>
+
+                        <TextField
+                            id="disksNames"
+                            label={diskError ? "Erreur sur les disques, vérifier SVP" : "Disques à verifier"}
+                            value={state.disks}
+                            error={diskError}
+                            color="primary"
+                            onChange={(e) => setState({ ...state, disks: e.target.value })}
+                            className={classes.fields}
+                            helperText="Lettres(s) uniquement, séparées par un espace ;)"
+                            onBlur={saveDisks}
 
                         />
                     </Grid>
@@ -158,4 +214,4 @@ const Process = ({ index, type, initialSTate }) => {
     );
 }
 
-export default Process;
+export default Disk;

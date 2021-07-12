@@ -56,6 +56,10 @@ const Service = ({ index, type, initialSTate }) => {
             setOptions(initialSTate.options)
         }
 
+        if(initialSTate.server){
+            checker.ping(initialSTate.server,setServerError)
+        }
+
     }, []
     )
 
@@ -74,7 +78,7 @@ const Service = ({ index, type, initialSTate }) => {
                 name: state.name,
                 action: status,
                 options: options,
-                os: "windows"
+                //os: "windows"
             }
         )
     }

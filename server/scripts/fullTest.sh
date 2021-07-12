@@ -5,21 +5,24 @@ LOCAL_DIR=/tmp
 LOG_DIR=/tmp
 TIME_OUT=600
 ################################ VARIABLES ################################
-APPLI=APPXXXX_SSA
+APPLI=fullTest
 case $TYPE_ENVIRONNEMENT in 
 		PROD)
-				LOCALHOST=LOCALHOST
 				INSTANCE=INSTANCE
+				LOCALHOST=LOCALHOST
+				SW11203=SW11203
 				REBOND_WIN=sw15298
 				;;
 		HPROD)
-				LOCALHOST=definir
 				INSTANCE=definir
+				LOCALHOST=definir
+				SW11203=definir
 				REBOND_WIN=sw15272
 				;;
 		HPROD2)
-				LOCALHOST=definir
 				INSTANCE=definir
+				LOCALHOST=definir
+				SW11203=definir
 				REBOND_WIN=sw15272
 				;;
 		*)
@@ -139,13 +142,12 @@ Relance_App()
 				ETAPE=Etape2
 				SRV=localhost
 				USER=
-				CMD="test" 
-				CMD="su - $USER -c $CMD " 
+				CMD_WIN="powershell ./Pool_iis.ps1 stop test pool localhost" 
 				echo
 				echo "DEBUT : $(date +'%d/%m/%Y %H:%M:%S')"
 				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
-				echo "Commande : "$CMD
-				res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q root@$SRV "$CMD")
+				echo "Commande : "$CMD_WIN
+				res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q adm-deploy@$REBOND_WIN "$CMD_WIN")
 				retval=$?
 				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
 				echo "FIN : $(date +'%d/%m/%Y %H:%M:%S')"
@@ -160,7 +162,7 @@ Relance_App()
 				ETAPE=Etape3
 				SRV=localhost
 				USER=
-				CMD_WIN="powershell ./checkDisk.ps1 C d localhost" 
+				CMD_WIN="powershell ./checkDisk.ps1 C D localhost" 
 				echo
 				echo "DEBUT : $(date +'%d/%m/%Y %H:%M:%S')"
 				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
@@ -200,13 +202,12 @@ Relance_App()
 				ETAPE=Etape5
 				SRV=localhost
 				USER=
-				CMD="instance" 
-				CMD="su - $USER -c $CMD " 
+				CMD_WIN="powershell ./database.ps1 status instance MSSQL localhost" 
 				echo
 				echo "DEBUT : $(date +'%d/%m/%Y %H:%M:%S')"
 				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
-				echo "Commande : "$CMD
-				res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q root@$SRV "$CMD")
+				echo "Commande : "$CMD_WIN
+				res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q adm-deploy@$REBOND_WIN "$CMD_WIN")
 				retval=$?
 				echo $res > $FIC_TMP
 				if grep -c "$RES_ATTENDU" $FIC_TMP > /dev/null; then
@@ -226,13 +227,12 @@ Relance_App()
 				ETAPE=Etape6
 				SRV=localhost
 				USER=
-				CMD="" 
-				CMD="su - $USER -c $CMD " 
+				CMD_WIN="powershell ./invoke.ps1 c:\temp\docker\windows\dockerfile localhost" 
 				echo
 				echo "DEBUT : $(date +'%d/%m/%Y %H:%M:%S')"
 				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
-				echo "Commande : "$CMD
-				res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q root@$SRV "$CMD")
+				echo "Commande : "$CMD_WIN
+				res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q adm-deploy@$REBOND_WIN "$CMD_WIN")
 				retval=$?
 				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
 				echo "FIN : $(date +'%d/%m/%Y %H:%M:%S')"
@@ -302,9 +302,9 @@ Arret_App()
 		if [[ ${ENVS[@]} =~ $TYPE_ENVIRONNEMENT ]] 
 		then
 				ETAPE=Etape1
-				SRV=localhost
+				SRV=sw11203
 				USER=
-				CMD_WIN="powershell ./service.ps1 stop bits localhost" 
+				CMD_WIN="powershell ./service.ps1 stop bits sw11203" 
 				echo
 				echo "DEBUT : $(date +'%d/%m/%Y %H:%M:%S')"
 				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
@@ -344,13 +344,12 @@ Arret_App()
 				ETAPE=Etape3
 				SRV=localhost
 				USER=
-				CMD="" 
-				CMD="su - $USER -c $CMD " 
+				CMD_WIN="powershell ./invoke.ps1 c:\temp\docker\windows\dockerfile localhost" 
 				echo
 				echo "DEBUT : $(date +'%d/%m/%Y %H:%M:%S')"
 				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
-				echo "Commande : "$CMD
-				res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q root@$SRV "$CMD")
+				echo "Commande : "$CMD_WIN
+				res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q adm-deploy@$REBOND_WIN "$CMD_WIN")
 				retval=$?
 				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
 				echo "FIN : $(date +'%d/%m/%Y %H:%M:%S')"
@@ -365,13 +364,12 @@ Arret_App()
 				ETAPE=Etape4
 				SRV=localhost
 				USER=
-				CMD="instance" 
-				CMD="su - $USER -c $CMD " 
+				CMD_WIN="powershell ./database.ps1 stop instance MSSQL localhost" 
 				echo
 				echo "DEBUT : $(date +'%d/%m/%Y %H:%M:%S')"
 				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
-				echo "Commande : "$CMD
-				res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q root@$SRV "$CMD")
+				echo "Commande : "$CMD_WIN
+				res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q adm-deploy@$REBOND_WIN "$CMD_WIN")
 				retval=$?
 				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
 				echo "FIN : $(date +'%d/%m/%Y %H:%M:%S')"
@@ -406,7 +404,7 @@ Arret_App()
 				ETAPE=Etape3
 				SRV=localhost
 				USER=
-				CMD_WIN="powershell ./checkDisk.ps1 C d localhost" 
+				CMD_WIN="powershell ./checkDisk.ps1 C D localhost" 
 				echo
 				echo "DEBUT : $(date +'%d/%m/%Y %H:%M:%S')"
 				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
@@ -426,13 +424,12 @@ Arret_App()
 				ETAPE=Etape2
 				SRV=localhost
 				USER=
-				CMD="test" 
-				CMD="su - $USER -c $CMD " 
+				CMD_WIN="powershell ./Pool_iis.ps1 stop test pool localhost" 
 				echo
 				echo "DEBUT : $(date +'%d/%m/%Y %H:%M:%S')"
 				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
-				echo "Commande : "$CMD
-				res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q root@$SRV "$CMD")
+				echo "Commande : "$CMD_WIN
+				res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q adm-deploy@$REBOND_WIN "$CMD_WIN")
 				retval=$?
 				echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
 				echo "FIN : $(date +'%d/%m/%Y %H:%M:%S')"
@@ -467,8 +464,8 @@ Tests_App()
 		echo
 		SRV="localhost"
 		USER=
-		CMD="database status instance Oracle localhost" 
-		CMD_WIN="powershell ./database.ps1 status instance Oracle localhost" 
+		CMD="database status instance MSSQL localhost" 
+		CMD_WIN="powershell ./database.ps1 status instance MSSQL localhost" 
 		SSA : "$APPLI"
 		Serveur : "$SRV"
 		Commande : "$CMD_WIN"
