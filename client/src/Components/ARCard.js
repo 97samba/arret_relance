@@ -141,6 +141,7 @@ const ARCard = ({ name, actions, SetActions, autoRelance, type, AddServer, gener
             ]
             SetActions(newState)
         }
+        
 
     }
 
