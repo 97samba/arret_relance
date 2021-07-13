@@ -219,7 +219,7 @@ const Create = () => {
         console.log("Changing title to ",title)
         pageMode === "Création" 
         ? checker.testTitle(title,setTitleError,setTitleOpen)
-        : setTitleOpen(false)
+        : history.location.state.name !== title ? checker.testTitle(title,setTitleError,setTitleOpen) : setTitleOpen(false)
     }
 
     return (

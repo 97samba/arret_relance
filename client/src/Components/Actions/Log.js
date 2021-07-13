@@ -44,7 +44,9 @@ const Log = ({ index, type, initialSTate }) => {
     useEffect(() => {
         setState(initialSTate)
         setOptions(initialSTate.options)
-
+        if(initialSTate.server){
+            checker.ping(initialSTate.server,setServerError)
+        }
 
     }, []
     )

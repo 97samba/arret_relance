@@ -41,9 +41,12 @@ const ARScript = ({ index, initialSTate }) => {
 
     })
 
-    useEffect(() => {
+    useEffect(async () => {
         setState(initialSTate)
         setOptions(initialSTate.options)
+        if(initialSTate.server){
+            checker.ping(initialSTate.server,setServerError)
+        }
 
 
     }, []
@@ -89,11 +92,12 @@ const ARScript = ({ index, initialSTate }) => {
                             onBlur={(e) => {
                                 saveInformations()
                                 checker.ping(e.target.value,setServerError)
+                                //serverError === false && checker.testPath(e.target.value,state.server,setScriptError)
                             }}
                             className={classes.fields}
                             id='server'
                             color='primary'
-                            label='Serveur'
+                            label={serverError ? "Injoignable" : 'Serveur'}
                             error={serverError}
 
                         />
@@ -105,14 +109,14 @@ const ARScript = ({ index, initialSTate }) => {
                             onChange={(e) => setState({ ...state, path: e.target.value })}
                             onBlur={(e) => {
                                 saveInformations()
-                                checker.testPath(e.target.value,state.server,setScriptError)
+                                serverError === false && checker.testPath(e.target.value,state.server,setScriptError)
                             }
                             }
                             value={state.path}
                             className={classes.fields}
                             id='Path'
                             color='primary'
-                            label={scriptError === "true" ? 'Script non retrouvé sur le serveur' : scriptError==="dossier" ? 'Dossier ? ': 'Path'}
+                            label={scriptError === "true" ? 'Script non retrouvé sur le serveur' : scriptError==="dossier" ? 'Dossier ? ' : serverError && state.path !==undefined ? "Ce chemin sera testé si serveur joignable" :'Path'}
                             error={state.path === "" || scriptError==="true" || scriptError === "dossier"}
 
 

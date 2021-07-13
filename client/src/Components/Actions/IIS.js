@@ -53,7 +53,9 @@ const PoolIIS = ({ index, type, initialSTate }) => {
             setStatus(initialSTate.action.toLowerCase())
             setOptions(initialSTate.options)
         }
-
+        if(initialSTate.server){
+            checker.ping(initialSTate.server,setServerError)
+        }
 
     }, []
     )

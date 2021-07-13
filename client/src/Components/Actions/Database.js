@@ -5,6 +5,7 @@ import { useContext, useState, useEffect } from "react"
 import ActionContext from "../../Context/ActionContext"
 import OptionMenu from "../Creation/OptionMenu"
 import OptionDialog from "../Creation/OptionDialog"
+import checker from "../Checker"
 
 
 const useStyles = makeStyles((theme) => ({
@@ -56,6 +57,10 @@ const Database = ({ index, type, initialSTate }) => {
         initialSTate.databaseType !== undefined
             ? setDatabaseType(initialSTate.databaseType.toUpperCase())
             : setDatabaseType("MSSQL")
+
+        if (initialSTate.server) {
+            checker.ping(initialSTate.server, setServerError)
+        }
 
     }, []
     )
@@ -182,7 +187,7 @@ const Database = ({ index, type, initialSTate }) => {
                             value={state.name}
                             id='DBName'
                             color='primary'
-                            label={databaseError ? 'Instance non retrouvée' : 'Instance'}
+                            label={databaseError ? 'Instance non retrouvée' : serverError && state.name !=="" ? "Instance non testée": 'Instance'}
                             error={databaseError}
                             onChange={(e) => setState({ ...state, name: e.target.value })}
                             onBlur={(e) => {

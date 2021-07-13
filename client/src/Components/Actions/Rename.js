@@ -45,7 +45,9 @@ const Rename = ({ index, type, initialSTate }) => {
         setState(initialSTate)
         setOptions(initialSTate.options)
 
-
+        if(initialSTate.server){
+            checker.ping(initialSTate.server,setServerError)
+        }
     }, []
     )
 

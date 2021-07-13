@@ -46,7 +46,9 @@ const Process = ({ index, type, initialSTate }) => {
         setOptions(initialSTate.options)
 
         setStatus(initialSTate.action)
-        
+        if(initialSTate.server){
+            checker.ping(initialSTate.server,setServerError)
+        }
     },[]
     )
 

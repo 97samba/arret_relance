@@ -6,6 +6,7 @@ import ActionContext from "../../Context/ActionContext"
 import OptionDialog from "../Creation/OptionDialog"
 import OptionMenu from "../Creation/OptionMenu"
 import checker from "../Checker"
+import ServerField from "../Fields/ServerField"
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -38,6 +39,7 @@ const Service = ({ index, type, initialSTate }) => {
 
     const [serviceError, setServiceError] = useState(false)
     const [serverError, setServerError] = useState(false)
+    const [server, setServer] = useState("")
 
     const [options, setOptions] = useState({
         block: true,
@@ -56,8 +58,11 @@ const Service = ({ index, type, initialSTate }) => {
             setOptions(initialSTate.options)
         }
 
-        if(initialSTate.server){
+        if (initialSTate.server) {
+            setServer(initialSTate.server)
             checker.ping(initialSTate.server,setServerError)
+            //checker.testService(initialSTate.service,initialSTate.server,setServiceError)
+            
         }
 
     }, []
@@ -69,12 +74,12 @@ const Service = ({ index, type, initialSTate }) => {
 
 
     const saveInformations = () => {
-        if (state.name === undefined || state.server === undefined) { return }
+        if (state.name === undefined || server === undefined) { return }
         saveData(
             {
                 index: index,
                 type: "service",
-                server: state.server,
+                server: server,
                 name: state.name,
                 action: status,
                 options: options,
@@ -102,20 +107,15 @@ const Service = ({ index, type, initialSTate }) => {
 
                     </Grid>
                     <Grid item md={2} xl={2}>
-                        <TextField
-                            className={classes.fields}
-                            value={state.server}
-                            id={`server- ${index}`}
-                            color='primary'
-                            error={serverError}
-                            label={serverError ? 'Injoignable' : 'Serveur'}
-                            onChange={(e) => setState({ ...state, server: e.target.value })}
-                            onBlur={(e) => {
-
-                                saveInformations()
-                                checker.ping(e.target.value, setServerError)
-                            }
-                            }
+                        <ServerField
+                            NameClass={classes.fields}
+                            saveInformations={saveInformations}
+                            server={server}
+                            setServer={setServer}
+                            index={index}
+                            serverError={serverError}
+                            setServerError={setServerError}
+                            initialServer={initialSTate.server}
                         />
                     </Grid>
                     <Grid item md={2} xl={2}>
@@ -138,12 +138,12 @@ const Service = ({ index, type, initialSTate }) => {
                             className={classes.fields}
                             id={`serviceName- ${index}`}
                             color='primary'
-                            label={serviceError ? 'Service non retrouvé sur ' + state.server : 'Service'}
+                            label={serviceError ? 'Service non retrouvé ' : serverError && state.name !=="" ? "Ce service sera testé si serveur joignable":'Service'}
                             error={serviceError}
                             onChange={(e) => setState({ ...state, name: e.target.value })}
                             onBlur={(e) => {
                                 saveInformations()
-                                checker.testService(e.target.value, state.server, setServiceError)
+                                !serverError && checker.testService(e.target.value, server, setServiceError)
                             }
                             }
                         //testService(e.target.value)
