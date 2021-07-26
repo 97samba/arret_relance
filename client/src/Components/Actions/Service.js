@@ -41,7 +41,7 @@ const Service = ({ index, type, initialSTate }) => {
     //létat du composant
     const [state, setState] = useState(initialSTate);
     //l'état du server
-    const [status, setStatus] = useState(initialSTate.action || type);
+    const [status, setStatus] = useState(type);
     //menu options
     const [openDialog, setOpenDialog] = useState(false);
 
@@ -60,10 +60,10 @@ const Service = ({ index, type, initialSTate }) => {
 
     useEffect(() => {
         setState(initialSTate);
-        // if (initialSTate.action) {
-        //     setStatus(initialSTate.action.toLowerCase());
-        //     setOptions(initialSTate.options);
-        // }
+        if (initialSTate.action) {
+            setStatus(initialSTate.action.toLowerCase());
+            setOptions(initialSTate.options);
+        }
     }, []);
 
     //verification du server et du service

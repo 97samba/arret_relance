@@ -59,8 +59,6 @@ function init($file) {
     
 }
 
-
-
 #
 ####### Créer les Variables
 #
@@ -114,7 +112,6 @@ function create-variable($Variables) {
     write-line -line '################################ FIN VARIABLES ################################'
     
 }
-
 
 #
 ####### Créer les fonctions de logs et report
@@ -215,7 +212,6 @@ function create-logAndReport() {
 
 }
 
-
 #
 ####### Créer les étapes de relance
 #
@@ -229,10 +225,12 @@ function create-relance($actions) {
     $num = $actions.count
     write-line -line "NB_ETAPE=$num" -tab 1
     write-line -line " "
+    write-line -line "let NUM_ERR=10 " -tab 1
+
     
     #Toutes les étapes
     $actions | ForEach-Object {
-
+        
         create-etape -step $_
     }    
     write-line -line "}"
@@ -250,6 +248,7 @@ function create-arret($actions) {
 
     write-line -line "NB_ETAPE=$($actions.count)" -tab 1
     write-line -line " "
+    write-line -line "let NUM_ERR=10 "
     
     #Toutes les étapes d'arrêt
     $actions | ForEach-Object {
@@ -271,8 +270,6 @@ function create-etape($step) {
     }
     if ($($step.options.hprod) -eq $true) {
         $envs += "HPROD"
-
-
     }
     if ($($step.options.inte) -eq $true) {
         $envs += "HPROD2"
@@ -295,6 +292,8 @@ function create-etape($step) {
     write-line -line "ETAPE=Etape$($step.index+1)" -tab 3
     
     write-line -line "SRV=`$$($step.server)" -tab 3
+
+    write-line -line "let NUM_ERR++ " -tab 3
     
     write-line -line "USER=$($step.user)" -tab 3
     
@@ -316,6 +315,8 @@ function create-etape($step) {
     write-line -line "fi" -tab 2
     write-line -line "" -tab 2
     write-line -line "done" -tab 1
+
+
 
 }
 
@@ -423,7 +424,7 @@ function Create-Command ($step) {
             return "powershell ./$($step.type).ps1 $($step.path) $($step.name) `$SRV"
         }
         Default {
-            return "powershell write-host Commande par défaut"
+            return "powershell write-host Commande non prise en compte"
         }
     }
 }
@@ -448,11 +449,11 @@ function create-tests($actions) {
         write-line -line "SRV=`$$($_.server)" -tab 1
         write-line -line "USER=" -tab 1
         write-line -line "CMD_WIN=`"$commande`" " -tab 1
-        write-line -line "SSA : `"`$APPLI`"" -tab 1
-        write-line -line "Serveur : `"`$SRV`"" -tab 1
-        write-line -line "Commande : `"`$CMD_WIN`"" -tab 1
+        write-line -line "echo SSA : `"`$APPLI`"" -tab 1
+        write-line -line "echo Serveur : `"`$SRV`"" -tab 1
+        write-line -line "echo Commande : `"`$CMD_WIN`"" -tab 1
         write-line -line "res=`$`(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q adm-deploy@`$REBOND_WIN `"`$CMD_WIN`"`)" -tab 1
-        write-line -line "Resultat : `"`$res`"" -tab 1
+        write-line -line "echo Resultat : `"`$res`"" -tab 1
         write-line -line "echo" -tab 1
         write-line -line ""
 
@@ -465,11 +466,11 @@ function create-tests($actions) {
         write-line -line "SRV=`$$($_.server)" -tab 1
         write-line -line "USER=" -tab 1
         write-line -line "CMD_WIN=`"$commande`" " -tab 1
-        write-line -line "SSA : `"`$APPLI`"" -tab 1
-        write-line -line "Serveur : `"`$SRV`"" -tab 1
-        write-line -line "Commande : `"`$CMD_WIN`"" -tab 1
+        write-line -line "echo SSA : `"`$APPLI`"" -tab 1
+        write-line -line "echo Serveur : `"`$SRV`"" -tab 1
+        write-line -line "echo Commande : `"`$CMD_WIN`"" -tab 1
         write-line -line "res=`$`(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q adm-deploy@`$REBOND_WIN `"`$CMD_WIN`"`)" -tab 1
-        write-line -line "Resultat : `"`$res`"" -tab 1
+        write-line -line "echo Resultat : `"`$res`"" -tab 1
         write-line -line "echo" -tab 1
         write-line -line ""
 
@@ -541,7 +542,7 @@ function main-process($file) {
 ############################### Main #############################
 verify-args -parameters $args.Count
 
-#On reupere le nom du fichier Json
+#On recupere le nom du fichier Json
 $PARPRE_NAME = (Split-Path $args[0] -Leaf)
 
 $PARPRE_NAME = [io.path]::GetFileNameWithoutExtension($PARPRE_NAME)

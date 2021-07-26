@@ -1,55 +1,31 @@
-#
-# Génére une POS
-#
+function write-line($line, $tab = 0) {
 
-#Variables
+    $symbole = ""
+    
+    if ($tab -gt 0) {
 
-$FILE_NAME = "Test"
-$json = Get-Content .\json\TestWebAction.json | ConvertFrom-Json
+        $symbole = "  "
 
-#Initialise, cr�ation du fichier et autre
-function INIT(){
-
-    if(! (Test-Path -Path $FILE_NAME)){
-
-        New-item -ItemType Directory -Name $FILE_NAME -Path "." | Out-Null
-        New-item -ItemType File -Name "$FILE_NAME.txt" -Path $FILE_NAME  | Out-Null
-
-    }else{
-
-        Write-Host ce dossier $FILE_NAME existe
-
+        for ($i = 0 ; $i -lt $tab ; $i++) {
+     
+            $symbole += $symbole
+        }
     }
- 
+    Add-Content -Value $symbole$line -Path $SCRIPT_DIRECTORY\$FILE_NAME
+}
+#Ajoute la fonction "executor" qui execute l'etape POS
+function AddFunctionExecutor($step){
 
+    write-line -line $step
+}
+
+#Ajoute la fonction "Decryptor" qui déchiffre le mot de passe
+function AddFunctionDecyptor(){
 
 }
 
-#Ecris une ligne pass�e en argument
-
-function WriteInFile($line){
-
-    Add-Content -Value $line -Path .\Test\Test.txt
-    
+function create-POSstep($step){
 
 }
 
-
-########################## Main ######################
-#INIT
-
-#writeInFile -line "tester une ligne"
-
-$json.name
-
-writeInFile -line "Arret_App(){"
-
-$json.Arret | ForEach-Object {
-    
-    $url = $_.url
-    writeInFile -line `$url=$url
-
-    $type = $_.type
-    writeInFile -line `$type=$type
-}
-writeInFile -line "}"
+########### MAIN ########

@@ -1,3 +1,4 @@
+import ENV from "../Env";
 //test si le service existe
 export const testService = async (service, server, setServiceError) => {
     if (server === null) {
@@ -5,27 +6,21 @@ export const testService = async (service, server, setServiceError) => {
     }
 
     console.log("Testing service : ", service, "server ", server);
-    fetch(
-        `http://localhost:5000/api/PARPRE/service?name=${service}&server=${server}`
-    )
+    fetch(`${ENV.SERVER_API_URI}/PARPRE/service?name=${service}&server=${server}`)
         .then((res) => res.json())
         .then((result) => {
             console.log("service state ", result);
-            result.state === ""
-                ? setServiceError(true)
-                : setServiceError(false);
+            result.state === "" ? setServiceError(true) : setServiceError(false);
         });
 };
 
 //Fait un ping
 export const testPing = async (server, setServerError) => {
-    fetch(`http://localhost:5000/api/PARPRE/ping?server=${server}`)
+    fetch(`${ENV.SERVER_API_URI}/PARPRE/ping?server=${server}`)
         .then((res) => res.json())
         .then((result) => {
             console.log("resultat ping ", result);
-            result.state === "True"
-                ? setServerError(false)
-                : setServerError(true);
+            result.state === "True" ? setServerError(false) : setServerError(true);
         });
 };
 
@@ -35,9 +30,7 @@ export const testPath = async (path, server, setScriptError) => {
     if (server === "") {
         return;
     }
-    fetch(
-        `http://localhost:5000/api/PARPRE/testPath?path=${path}&server=${server}`
-    )
+    fetch(`${ENV.SERVER_API_URI}/PARPRE/testPath?path=${path}&server=${server}`)
         .then((result) => result.json())
         .then((res) => {
             console.log(res.state);
@@ -51,17 +44,17 @@ export const testPath = async (path, server, setScriptError) => {
 };
 
 export const testDisk = async (server, setDiskSelection) => {
-    fetch(`http://localhost:5000/api/PARPRE/testDisk?server=${server}`)
+    fetch(`${ENV.SERVER_API_URI}/PARPRE/testDisk?server=${server}`)
         .then((result) => result.json())
         .then((res) => {
-            console.log("les disques ", res.disks);
+            //console.log("les disques ", res.disks);
             setDiskSelection(res.disks);
         });
 };
 
 // Vérifie si le titre saisi existe
 export const testTitle = async (title, setTitleError, setTitleOpen) => {
-    fetch(`http://localhost:5000/api/PARPRE/testTitle?title=${title}`)
+    fetch(`${ENV.SERVER_API_URI}/PARPRE/testTitle?title=${title}`)
         .then((res) => res.json())
         .then((result) => {
             console.log("Titre existe :", result);

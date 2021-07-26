@@ -39,6 +39,7 @@ const Link = ({ index, initialSTate }) => {
     const [state, setState] = useState({ initialSTate });
     const [urlState, setUrlState] = useState("UP");
     const [navigationMode, setnavigationMode] = useState("normal");
+    const [openDialog, setOpenDialog] = useState(false);
 
     useEffect(() => {
         setState(initialSTate);
@@ -46,10 +47,10 @@ const Link = ({ index, initialSTate }) => {
     }, []);
     const formatUrl = (url) => {
         if (url.startsWith("http") || url.length < 4) {
-            console.log("url est bonne");
+            //console.log("url est bonne");
             return url;
         } else {
-            console.log("error url");
+            //console.log("error url");
             return "http://" + url;
         }
     };
@@ -59,7 +60,7 @@ const Link = ({ index, initialSTate }) => {
         setState({ ...state, url: formatedUrl });
 
         if (e.target.value !== "") {
-            console.log("accessing ", formatedUrl);
+            // console.log("accessing ", formatedUrl);
 
             await fetch(`http://localhost:5000/api/PARPRE/link?url=${formatedUrl}`)
                 .then((res) => res.json())
@@ -72,8 +73,6 @@ const Link = ({ index, initialSTate }) => {
         if (state.url === undefined) {
             return;
         }
-        console.log("state before save : ", state);
-
         saveData({
             index: index,
             type: "link",
@@ -104,7 +103,7 @@ const Link = ({ index, initialSTate }) => {
                             label="Lien"
                             onChange={(e) => setState({ ...state, url: formatUrl(e.target.value) })}
                             onBlur={(e) => {
-                                testConnection(e);
+                                //testConnection(e);
                             }}
                         />
                     </Grid>
@@ -144,6 +143,7 @@ const Link = ({ index, initialSTate }) => {
                                     index={index}
                                     deleteAction={deleteAction}
                                     duplicateAction={duplicateAction}
+                                    setOpenDialog={setOpenDialog}
                                 />
                             </Grid>
 

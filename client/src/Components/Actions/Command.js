@@ -130,7 +130,7 @@ const Command = ({ index, initialSTate }) => {
                             }}
                         />
                     </Grid>
-                    <Grid item md={5} xl={4}>
+                    <Grid item md={5} xl={5}>
                         <TextField
                             value={state.name}
                             className={classes.fields}
@@ -154,7 +154,7 @@ const Command = ({ index, initialSTate }) => {
                             }}
                         />
                     </Grid>
-                    <Grid item md={1} xl={2}>
+                    <Grid item md={1} xl={1}>
                         <TextField
                             className={classes.fields}
                             value={state.result}

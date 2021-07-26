@@ -5,6 +5,9 @@ const exec = util.promisify(require("child_process").exec);
 const fs = require("fs");
 const mongoose = require("mongoose");
 const Parpre = require("../models/parpre");
+require("dotenv").config();
+
+const jenkinsARRepo = "/outil/jenkins/applicatifs/gitbranchrepo";
 
 /*
     database
@@ -12,7 +15,8 @@ const Parpre = require("../models/parpre");
 const { ObjectId } = require("bson");
 
 const DB_NAME = "AR";
-const url = `mongodb://127.0.0.1:27017/${DB_NAME}`;
+
+const url = `${process.env.REACT_APP_BDD_URI}${DB_NAME}`;
 
 mongoose
     .connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -31,6 +35,12 @@ router.post("/PARPRE/create", async (req, res) => {
     await treatWebAction(element);
 
     await treatParpre(element, mode, res);
+
+    //copy vers les serveurs master
+    //copyARandPOSToMaster(element.name, process.env.JENKINS_MASTER_PROD);
+    copyARandPOSToMaster(element.name, process.env.JENKINS_MASTER_HPROD);
+    //copyARandPOSToMaster(element.name, process.env.JENKINS_MASTER_IPP2);
+    //copyARandPOSToMaster(element.name, process.env.JENKINS_MASTER_DEV);
 });
 
 const treatParpre = async (element, mode, res) => {
@@ -83,6 +93,13 @@ async function treatWebAction(parpre) {
 
     console.log("Il y a ", webActions.length, " action(s) web");
 
+    if (webActions.length > 0) {
+        await HashPassword(webActions);
+    }
+}
+
+//Chiffre les mots de passe
+const HashPassword = async (webActions) => {
     for (let i = 0; i < webActions.length; i++) {
         //console.log("working for ", i)
         if (webActions[i].informations.type === "connection") {
@@ -104,15 +121,28 @@ async function treatWebAction(parpre) {
             }
         }
     }
-}
+};
 
-//retourne les POS de la base de données
+//Copy les scripts vers les masters (PROD HPROD IPP2 et DEV)
+const copyARandPOSToMaster = async (ssaName, server) => {
+    exec(
+        `./../Powershell/copyDocumentsToMaster.ps1 ${ssaName} ${server}`,
+        { shell: "powershell" },
+        (error, stdout, stderr) => {
+            console.log("copy script :", stdout);
+            console.log("err script :", stderr);
+            console.log("error script :", error);
+        }
+    );
+};
+
+//retourne les documents (ssas) de la base de données
 router.get("/AllPOS", async (req, res) => {
     console.log("Sending pos");
     Parpre.find().then((result) => res.send(result));
 });
 
-//retourne une pos
+//retourne un ssa
 router.get("/getAPOS", (req, res) => {
     Parpre.findOne({ _id: new ObjectId(req.query.id) }).then((result) => {
         res.send(result);
@@ -126,7 +156,6 @@ router.get("/PARPRE/testTitle", (req, res) => {
 });
 
 // Dashboard REST
-
 router.get("/DashBoard/getAllSSA", (req, res) => {
     Parpre.find().then((result) => {
         res.send(result);

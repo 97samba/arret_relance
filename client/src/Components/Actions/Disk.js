@@ -95,7 +95,7 @@ const Disk = ({ index, type, initialSTate }) => {
         var notFound = e.target.value
             .split(" ")
             .filter((element) => !diskSelection.includes(element.toUpperCase()));
-        console.log("not found ", notFound.length);
+        // console.log("not found ", notFound.length);
         notFound.length > 0 ? setDiskError(true) : setDiskError(false);
 
         saveInformations();

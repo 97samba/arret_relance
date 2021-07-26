@@ -1,7 +1,6 @@
 //Les routes pour les fonctions qui executent du code windows
 const router = require("express").Router();
 const { exec } = require("child_process");
-const { stderr, stdout, stdin } = require("process");
 
 //ping from react
 
@@ -36,11 +35,7 @@ router.get("/PARPRE/service", (req, res) => {
         (error, stdout, stderr) => {
             // console.log("out ",stderr)
             stdout === ""
-                ? console.log(
-                      req.query.name,
-                      "n'existe pas sur le server ",
-                      req.query.server
-                  )
+                ? console.log(req.query.name, "n'existe pas sur le server ", req.query.server)
                 : console.log(
                       "service : ",
                       req.query.name,
@@ -65,11 +60,7 @@ router.get("/PARPRE/database", (req, res) => {
             // console.log("error ",stderr)
 
             stdout === ""
-                ? console.log(
-                      req.query.database,
-                      "n'existe pas sur le server ",
-                      req.query.server
-                  )
+                ? console.log(req.query.database, "n'existe pas sur le server ", req.query.server)
                 : console.log(
                       "database : ",
                       req.query.databae,
@@ -86,8 +77,7 @@ router.get("/PARPRE/database", (req, res) => {
 
 //test si un service existe et renvois son etat
 router.get("/PARPRE/testPath", (req, res) => {
-    $remotePath =
-        "\\\\" + req.query.server + "\\" + req.query.path.replace(":", "$");
+    $remotePath = "\\\\" + req.query.server + "\\" + req.query.path.replace(":", "$");
 
     exec(
         `
@@ -102,11 +92,7 @@ router.get("/PARPRE/testPath", (req, res) => {
         (error, stdout, stderr) => {
             console.log("out ", stdout);
             stdout.replace(/(\r\n|\n|\r)/gm, "") == "false"
-                ? console.log(
-                      req.query.path,
-                      "n'existe pas sur le server ",
-                      req.query.server
-                  )
+                ? console.log(req.query.path, "n'existe pas sur le server ", req.query.server)
                 : console.log(
                       "script : ",
                       req.query.path,
