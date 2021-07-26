@@ -1,5 +1,5 @@
 #
-# Génére une POS
+# GÃ©nÃ©re une POS
 #
 
 #Variables
@@ -7,7 +7,7 @@
 $FILE_NAME = "Test"
 $json = Get-Content .\json\TestWebAction.json | ConvertFrom-Json
 
-#Initialise, création du fichier et autre
+#Initialise, crï¿½ation du fichier et autre
 function INIT(){
 
     if(! (Test-Path -Path $FILE_NAME)){
@@ -25,7 +25,7 @@ function INIT(){
 
 }
 
-#Ecris une ligne passée en argument
+#Ecris une ligne passï¿½e en argument
 
 function WriteInFile($line){
 

@@ -4,45 +4,40 @@
 $json.name
 $json.auteur
 $json.date_de_creation
-$CURRENT_URL=""
+$CURRENT_URL = ""
 
-function convert-password($password, $login){
+function convert-password($password, $login) {
 
     $mdp = $password | ConvertTo-SecureString -key (Get-Content .\aes.key)
     
 
-    $pscred = New-Object System.Management.Automation.PSCredential($login,$mdp)
+    $pscred = New-Object System.Management.Automation.PSCredential($login, $mdp)
     
     return $pscred.GetNetworkCredential().Password
     
 }
 
-function get-driver($navigator){
+function get-driver($navigator) {
     
-    if($navigator -eq "Chrome")
-    {
+    if ($navigator -eq "Chrome") {
         $driver = Start-SeChrome -ImplicitWait 5
         
         return $driver
     }
-    if($navigator -eq "Firefox")
-    {
+    if ($navigator -eq "Firefox") {
         return Start-SeFirefox
     }
-    if($navigator -eq "Edge")
-    {
+    if ($navigator -eq "Edge") {
         return Start-SeEdge 
     }
-    if($null -eq $navigator)
-    {
+    if ($null -eq $navigator) {
         return $null
     }
 
 }
 
-function Url($url, $driver)
-{
-    if($url -ne $CURRENT_URL){
+function Url($url, $driver) {
+    if ($url -ne $CURRENT_URL) {
         #Entre que quand c'est un url diferrent 
         Enter-SeUrl -Url $url -Target $driver
         write-host Lien different $url current $CURRENT_URL`n
@@ -51,9 +46,9 @@ function Url($url, $driver)
     Start-Sleep -s 2
 }
 
-function click-element($driver, $url,$informations){
+function click-element($driver, $url, $informations) {
     
-    if($url -ne $CURRENT_URL){
+    if ($url -ne $CURRENT_URL) {
 
         write-host Lien different $url current $CURRENT_URL`n
         Enter-SeUrl -Url $url -Target $driver
@@ -69,9 +64,9 @@ function click-element($driver, $url,$informations){
 }
 
 # fonction pour l'authentification
-function init-connection($driver, $url, $informations){
+function init-connection($driver, $url, $informations) {
    
-    if($url -ne $CURRENT_URL){
+    if ($url -ne $CURRENT_URL) {
         Enter-SeUrl -Url $url -Target $driver
         write-host Lien different $url current $CURRENT_URL`n
     }
@@ -96,8 +91,8 @@ function init-connection($driver, $url, $informations){
     [IO.File]::WriteAllBytes($filename, $bytes)
 }
 
-function set-field($driver, $url, $informations){
-    if($url -ne $CURRENT_URL){
+function set-field($driver, $url, $informations) {
+    if ($url -ne $CURRENT_URL) {
         write-host Lien different $url current $CURRENT_URL`n
         Enter-SeUrl -Url $url -Target $driver
     }
@@ -110,18 +105,38 @@ function set-field($driver, $url, $informations){
     Start-Sleep -s 2
 }
 
+function logOut($driver, $url, $informations) {
+    if ($url -ne $CURRENT_URL) {
+        write-host Lien different $url current $CURRENT_URL`n
+        Enter-SeUrl -Url $url -Target $driver
+    }
+    if ($($informations.logOutSelector)) {
+        Write-Host Déconnexion par click
+        click-element -driver $driver -url $url -informations $informations
+    }
+    else {
+        if ($($informations.logOut)) {
+            Write-Host Déconnexion par Lien
+            Enter-SeUrl -Url $($informations.logOut) -Target $driver
+        }
+    }
+}
 
-function webAction($driver, $url, $informations){
+
+function webAction($driver, $url, $informations) {
     
-    if($informations.type -eq "connection"){
+    if ($informations.type -eq "connection") {
      
         init-connection -driver $driver -url $url -informations $informations
     }
-    if($informations.type -eq "click"){
+    if ($informations.type -eq "click") {
 
         click-element -driver $driver -url $url -informations $informations
     }
-    if($informations.type -eq "form"){
+    if ($informations.type -eq "logOut") {
+        logOut -url $url -driver $driver -informations $informations
+    }
+    if ($informations.type -eq "form") {
 
         set-field -driver $driver -url $url -informations $informations
     }
@@ -131,18 +146,15 @@ function webAction($driver, $url, $informations){
 ######################## Main ######################
 $driver = Start-SeChrome 
 
-
-
 $json.POS | ForEach-Object {
 
-    if($_.type -eq "Link")
-    {
+    if ($_.type -eq "Link") {
         Write-Host "Url action found" 
         Url -url $_.url -driver $driver
         
     }
 
-    if($_.type -eq "webAction"){
+    if ($_.type -eq "webAction") {
 
         
         Write-Host "Web action found type : " $($_.informations.type)

@@ -1,172 +1,230 @@
-import { Button, Grid, IconButton, InputBase, makeStyles, Paper, Typography } from '@material-ui/core'
-import { useEffect, useState } from 'react';
-import { Add, ArrowBack, ArrowForward, SearchSharp } from '@material-ui/icons';
-import ListSSA from '../Components/Manage/ListSSA';
-import axios from 'axios';
+import {
+    Box,
+    Button,
+    Grid,
+    IconButton,
+    InputBase,
+    makeStyles,
+    Paper,
+    Typography,
+    CircularProgress,
+    Dialog,
+    DialogTitle,
+    Divider,
+    TextField,
+    Chip,
+} from "@material-ui/core";
+import { useEffect, useState } from "react";
+import { ArrowBack, ArrowForward, SearchSharp } from "@material-ui/icons";
+import ListSSA from "../Components/Manage/ListSSA";
+import axios from "axios";
+import { Autocomplete } from "@material-ui/lab";
 
 const useStyles = makeStyles((theme) => ({
     root: {
         margin: theme.spacing(1),
-
     },
     fields: {
         padding: theme.spacing(2),
-        display: 'flex',
-        justifyContent: 'space-between'
+        display: "flex",
+        justifyContent: "space-between",
     },
     head: {
         marginLeft: theme.spacing(1),
         marginTop: theme.spacing(2),
-        marginBottom: theme.spacing(3)
-
-    }
-}))
-
+        marginBottom: theme.spacing(3),
+    },
+}));
 
 const Manage = () => {
-    const url = "http://localhost:5000/api"
-    const [POS, SetPOS] = useState([])
-    const [ExcelTab, SetExcelTab] = useState(false)
-    const [allExcel, setAllExcel] = useState([])
+    const url = "http://localhost:5000/api";
+    const [POS, SetPOS] = useState([]);
+    const [ExcelTab, SetExcelTab] = useState(false);
+    const [allExcel, setAllExcel] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        document.title = "Modify"        
-        getAllPos()
-        GetAllExcel()
-        
-    }, [])
+        document.title = "Modify";
+        getAllPos();
+    }, []);
 
+    const GetAllExcel = () => {
+        setLoading(true);
 
-    const GetAllExcel =() =>{
-            
-        axios.post(`http://localhost:5000/api/ConvertAll-Excel`)
-            .then(res =>  {setAllExcel(res.data); console.log("data ",res.data)})
-            
-    }
+        axios.post(`http://localhost:5000/api/ConvertAll-Excel`).then((res) => {
+            setAllExcel(res.data);
+            console.log("data ", res.data);
+            setLoading(false);
+        });
+    };
 
-    const classes = useStyles()
+    const classes = useStyles();
 
     const getAllPos = async () => {
+        setLoading(true);
         await fetch(`${url}/AllPOS`)
-            .then(Response => Response.json())
-            .then(result => {
+            .then((Response) => Response.json())
+            .then((result) => {
                 //console.log(result)
-                SetPOS(result)
-            })
-
-    }
-
-
+                SetPOS(result);
+                setLoading(false);
+            });
+    };
 
     return (
         <div>
             <div className={classes.head}>
-                <Grid container spacing={2}>
+                <Grid container spacing={2} alignItems="center">
                     <Grid item sm={4}>
-                        <Button
-                            startIcon={
-                                ExcelTab ? <ArrowBack /> : <ArrowForward />
-                            }
-                            variant="contained"
-                            elevation={0}
-                            onClick={() => SetExcelTab(!ExcelTab)}
-
-                        > {!ExcelTab
-                            ? `Importés depuis Excel ( ${allExcel.length} )`
-                            : `Enregistrés ( ${POS.length} )`
-
-                            }
-
-                        </Button>
+                        {ExcelTab ? (
+                            <Button
+                                startIcon={<ArrowBack />}
+                                variant="contained"
+                                elevation={0}
+                                onClick={() => SetExcelTab(!ExcelTab)}
+                            >
+                                Retour ({POS.length})
+                            </Button>
+                        ) : (
+                            <Button
+                                endIcon={<ArrowForward />}
+                                variant="contained"
+                                elevation={0}
+                                onClick={() => {
+                                    SetExcelTab(!ExcelTab);
+                                    allExcel.length == 0 && GetAllExcel();
+                                }}
+                                style={{ background: "#a6db9e" }}
+                            >
+                                Convertir un Excel ({allExcel.length})
+                            </Button>
+                        )}
                     </Grid>
                     <Grid item sm={3}>
-                        <Paper component="form" elevation={1} >
-                            <IconButton aria-label="menu">
-                                <SearchSharp />
-                            </IconButton>
-                            <InputBase
-
-                                placeholder="Rechercher une SSA"
-                            />
-
-                        </Paper>
+                        <Autocomplete
+                            id="autocomplete-ssa"
+                            options={POS}
+                            getOptionLabel={(option) => option.name}
+                            noOptionsText="SSA inconnu"
+                            style={{ width: 300 }}
+                            onChange={(event, newValue) => {
+                                console.log(newValue);
+                            }}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    variant="outlined"
+                                    placeholder="Rechercher un SSA"
+                                    fullWidth
+                                    style={{ background: "white" }}
+                                />
+                            )}
+                        />
                     </Grid>
-                    {/*
-                    <Grid item sm={3}>
-                        
-                        
-                        
-                       
-                        <FormControl size="medium" variant="filled">
-                            <InputLabel id="filter">Filter par</InputLabel>
-                            <Select labelId="filter" value="filtre" >
-                                <MenuItem value="">
-                                    <em>None</em>
-                                </MenuItem>
-                                <MenuItem value="nom">Nom</MenuItem>
-                                <MenuItem value={20}>Type</MenuItem>
-                                <MenuItem value={30}>état</MenuItem>
-                            </Select>
-                        </FormControl>
-                        
+
+                    <Grid item sm={5}>
+                        <Box display="flex" justifyContent="center">
+                            <Typography variant="h6" color="primary">
+                                {ExcelTab
+                                    ? "Transformers Excel"
+                                    : "Transformers format Web"}
+                            </Typography>
+                        </Box>
                     </Grid>
-                     */}
                 </Grid>
             </div>
 
             <div>
-                <Grid style={{ padding: 5 }} container direction="row" className={classes.root}>
-                    <Grid item xs={3} md={1} sm={1} >
+                <Divider light />
+                <Grid
+                    style={{ padding: 5 }}
+                    container
+                    direction="row"
+                    className={classes.root}
+                >
+                    <Grid item xs={3} md={1} sm={1}>
                         <Typography>Code</Typography>
                     </Grid>
 
-                    <Grid item xs={3} md={3} sm={3}  >
+                    <Grid item xs={3} md={3} sm={3}>
                         <Typography> Nom</Typography>
                     </Grid>
 
-                    <Grid item xs={3} md={1} sm={1}  >
+                    <Grid item xs={3} md={1} sm={1}>
                         <Typography> Etapes</Typography>
                     </Grid>
 
-                    <Grid item xs={3} md={2} sm={2}  >
+                    <Grid item xs={3} md={2} sm={2}>
                         <Typography> Auteur</Typography>
                     </Grid>
 
-                    <Grid item xs={3} md={2} sm={2}  >
+                    <Grid item xs={3} md={2} sm={2}>
                         <Typography> Date de création </Typography>
                     </Grid>
 
-                    <Grid item xs={3} md={3} sm={3} spacing={1} container justify="center">
+                    <Grid
+                        item
+                        xs={3}
+                        md={3}
+                        sm={3}
+                        spacing={1}
+                        container
+                        justify="center"
+                    >
                         <Typography>Actions</Typography>
                     </Grid>
                 </Grid>
-                {
-                    ExcelTab  ?
-                        (
-                            allExcel.length > 0 ?
-                            (
-                                allExcel.map(excel => (
-                                <ListSSA ssa={excel} fromExcel={true} key={excel._id} />
-                            ))  
-                            )  :
-                            (
-                                <Typography>Chargement</Typography>
-                            )                       
 
-                        )
-                        :
-                        (
-                            POS.map(pos => (
-                                <ListSSA ssa={pos} key={pos._id} fromExcel={false}/>
+                <div>
+                    <Dialog
+                        open={loading}
+                        style={{ minHeight: 100, minWidth: 100 }}
+                    >
+                        <Box
+                            display="flex"
+                            alignContent="center"
+                            alignItems="center"
+                            justifyContent="center"
+                            m={2}
+                        >
+                            <CircularProgress style={{ marginLeft: 10 }} />
+                        </Box>
+                        <DialogTitle>
+                            {ExcelTab
+                                ? "Conversion des fichiers Excel en format Web"
+                                : "Chargement des documents de la base"}
+                        </DialogTitle>
+                    </Dialog>
+                </div>
+
+                <div>
+                    {ExcelTab ? (
+                        allExcel.length > 0 ? (
+                            allExcel.map((excel) => (
+                                <ListSSA
+                                    ssa={excel}
+                                    fromExcel={true}
+                                    key={excel._id}
+                                    setLoading={setLoading}
+                                />
                             ))
+                        ) : (
+                            <div>chargement</div>
                         )
-
-                }
-
+                    ) : (
+                        POS.map((pos) => (
+                            <ListSSA
+                                ssa={pos}
+                                key={pos._id}
+                                fromExcel={false}
+                                setLoading={setLoading}
+                            />
+                        ))
+                    )}
+                </div>
             </div>
-
         </div>
     );
-}
+};
 
 export default Manage;

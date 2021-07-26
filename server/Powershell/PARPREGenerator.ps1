@@ -16,7 +16,7 @@ function write-line($line, $tab = 0) {
     
     if ($tab -gt 0) {
 
-        $symbole = "`t"
+        $symbole = "  "
 
         for ($i = 0 ; $i -lt $tab ; $i++) {
      
@@ -52,6 +52,7 @@ function init($file) {
 
         Write-Host ce fichier $FILE_NAME existe
         Remove-Item -Path $SCRIPT_DIRECTORY\$FILE_NAME
+        Write-Host Suppression de  $FILE_NAME 
         New-item -ItemType File -Name $FILE_NAME -Path $SCRIPT_DIRECTORY   | Out-Null
 
     }
@@ -283,17 +284,19 @@ function create-etape($step) {
     }
 
     write-line -line "#Les environnements sur lesquels vont s`'executer la commande" -tab 1
-    write-line -line "`$ENVS=`($envs`)" -tab 1
+    write-line -line "`ENVS=`($envs`)" -tab 1
     write-line -line "" -tab 1
+    write-line -line "for i in `"`${ENVS[@]}`"" -tab 1
+    write-line -line "do" -tab 1
     
-    write-line -line "if [[ `${ENVS[@]} =~ `$TYPE_ENVIRONNEMENT ]] " -tab 1
-    write-line -line "then" -tab 1
+    write-line -line "if [ `$i == `$TYPE_ENVIRONNEMENT ] " -tab 2
+    write-line -line "then" -tab 2
     
-    write-line -line "ETAPE=Etape$($step.index+1)" -tab 2
+    write-line -line "ETAPE=Etape$($step.index+1)" -tab 3
     
-    write-line -line "SRV=$($step.server)" -tab 2
+    write-line -line "SRV=`$$($step.server)" -tab 3
     
-    write-line -line "USER=$($step.user)" -tab 2
+    write-line -line "USER=$($step.user)" -tab 3
     
     if ($($step.os) -ne "linux") {
         
@@ -308,10 +311,12 @@ function create-etape($step) {
     create-windowsStep -step $step
 
     
-    write-line -line "echo" -tab 2    
+    write-line -line "echo" -tab 3    
     
-    write-line -line "fi" -tab 1
-    write-line -line "" -tab 1
+    write-line -line "fi" -tab 2
+    write-line -line "" -tab 2
+    write-line -line "done" -tab 1
+
 }
 
 ########### Créer une étape windows
@@ -320,36 +325,36 @@ function create-windowsStep($step) {
     #write-line -line "CMD=`"$($step.type) $($step.action) $($step.name)$($step.service) $($step.databaseType) $($step.server)`" " -tab 2
 
     $commande = Create-Command -step $step
-    write-host $commande
+    #write-host $commande
 
-    write-line -line "CMD_WIN=`"$commande`" " -tab 2
+    write-line -line "CMD_WIN=`"$commande`" " -tab 3
 
-    write-line -line "echo" -tab 2
-    write-line -line "echo `"DEBUT : `$`(date +`'%d/%m/%Y %H:%M:%S`'`)`"" -tab 2
-    write-line -line "echo `"Serveur `"`$SRV`" - [`"`$TYPE_ACTION`":`"`$APPLI`":`"`$ETAPE`"/`"`$NB_ETAPE`"]`" " -tab 2
+    write-line -line "echo" -tab 3
+    write-line -line "echo `"DEBUT : `$`(date +`'%d/%m/%Y %H:%M:%S`'`)`"" -tab 3
+    write-line -line "echo `"Serveur `"`$SRV`" - [`"`$TYPE_ACTION`":`"`$APPLI`":`"`$ETAPE`"/`"`$NB_ETAPE`"]`" " -tab 3
 
     #write-line -line "echo `"Commande : `"`$CMD" -tab 2
-    write-line -line "echo `"Commande : `"`$CMD_WIN" -tab 2
-    write-line -line "res=`$`(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q adm-deploy@`$REBOND_WIN `"`$CMD_WIN`"`)" -tab 2
+    write-line -line "echo `"Commande : `"`$CMD_WIN" -tab 3
+    write-line -line "res=`$`(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q adm-deploy@`$REBOND_WIN `"`$CMD_WIN`"`)" -tab 3
     
-    write-line -line "retval=`$?" -tab 2
+    write-line -line "retval=`$?" -tab 3
     
     if ($($step.action) -eq "status") {
 
-        write-line -line "echo `$res > `$FIC_TMP" -tab 2
-        write-line -line "if grep -c `"`$RES_ATTENDU`" `$FIC_TMP > /dev/null; then" -tab 2
-        write-line -line    "echo `"Serveur `"`$SRV`" - [`"`$TYPE_ACTION`":`"`$APPLI`":`"`$ETAPE`"/`"`$NB_ETAPE`"]  / OK `(RES`(`"`$res`"`)` / RES_ATTENDU`(`"`$RES_ATTENDU`"`)`)`"" -tab 3
-        write-line -line "else" -tab 2
-        write-line -line    "echo `"Serveur `"`$SRV`" - [`"`$TYPE_ACTION`":`"`$APPLI`":`"`$ETAPE`"/`"`$NB_ETAPE`"]  / ERREUR `"`$NUM_ERR`" : RESULTAT `(`"`$res`"`) DIFFERENT DU RESULTAT ATTENDU `(`"`$RES_ATTENDU`"`)`"" -tab 3
-        write-line -line    "exit `$NUM_ERR" -tab 3
-        write-line -line "fi" -tab 2
+        write-line -line "echo `$res > `$FIC_TMP" -tab 3
+        write-line -line "if grep -c `"`$RES_ATTENDU`" `$FIC_TMP > /dev/null; then" -tab 3
+        write-line -line "echo `"===> OK / RESULTAT : `"`$res`" / RES_ATTENDU`(`"`$RES_ATTENDU`"`)`)`"" -tab 3
+        write-line -line "else" -tab 3
+        write-line -line "echo `"===> ERREUR `"`$NUM_ERR`" : RESULTAT : `"`$res`" / DIFFERENT DU RESULTAT ATTENDU `(`"`$RES_ATTENDU`"`)`"" -tab 3
+        write-line -line "exit `$NUM_ERR" -tab 3
+        write-line -line "fi" -tab 3
     
 
     }
     else {
         
-        write-line -line "echo `"Serveur `"`$SRV`" - [`"`$TYPE_ACTION`":`"`$APPLI`":`"`$ETAPE`"/`"`$NB_ETAPE`"]`" " -tab 2
-        write-line -line "echo `"FIN : `$`(date +`'%d/%m/%Y %H:%M:%S`'`)`"" -tab 2
+        write-line -line "echo `"Serveur `"`$SRV`" - [`"`$TYPE_ACTION`":`"`$APPLI`":`"`$ETAPE`"/`"`$NB_ETAPE`"] / OK RES`(`"`$res`"`) `" " -tab 3
+        write-line -line "echo `"FIN : `$`(date +`'%d/%m/%Y %H:%M:%S`'`)`"" -tab 3
     }
 }
 
@@ -394,28 +399,28 @@ function Create-Command ($step) {
 
     switch ($($step.type)) {
         "service" { 
-            return "powershell ./$($step.type).ps1 $($step.action) $($step.name) $($step.server)"
+            return "powershell ./$($step.type).ps1 $($step.action) $($step.name) `$SRV"
         }
         "process" { 
-            return "powershell ./$($step.type).ps1 $($step.action) $($step.name) $($step.server)"
+            return "powershell ./$($step.type).ps1 $($step.action) $($step.name) `$SRV"
         }
         "database" { 
-            return "powershell ./$($step.type).ps1 $($step.action) $($step.name) $($step.databaseType) $($step.server)"
+            return "powershell ./$($step.type).ps1 $($step.action) `$$($step.name) $($step.databaseType) `$SRV"
         }
         "script" { 
-            return "powershell ./invoke.ps1 $($step.path) $($step.server)"
+            return "powershell ./invoke.ps1 $($step.path) `$SRV"
         }
         "log" { 
-            return "powershell ./checkLog.ps1 $($step.name) $($step.path) $($step.server)"
+            return "powershell ./checkLog.ps1 $($step.name) $($step.path) `$SRV"
         }
         "disk" { 
-            return "powershell ./checkDisk.ps1 $($step.disks) $($step.server)"
+            return "powershell ./checkDisk.ps1 $($step.disks) `$SRV"
         }
         "IIS" { 
-            return "powershell ./Pool_iis.ps1 $($step.action) $($step.name) $($step.elementType) $($step.server)"
+            return "powershell ./Pool_iis.ps1 $($step.action) $($step.name) $($step.elementType) `$SRV"
         }
         "rename" { 
-            return "powershell ./$($step.type).ps1 $($step.path) $($step.name) $($step.server)"
+            return "powershell ./$($step.type).ps1 $($step.path) $($step.name) `$SRV"
         }
         Default {
             return "powershell write-host Commande par défaut"
@@ -435,12 +440,14 @@ function create-tests($actions) {
     
     #Toutes les étapes d'arret avec vérification
     $actions.Arret | where-Object { $_.action -eq "status" } | ForEach-Object {
+        $commande = Create-Command -step $_
+        #write-host $commande
+    
         
         write-line -line "echo" -tab 1
-        write-line -line "SRV=`"$($_.server)`"" -tab 1
+        write-line -line "SRV=`$$($_.server)" -tab 1
         write-line -line "USER=" -tab 1
-        write-line -line "CMD=`"$($_.type) $($_.action) $($_.name)$($_.service) $($_.databaseType) $($_.server)`" " -tab 1
-        write-line -line "CMD_WIN=`"powershell ./$($_.type).ps1 $($_.action) $($_.name)$($_.service) $($_.databaseType) $($_.server)`" " -tab 1
+        write-line -line "CMD_WIN=`"$commande`" " -tab 1
         write-line -line "SSA : `"`$APPLI`"" -tab 1
         write-line -line "Serveur : `"`$SRV`"" -tab 1
         write-line -line "Commande : `"`$CMD_WIN`"" -tab 1
@@ -452,12 +459,12 @@ function create-tests($actions) {
     }   
     #Toutes les étapes de relance avec vérification
     $actions.Relance | where-Object { $_.action -eq "status" } | ForEach-Object {
+        $commande = Create-Command -step $_
         
         write-line -line "echo" -tab 1
-        write-line -line "SRV=`"$($_.server)`"" -tab 1
+        write-line -line "SRV=`$$($_.server)" -tab 1
         write-line -line "USER=" -tab 1
-        write-line -line "CMD=`"$($_.type) $($_.action) $($_.name)$($_.service) $($_.databaseType) $($_.server)`" " -tab 1
-        write-line -line "CMD_WIN=`"powershell ./$($_.type).ps1 $($_.action) $($_.name)$($_.service) $($_.databaseType) $($_.server)`" " -tab 1
+        write-line -line "CMD_WIN=`"$commande`" " -tab 1
         write-line -line "SSA : `"`$APPLI`"" -tab 1
         write-line -line "Serveur : `"`$SRV`"" -tab 1
         write-line -line "Commande : `"`$CMD_WIN`"" -tab 1

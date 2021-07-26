@@ -274,7 +274,7 @@ const formatCommand = (action, variables) => {
         //console.log("cmd",action.cmd)
         action.cmd.split(" ").includes("$" + variable.name)
 
-            ? newAction = { ...action, cmd: action.cmd.replace(`$${variable.name}`, variable.prod) }
+            ? newAction = { ...action, cmd: action.cmd.replace(variable.name, variable.prod) }
 
             : newAction = action
 

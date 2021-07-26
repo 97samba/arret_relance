@@ -1,15 +1,42 @@
-import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, FormControlLabel, FormGroup, Grid, TextField, Typography } from "@material-ui/core";
-import { FormControl, InputLabel, MenuItem, Select } from "@material-ui/core"
+import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, FormControlLabel, FormGroup,  Grid, Slider, TextField, Typography } from "@material-ui/core";
+import { FormControl } from "@material-ui/core"
 
 import { useEffect, useState } from "react";
 
 const OptionDialog = ({ options, saveInfos, setOptions, openDialog, setOpenDialog }) => {
 
-    useEffect(()=>{
-        setOptions(options)
-    })
+    useEffect(() => {
+        setOptions({...options,timeOut:timeOut})
+    },[])
     const [block, setBlock] = useState(true)
+    const [timeOut, setTimeOut] = useState(0)
 
+    const marks = [
+        {
+            value:0,
+            label:'0 s'
+        },
+        {
+            value:2,
+            label:'2 s'
+        },
+        {
+            value:4,
+            label:'4 s'
+        },
+        {
+            value:6,
+            label:'6 s'
+        },
+        {
+            value:8,
+            label:'8 s'
+        },
+        {
+            value:10,
+            label:'10 s'
+        },
+    ]
 
     return (
         <div>
@@ -104,24 +131,22 @@ const OptionDialog = ({ options, saveInfos, setOptions, openDialog, setOpenDialo
                         <Grid item>
                             <Grid container alignItems="center" direction="row" spacing={2} >
                                 <Grid item md={6} >
-                                    <Typography>Bloquante :</Typography>
+                                    <Typography>Sleep :</Typography>
                                 </Grid>
                                 <Grid item md={6}>
                                     <FormControl fullWidth>
-                                        <InputLabel>Execution Bloquante *</InputLabel>
-                                        <Select
-                                            value={block}
-                                            onChange={(e) => setBlock(e.target.value)}
-                                        >
-                                            <MenuItem value={true}>Oui</MenuItem>
-                                            <MenuItem value={false}>Non</MenuItem>
-                                        </Select>
+                                        <Slider
+                                            defaultValue={0}
+                                            value={timeOut}
+                                            aria-labelledby="continuous-slider"
+                                            max={10}
+                                            step={2}
+                                            marks={marks}
+                                            onChange={(e,value)=>setTimeOut(value)}
+                                        />
                                     </FormControl>
                                 </Grid>
-                                <Grid item md={12}>
-                                    <Typography>*Arrête ou pas, l'exécution de Jenkins*</Typography>
 
-                                </Grid>
                             </Grid>
                         </Grid>
 

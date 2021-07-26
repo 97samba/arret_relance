@@ -148,7 +148,7 @@ const WebAction = ({ index, initialSTate }) => {
 
 
                     </Grid>
-                    <Grid item md={6} xl={2}>
+                    <Grid item md={6} xl={6}>
                         <TextField
 
                             className={classes.fields}
@@ -161,7 +161,7 @@ const WebAction = ({ index, initialSTate }) => {
                         />
                     </Grid>
 
-                    <Grid item md={2} xl={3} >
+                    <Grid item md={2} xl={2} >
                         <FormControl className={classes.dropDown}>
                             <InputLabel>Action</InputLabel>
                             <Select value={actionType} onChange={(e) => {setActionType(e.target.value);setInformations({...informations,type:e.target.value})}}>

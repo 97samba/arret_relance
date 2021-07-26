@@ -1,15 +1,13 @@
-import {  Box, Drawer, makeStyles,Typography } from "@material-ui/core";
+import { Box, Button, Drawer, makeStyles, Typography } from "@material-ui/core";
 import { useState } from "react";
-import {DataGrid} from '@material-ui/data-grid';
+import { DataGrid, GridOverlay } from "@material-ui/data-grid";
+import { Add, Delete } from "@material-ui/icons";
 
-const drawerWidthRight = 280
+const drawerWidthRight = 280;
 
 const useStyles = makeStyles((theme) => {
-
     return {
-        root: {
-
-        },
+        root: {},
         navRight: {
             width: drawerWidthRight,
             //display:'none'
@@ -17,24 +15,37 @@ const useStyles = makeStyles((theme) => {
         drawerPaperRight: {
             width: drawerWidthRight,
             backgroundColor: "#FFFFF",
-            borderLeft: '0px'
-
-        }
-
-    }
-})
-
-
-
-
+            borderLeft: "0px",
+        },
+    };
+});
 
 const RightNav = ({ ServerRow, saveRows }) => {
     const [progress, setProgress] = useState(0);
+    const [selectedRow, SetSelectedRow] = useState();
     const columns = [
-        {field : 'prod', headerName: 'prod', width : 90, editable : true, sortable:false },
-        {field : 'hprod', headerName: 'hprod', width : 90, editable : true, sortable:false },
-        {field : 'dev', headerName: 'IPP2', width :90, editable : true, sortable:false }
-    ]
+        {
+            field: "prod",
+            headerName: "prod",
+            width: 90,
+            editable: true,
+            sortable: false,
+        },
+        {
+            field: "hprod",
+            headerName: "hprod",
+            width: 90,
+            editable: true,
+            sortable: false,
+        },
+        {
+            field: "dev",
+            headerName: "IPP2",
+            width: 90,
+            editable: true,
+            sortable: false,
+        },
+    ];
 
     /*
     useEffect(() => {
@@ -48,53 +59,90 @@ const RightNav = ({ ServerRow, saveRows }) => {
     }, []);
     */
 
-    const classes = useStyles()
-    
-    const handleCellchange = (cell) => {
-        console.log("Changing the ",cell)
-        
+    const classes = useStyles();
 
-        const editedServers = ServerRow.map(row => {
-            if(row.id === cell.id){
-                row = {...row, [cell.field] :cell.props.value  }
-                return row
+    const handleCellchange = (cell) => {
+        console.log("Changing the ", cell);
+
+        const editedServers = ServerRow.map((row) => {
+            if (row.id === cell.id) {
+                row = { ...row, [cell.field]: cell.props.value };
+                return row;
             }
-            return row
-        })
-        saveRows(editedServers)
-        console.log("edited ",editedServers)
-    }
+            return row;
+        });
+        saveRows(editedServers);
+        console.log("edited ", editedServers);
+    };
+
+    const addRow = () => {
+        const newRow = {
+            id: ServerRow.length,
+            prod: "definir",
+            hprod: "",
+            dev: "",
+            name: "",
+            auto: false,
+        };
+
+        saveRows([...ServerRow, newRow]);
+        console.log("new row");
+    };
+
+    const deleteRow = () => {
+        const newstate = ServerRow.filter((row) => row.id !== selectedRow);
+        console.log("New tab " + newstate);
+        selectedRow != undefined && saveRows(newstate);
+        SetSelectedRow(undefined);
+    };
 
     return (
         <div>
-
             <Drawer
                 elevation={0}
                 variant="permanent"
-                anchor='right'
+                anchor="right"
                 classes={{ paper: classes.drawerPaperRight }}
                 className={classes.navRight}
             >
                 <Box>
                     <Box m={2} display="flex" justifyContent="center">
-                        <Typography gutterBottom>
-                            Variables
-                        </Typography>
+                        <Typography gutterBottom>Variables</Typography>
                     </Box>
 
-                        
-                    <div style={{height : 300,width:"100%"}}>
-                        <DataGrid 
-                        rows={ServerRow}
-                        columns={columns}
-                        hideFooter
-                        disableColumnMenu
-                        rowHeight={40}
-                        headerHeight={40}
-                        onEditCellChangeCommitted={cell => handleCellchange(cell)}
-                        
+                    <div style={{ height: 300, width: "100%" }}>
+                        <DataGrid
+                            rows={ServerRow}
+                            columns={columns}
+                            hideFooter
+                            disableColumnMenu
+                            rowHeight={40}
+                            headerHeight={40}
+                            onEditCellChangeCommitted={(cell) => handleCellchange(cell)}
+                            onRowClick={(e) => SetSelectedRow(e.id)}
                         />
                     </div>
+                    <Box display="flex" justifyContent="space-between" mt={1} m={2}>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            size="small"
+                            endIcon={<Add />}
+                            onClick={addRow}
+                        >
+                            Ajouter
+                        </Button>
+                        <Button
+                            variant="contained"
+                            color="secondary"
+                            size="small"
+                            endIcon={<Delete />}
+                            onClick={deleteRow}
+                            disabled={selectedRow == undefined}
+                        >
+                            Supprimer
+                        </Button>
+                    </Box>
                 </Box>
 
                 <Box>
@@ -150,9 +198,8 @@ const RightNav = ({ ServerRow, saveRows }) => {
                      */}
                 </Box>
             </Drawer>
-
         </div>
     );
-}
+};
 
-export default RightNav
+export default RightNav;

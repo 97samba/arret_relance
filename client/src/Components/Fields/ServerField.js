@@ -1,16 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { TextField } from "@material-ui/core"
 import checker from "../Checker";
 
 
-const ServerField = ({ NameClass, server, setServer, index, saveInformations, initialServer,serverError,setServerError }) => {
+const ServerField = ({ NameClass, server, setServer, index, saveInformations, initialServer, serverError, setServerError,verification }) => {
 
 
     useEffect(() => {
-        server !== ""
-            ? checker.ping(server, setServerError)
-            : checker.ping(initialServer, setServerError)
-            
+        if (initialServer && (server === "" || server === undefined)&& verification) {
+            checker.ping(initialServer, setServerError)
+        }
+        if (server) {
+            //checker.ping(server, setServerError)
+        }
+
     }, [])
 
     return (
@@ -27,7 +30,7 @@ const ServerField = ({ NameClass, server, setServer, index, saveInformations, in
                 onBlur={(e) => {
                     saveInformations()
                     checker.ping(e.target.value, setServerError)
-                    
+
                 }
                 }
             />

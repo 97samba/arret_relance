@@ -1,38 +1,33 @@
-import { Box, makeStyles, Paper, Typography} from '@material-ui/core'
-import { SupervisedUserCircle } from '@material-ui/icons'
+import { Box, makeStyles, Paper, Typography } from "@material-ui/core";
+import { SupervisedUserCircle } from "@material-ui/icons";
+
+//Le nombre de ssa dans Céphée
+const totalDocument = 728;
 
 const useStyles = makeStyles((theme) => ({
-    root:{
-        padding:theme.spacing(1),
-        
-    }
-}))
+    root: {
+        padding: theme.spacing(5),
+    },
+}));
 
-const DashboardCard = ({name}) => {
-    const classes = useStyles()
+const DashboardCard = ({ name, icon, documentNumber }) => {
+    const classes = useStyles();
 
-
-    return ( 
+    return (
         <div>
-            <Paper className = {classes.root} elevation={1} >
-                <Box p={2} display='block' 
-                justifyContent='center'>
-                    <Box mx={3}>
-                       <SupervisedUserCircle  /> 
-                    </Box>
-                    <Box mx={3}>
-                       <Typography>
-                            {name}
-                        </Typography> 
-                    </Box>
-                    <Box mx={3}>
-                        <Typography variant='h5'> 125</Typography>
-                    </Box>
+            <Paper className={classes.root} elevation={1}>
+                <Box display="flex" justifyContent="center">
+                    <Box mr={1}>{icon}</Box>
+                    <Typography>{name}</Typography>
+                </Box>
+                <Box display="flex" justifyContent="center">
+                    <Typography variant="h5">
+                        {documentNumber} / {totalDocument}
+                    </Typography>
                 </Box>
             </Paper>
-
         </div>
-     );
-}
- 
+    );
+};
+
 export default DashboardCard;

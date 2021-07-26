@@ -1,60 +1,59 @@
-import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
-import Create from './Pages/Create';
-import DashBoard from './Pages/DashBoard'
-import Manage from './Pages/Manage';
-import Settings from './Pages/Settings';
-import Layout from './Components/Layout'
-import { createMuiTheme, ThemeProvider } from '@material-ui/core'
-import Modify from './Pages/Modify';
-import ViewItem from './Pages/ViewItem';
-import TestSSA from './Pages/TestSSA';
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import Create from "./Pages/Create";
+import DashBoard from "./Pages/DashBoard";
+import Manage from "./Pages/Manage";
+import Settings from "./Pages/Settings";
+import Layout from "./Components/Layout";
+import { createMuiTheme, ThemeProvider } from "@material-ui/core";
+import Modify from "./Pages/Modify";
+import ViewItem from "./Pages/ViewItem";
+import TestSSA from "./Pages/Automator";
 
 const theme = createMuiTheme({
-  typography: {
-    fontFamily: 'Quicksand',
-    fontWeightLight: 400,
-    fontWeightRegular: 500,
-    fontWeightMedium: 600,
-    fontWeightBold: 1000,
-  }
-})
+    typography: {
+        fontFamily: "Quicksand",
+        fontWeightLight: 400,
+        fontWeightRegular: 500,
+        fontWeightMedium: 600,
+        fontWeightBold: 1000,
+    },
+});
 
 function App() {
-  return (
-    <ThemeProvider theme={theme}>
-      <Router>
-        <Layout>
-          <Switch>
-            <Route exact path="/">
-              <DashBoard />
-            </Route>
+    return (
+        <ThemeProvider theme={theme}>
+            <Router>
+                <Layout>
+                    <Switch>
+                        <Route exact path="/">
+                            <DashBoard />
+                        </Route>
 
-            <Route  path="/create">
-              <Create />
-            </Route>
+                        <Route path="/create">
+                            <Create />
+                        </Route>
 
-            <Route  path="/manage">
-              <Manage />
-            </Route>
+                        <Route path="/manage">
+                            <Manage />
+                        </Route>
 
-            <Route  path="/settings">
-              <Settings />
-            </Route>
-            <Route  path="/modify">
-              <Modify />
-            </Route>
-            <Route  path="/view">
-              <ViewItem />
-            </Route>
-            <Route  path="/TestSSA">
-              <TestSSA />
-            </Route>
-          </Switch>
-        </Layout>
-
-      </Router>
-   </ThemeProvider>
-  );
+                        <Route path="/settings">
+                            <Settings />
+                        </Route>
+                        <Route path="/modify">
+                            <Modify />
+                        </Route>
+                        <Route path="/view">
+                            <ViewItem />
+                        </Route>
+                        <Route path="/Automator">
+                            <TestSSA />
+                        </Route>
+                    </Switch>
+                </Layout>
+            </Router>
+        </ThemeProvider>
+    );
 }
 
 export default App;
