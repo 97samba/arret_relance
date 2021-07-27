@@ -63,26 +63,26 @@ export const testTitle = async (title, setTitleError, setTitleOpen) => {
         });
 };
 
-const checker = {
-    ping: (server, setServerError, setPingedServers, pingedServers) => {
-        testPing(server, setServerError, setPingedServers, pingedServers);
-    },
-    testService: (service, server, setServiceError) => {
-        testService(service, server, setServiceError);
-    },
-    testDatabase: (database, server) => {},
-    testPath: (path, server, setScriptError) => {
-        testPath(path, server, setScriptError);
-    },
-    testUrl: (url, server) => {},
-    testProcess: (process, server) => {},
-    testDisk: (server, setDiskSelection) => {
-        testDisk(server, setDiskSelection);
-    },
-    testIIS: (element, server) => {},
-    testTitle: (title, setTitleError, setTitleOpen) => {
-        testTitle(title, setTitleError, setTitleOpen);
-    },
-};
+// const checker = {
+//     ping: (server, setServerError, setPingedServers, pingedServers) => {
+//         testPing(server, setServerError, setPingedServers, pingedServers);
+//     },
+//     testService: (service, server, setServiceError) => {
+//         testService(service, server, setServiceError);
+//     },
+//     testDatabase: (database, server) => {},
+//     testPath: (path, server, setScriptError) => {
+//         testPath(path, server, setScriptError);
+//     },
+//     testUrl: (url, server) => {},
+//     testProcess: (process, server) => {},
+//     testDisk: (server, setDiskSelection) => {
+//         testDisk(server, setDiskSelection);
+//     },
+//     testIIS: (element, server) => {},
+//     testTitle: (title, setTitleError, setTitleOpen) => {
+//         testTitle(title, setTitleError, setTitleOpen);
+//     },
+// };
 
 //export default checker;

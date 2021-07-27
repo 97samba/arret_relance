@@ -1,11 +1,41 @@
-﻿$json = gc $args[0] | ConvertFrom-Json
+﻿<#
+    Programme qui execute les Etapes pos suivant une plage donnée, si on cette derniere n'est pas renseignée toute la POS est executée
+    Arguments : 
+        * fichier Json du ssa
+        * debut le debut de la plage d'étape à executer dans la POS
+        * Fin laa fin de la plage d'étape à executer dans la POS
+
+    exemple 1: .\POSExcutor.ps1 .\Json\APPXXX_test.json
+    ici toutes les actions de la POS sont exécutées
+    
+    exemple 2: .\POSExcutor.ps1 .\Json\APPXXX_test.json 1 3
+    ici seules les étapes de 1 à 3 sont exécutées
+#>
 
 
-$json.name
-$json.auteur
-$json.date_de_creation
+############## Variables  ###################
 $CURRENT_URL = ""
+$json = get-content $args[0] | ConvertFrom-Json
+$start=0
+$end= $json.POS.length
 
+if($args[1]){
+    $start=$args[1]
+}
+if($args[2]){
+    $end=$args[2]
+}
+
+#Fonction de présentation
+function describe-ssa(){
+    
+    "`nApplication : "+$json.name
+    "Auteur : "+$json.auteur
+    "Date de création "+$json.date_de_creation
+
+    write-host "Execution des étapes de $start à $end`n"
+}
+#Décrypte un mot de passe
 function convert-password($password, $login) {
 
     $mdp = $password | ConvertTo-SecureString -key (Get-Content .\aes.key)
@@ -17,6 +47,7 @@ function convert-password($password, $login) {
     
 }
 
+#renvoit un driver Chrome | Firefox | Edge
 function get-driver($navigator) {
     
     if ($navigator -eq "Chrome") {
@@ -36,6 +67,7 @@ function get-driver($navigator) {
 
 }
 
+#Visite une url
 function Url($url, $driver) {
     if ($url -ne $CURRENT_URL) {
         #Entre que quand c'est un url diferrent 
@@ -46,6 +78,7 @@ function Url($url, $driver) {
     Start-Sleep -s 2
 }
 
+#Fait un click sur un element
 function click-element($driver, $url, $informations) {
     
     if ($url -ne $CURRENT_URL) {
@@ -91,6 +124,7 @@ function init-connection($driver, $url, $informations) {
     [IO.File]::WriteAllBytes($filename, $bytes)
 }
 
+# rensigne un text dans un champ
 function set-field($driver, $url, $informations) {
     if ($url -ne $CURRENT_URL) {
         write-host Lien different $url current $CURRENT_URL`n
@@ -105,6 +139,7 @@ function set-field($driver, $url, $informations) {
     Start-Sleep -s 2
 }
 
+#fait une déconnexion
 function logOut($driver, $url, $informations) {
     if ($url -ne $CURRENT_URL) {
         write-host Lien different $url current $CURRENT_URL`n
@@ -122,7 +157,7 @@ function logOut($driver, $url, $informations) {
     }
 }
 
-
+#traite une action web
 function webAction($driver, $url, $informations) {
     
     if ($informations.type -eq "connection") {
@@ -144,25 +179,25 @@ function webAction($driver, $url, $informations) {
 }
 
 ######################## Main ######################
-$driver = Start-SeChrome 
+#$driver = Start-SeChrome 
 
-$json.POS | ForEach-Object {
+describe-ssa
 
-    if ($_.type -eq "Link") {
+$POS = $json.POS
+
+for ($i = $start; $i -lt $end; $i++) {
+    
+    if ($POS[$i].type -eq "Link") {
         Write-Host "Url action found" 
-        Url -url $_.url -driver $driver
-        
+        #Url -url $POS[$i].url -driver $driver
     }
-
-    if ($_.type -eq "webAction") {
-
-        
-        Write-Host "Web action found type : " $($_.informations.type)
-        webAction -driver $driver -informations $_.informations -url $_.url
-                
+    
+    if ($POS[$i].type -eq "webAction") {
+        Write-Host "Web action found type : " $($POS[$i].informations.type)
+        #webAction -driver $driver -informations $POS[$i].informations -url $POS[$i].url     
     }
-    $CURRENT_URL = $_.url
+    $CURRENT_URL = $POS[$i].url
     Write-Host current URL : $CURRENT_URL
-
 }
-Stop-SeDriver -Target $driver
+    
+#Stop-SeDriver -Target $driver

@@ -248,7 +248,7 @@ function create-arret($actions) {
 
     write-line -line "NB_ETAPE=$($actions.count)" -tab 1
     write-line -line " "
-    write-line -line "let NUM_ERR=10 "
+    write-line -line "let NUM_ERR=10 " -tab 1
     
     #Toutes les étapes d'arrêt
     $actions | ForEach-Object {

@@ -9,15 +9,15 @@ require("dotenv").config();
 
 const jenkinsARRepo = "/outil/jenkins/applicatifs/gitbranchrepo";
 
-/*
-    database
-*/
 const { ObjectId } = require("bson");
 
 const DB_NAME = "AR";
 
 const url = `${process.env.REACT_APP_BDD_URI}${DB_NAME}`;
 
+/*
+    Connexion à la base de données
+*/
 mongoose
     .connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
     .then((result) =>
@@ -30,6 +30,7 @@ mongoose
 */
 router.post("/PARPRE/create", async (req, res) => {
     let element = req.body.data;
+
     let mode = req.body.mode;
 
     await treatWebAction(element);
@@ -37,15 +38,21 @@ router.post("/PARPRE/create", async (req, res) => {
     await treatParpre(element, mode, res);
 
     //copy vers les serveurs master
-    //copyARandPOSToMaster(element.name, process.env.JENKINS_MASTER_PROD);
-    copyARandPOSToMaster(element.name, process.env.JENKINS_MASTER_HPROD);
-    //copyARandPOSToMaster(element.name, process.env.JENKINS_MASTER_IPP2);
-    //copyARandPOSToMaster(element.name, process.env.JENKINS_MASTER_DEV);
+    //await copyARandPOSToAllMasters(element.name);
 });
 
+//Fonction de traitement de la parpre
 const treatParpre = async (element, mode, res) => {
     console.log("Enregistrement de la PARPRE ", element.name);
 
+    //generer le fichier Json
+    await generateJsonFile(element);
+    await generatePOS(element);
+    await generateARScript(element, res, mode);
+};
+
+//génere le fichier Json
+const generateJsonFile = async (element) => {
     await fs.promises.writeFile(
         `./Powershell/Json/${element.name}.json`,
         JSON.stringify(element),
@@ -53,7 +60,10 @@ const treatParpre = async (element, mode, res) => {
     );
 
     console.log("Le Fichier json a été généré");
+};
 
+//genere le fichier d'arret relance
+const generateARScript = (element, res, mode) => {
     exec(`./Powershell/PARPREGenerator.ps1 ./Powershell/Json/${element.name}.json`, {
         shell: "powershell.exe",
     })
@@ -88,6 +98,7 @@ const treatParpre = async (element, mode, res) => {
         });
 };
 
+//Fonction de traitement des actions Web
 async function treatWebAction(parpre) {
     const webActions = parpre.POS.filter((action) => action.type === "webAction");
 
@@ -101,13 +112,11 @@ async function treatWebAction(parpre) {
 //Chiffre les mots de passe
 const HashPassword = async (webActions) => {
     for (let i = 0; i < webActions.length; i++) {
-        //console.log("working for ", i)
         if (webActions[i].informations.type === "connection") {
             if (webActions[i].informations.password.length < 30) {
                 console.log("Chiffrement du mot de passe de ", webActions[i].informations.login);
                 const password = JSON.stringify(webActions[i].informations.password);
                 var hashedPassword = "";
-                //console.log(webActions[i].informations.password)
                 await exec(`./Powershell/PassHasher.ps1 ${password}`, {
                     shell: "powershell.exe",
                 }).then((result) => {
@@ -123,7 +132,16 @@ const HashPassword = async (webActions) => {
     }
 };
 
-//Copy les scripts vers les masters (PROD HPROD IPP2 et DEV)
+const generatePOS = async (element) => {
+    await exec(
+        `./Powershell/PosGenerator.ps1 ./Powershell/Json/${element.name}.json`,
+        { shell: "powershell" },
+        (error, stdout, stderr) => {
+            console.log("sortie : ", stdout);
+        }
+    );
+};
+//Copy les scripts vers un master
 const copyARandPOSToMaster = async (ssaName, server) => {
     exec(
         `./../Powershell/copyDocumentsToMaster.ps1 ${ssaName} ${server}`,
@@ -136,9 +154,17 @@ const copyARandPOSToMaster = async (ssaName, server) => {
     );
 };
 
+//Copy les scripts vers les serveurs master Jenkins (PROD HPROD IPP2 et DEV)
+const copyARandPOSToAllMasters = async (ssaName) => {
+    //copyARandPOSToMaster(ssaName, process.env.JENKINS_MASTER_PROD);
+    copyARandPOSToMaster(ssaName, process.env.JENKINS_MASTER_HPROD);
+    //copyARandPOSToMaster(ssaName, process.env.JENKINS_MASTER_IPP2);
+    //copyARandPOSToMaster(ssaName, process.env.JENKINS_MASTER_DEV);
+};
+
 //retourne les documents (ssas) de la base de données
 router.get("/AllPOS", async (req, res) => {
-    console.log("Sending pos");
+    console.log("Sending all documents");
     Parpre.find().then((result) => res.send(result));
 });
 
@@ -149,6 +175,7 @@ router.get("/getAPOS", (req, res) => {
     });
 });
 
+//Test si un titre est déja utilisé dans la base
 router.get("/PARPRE/testTitle", (req, res) => {
     Parpre.findOne({ name: req.query.title }, (err, results) => {
         res.send(results !== null);

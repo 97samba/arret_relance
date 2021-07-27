@@ -43,7 +43,7 @@ const WebAction = ({ index, initialSTate }) => {
     const classes = useStyles();
     const [anchorEl, setAnchor] = useState(null);
     const { deleteAction, duplicateAction, saveData } = useContext(ActionContext);
-    const [state, setState] = useState({ initialSTate });
+    const [state, setState] = useState(initialSTate);
     const [actionType, setActionType] = useState("connection");
     const [openDialog, setOpenDialog] = useState(false);
     const [informations, setInformations] = useState({});
@@ -66,10 +66,10 @@ const WebAction = ({ index, initialSTate }) => {
     const reduire = () => {};
     useEffect(() => {
         setState(initialSTate);
-        // if (initialSTate.informations.type) {
-        //     console.log("action type ", initialSTate.informations.type)
-        //     setActionType(initialSTate.informations.type)
-        // }
+        if (initialSTate.informations.type) {
+            console.log("action type ", initialSTate.informations.type);
+            setActionType(initialSTate.informations.type);
+        }
         setInformations(initialSTate.informations);
         setOptions(initialSTate.options);
     }, []);

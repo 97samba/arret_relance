@@ -112,10 +112,112 @@ Relance_App()
     NB_ETAPE=4
  
     let NUM_ERR=10 
-@{index=0; type=database; server=localhost; name=instance; action=start; databaseType=MSSQL; options=}
-@{index=1; type=database; server=localhost; name=instance; action=status; databaseType=MSSQL; options=}
-@{index=2; type=service; server=localhost; name=bits; action=start; options=}
-@{index=3; type=service; server=localhost; name=bits; action=status; options=}
+    #Les environnements sur lesquels vont s'executer la commande
+    ENVS=(PROD HPROD)
+    
+    for i in "${ENVS[@]}"
+    do
+        if [ $i == $TYPE_ENVIRONNEMENT ] 
+        then
+                ETAPE=Etape1
+                SRV=$localhost
+                let NUM_ERR++ 
+                USER=
+                CMD_WIN="powershell ./database.ps1 start $instance MSSQL $SRV" 
+                echo
+                echo "DEBUT : $(date +'%d/%m/%Y %H:%M:%S')"
+                echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
+                echo "Commande : "$CMD_WIN
+                res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q adm-deploy@$REBOND_WIN "$CMD_WIN")
+                retval=$?
+                echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"] / OK RES("$res") " 
+                echo "FIN : $(date +'%d/%m/%Y %H:%M:%S')"
+                echo
+        fi
+        
+    done
+    #Les environnements sur lesquels vont s'executer la commande
+    ENVS=(PROD HPROD2)
+    
+    for i in "${ENVS[@]}"
+    do
+        if [ $i == $TYPE_ENVIRONNEMENT ] 
+        then
+                ETAPE=Etape2
+                SRV=$localhost
+                let NUM_ERR++ 
+                USER=
+                CMD_WIN="powershell ./database.ps1 status $instance MSSQL $SRV" 
+                echo
+                echo "DEBUT : $(date +'%d/%m/%Y %H:%M:%S')"
+                echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
+                echo "Commande : "$CMD_WIN
+                res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q adm-deploy@$REBOND_WIN "$CMD_WIN")
+                retval=$?
+                echo $res > $FIC_TMP
+                if grep -c "$RES_ATTENDU" $FIC_TMP > /dev/null; then
+                echo "===> OK / RESULTAT : "$res" / RES_ATTENDU("$RES_ATTENDU"))"
+                else
+                echo "===> ERREUR "$NUM_ERR" : RESULTAT : "$res" / DIFFERENT DU RESULTAT ATTENDU ("$RES_ATTENDU")"
+                exit $NUM_ERR
+                fi
+                echo
+        fi
+        
+    done
+    #Les environnements sur lesquels vont s'executer la commande
+    ENVS=(PROD HPROD HPROD2 DEV)
+    
+    for i in "${ENVS[@]}"
+    do
+        if [ $i == $TYPE_ENVIRONNEMENT ] 
+        then
+                ETAPE=Etape3
+                SRV=$localhost
+                let NUM_ERR++ 
+                USER=
+                CMD_WIN="powershell ./service.ps1 start bits $SRV" 
+                echo
+                echo "DEBUT : $(date +'%d/%m/%Y %H:%M:%S')"
+                echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
+                echo "Commande : "$CMD_WIN
+                res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q adm-deploy@$REBOND_WIN "$CMD_WIN")
+                retval=$?
+                echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"] / OK RES("$res") " 
+                echo "FIN : $(date +'%d/%m/%Y %H:%M:%S')"
+                echo
+        fi
+        
+    done
+    #Les environnements sur lesquels vont s'executer la commande
+    ENVS=(PROD HPROD HPROD2 DEV)
+    
+    for i in "${ENVS[@]}"
+    do
+        if [ $i == $TYPE_ENVIRONNEMENT ] 
+        then
+                ETAPE=Etape4
+                SRV=$localhost
+                let NUM_ERR++ 
+                USER=
+                CMD_WIN="powershell ./service.ps1 status bits $SRV" 
+                echo
+                echo "DEBUT : $(date +'%d/%m/%Y %H:%M:%S')"
+                echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
+                echo "Commande : "$CMD_WIN
+                res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q adm-deploy@$REBOND_WIN "$CMD_WIN")
+                retval=$?
+                echo $res > $FIC_TMP
+                if grep -c "$RES_ATTENDU" $FIC_TMP > /dev/null; then
+                echo "===> OK / RESULTAT : "$res" / RES_ATTENDU("$RES_ATTENDU"))"
+                else
+                echo "===> ERREUR "$NUM_ERR" : RESULTAT : "$res" / DIFFERENT DU RESULTAT ATTENDU ("$RES_ATTENDU")"
+                exit $NUM_ERR
+                fi
+                echo
+        fi
+        
+    done
 }
  
 ######################################## RELANCE ########################################
@@ -123,7 +225,7 @@ Arret_App()
 {
     NB_ETAPE=4
  
-let NUM_ERR=10 
+    let NUM_ERR=10 
     #Les environnements sur lesquels vont s'executer la commande
     ENVS=(PROD HPROD)
     
