@@ -132,7 +132,7 @@ function create-logAndReport() {
     write-line -line "fi"
 
     write-line -line "FIC_ETAT=`$LOCAL_DIR/etat.txt"
-    write-line -line "FIC_TEMP=`$LOCAL_DIR/tmp.txt"
+    write-line -line "FIC_TMP=`$LOCAL_DIR/tmp.txt"
     write-line -line "case `$TYPE_ACTION in"
     
     write-line -line "Arret)" -tab 1
@@ -231,7 +231,7 @@ function create-relance($actions) {
     #Toutes les étapes
     $actions | ForEach-Object {
         
-        create-etape -step $_
+        create-etape -step $_ -sequence "start"
     }    
     write-line -line "}"
 }
@@ -253,7 +253,7 @@ function create-arret($actions) {
     #Toutes les étapes d'arrêt
     $actions | ForEach-Object {
 
-        create-etape -step $_
+        create-etape -step $_ -sequence "stop"
     }    
     write-line -line "}"
 }
@@ -261,7 +261,7 @@ function create-arret($actions) {
 #
 ####### Créer une étape 
 #
-function create-etape($step) {
+function create-etape($step,$sequence) {
     
     $envs = @()
 
@@ -292,7 +292,12 @@ function create-etape($step) {
     write-line -line "ETAPE=Etape$($step.index+1)" -tab 3
     
     write-line -line "SRV=`$$($step.server)" -tab 3
+    if (($($step.action) -eq "status") -or ($($step.type) -eq "command")) {
 
+        $resAttendu = res-attendu -sequence $sequence -step $step 
+
+        write-line -line "RES_ATTENDU=`"$resAttendu`"" -tab 3
+    }
     write-line -line "let NUM_ERR++ " -tab 3
     
     write-line -line "USER=$($step.user)" -tab 3
@@ -420,14 +425,91 @@ function Create-Command ($step) {
         "IIS" { 
             return "powershell ./Pool_iis.ps1 $($step.action) $($step.name) $($step.elementType) `$SRV"
         }
+        "link" { 
+            return "powershell ./CheckUrl.ps1 status $($step.url) `$SRV"
+        }
         "rename" { 
             return "powershell ./$($step.type).ps1 $($step.path) $($step.name) `$SRV"
+        }
+        "command"{
+            return $($step.name)
         }
         Default {
             return "powershell write-host Commande non prise en compte"
         }
     }
 }
+
+#renvois le resultat attendu
+
+function res-attendu($step,$sequence){
+
+    if($sequence -eq "start"){
+
+        switch ($($step.type)) {
+            "service" { 
+                return "running"
+            }
+            "process" { 
+                return "running"
+            }
+            "database" { 
+                return "running"
+            }            
+            "log" { 
+                return "ok"
+            }
+            "disk" { 
+                return "ok"
+            }
+            "IIS" { 
+                return "running"
+            }
+            "link" { 
+                return "ok"
+            }
+            "command"{
+                return $($step.result)
+            }
+            Default {
+                return "N/an"
+            }
+    }
+    }
+    if($sequence -eq "stop"){
+
+        switch ($($step.type)) {
+            "service" { 
+                return "stopped"
+            }
+            "process" { 
+                return "stopped"
+            }
+            "database" { 
+                return "stopped"
+            }            
+            "log" { 
+                return "ko"
+            }
+            "disk" { 
+                return "ko"
+            }
+            "IIS" { 
+                return "stopped"
+            }
+            "link" { 
+                return "ko"
+            }
+            "command"{
+                return $($step.result)
+            }
+            Default {
+                return "N/an"
+            }
+        }
+    }
+}
+
 #
 ####### Créer les étapes d'Arrêt
 #
@@ -443,7 +525,6 @@ function create-tests($actions) {
     $actions.Arret | where-Object { $_.action -eq "status" } | ForEach-Object {
         $commande = Create-Command -step $_
         #write-host $commande
-    
         
         write-line -line "echo" -tab 1
         write-line -line "SRV=`$$($_.server)" -tab 1
