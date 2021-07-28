@@ -19,10 +19,10 @@ $json = get-content $args[0] | ConvertFrom-Json
 $start=0
 $end= $json.POS.length
 
-if($args[1]){
+if($args[1] -ge 0){
     $start=$args[1]
 }
-if($args[2]){
+if($args[2] -ge 0){
     $end=$args[2]
 }
 
@@ -67,14 +67,25 @@ function get-driver($navigator) {
 
 }
 
+#Prends une capture d'ecran
+
+function take-screenshot($driver,$index){
+    $screenshot = Invoke-SeScreenshot -Target $driver 
+    
+    $filename = Join-Path (Get-Location).Path "$($json.name)-$index.png"
+    $bytes = [Convert]::FromBase64String($screenshot)
+
+    [IO.File]::WriteAllBytes($filename, $bytes)
+}
+
 #Visite une url
-function Url($url, $driver) {
+function Url($url, $driver,$index) {
     if ($url -ne $CURRENT_URL) {
         #Entre que quand c'est un url diferrent 
         Enter-SeUrl -Url $url -Target $driver
         write-host Lien different $url current $CURRENT_URL`n
     }
-
+    take-screenshot -driver $driver -index $index
     Start-Sleep -s 2
 }
 
@@ -97,7 +108,7 @@ function click-element($driver, $url, $informations) {
 }
 
 # fonction pour l'authentification
-function init-connection($driver, $url, $informations) {
+function init-connection($driver, $url, $informations,$index) {
    
     if ($url -ne $CURRENT_URL) {
         Enter-SeUrl -Url $url -Target $driver
@@ -116,12 +127,6 @@ function init-connection($driver, $url, $informations) {
 
     Start-Sleep -s 2
 
-    $screenshot = Invoke-SeScreenshot -Target $driver 
-    
-    $filename = Join-Path (Get-Location).Path "$($json.name)-1$.png"
-    $bytes = [Convert]::FromBase64String($screenshot)
-
-    [IO.File]::WriteAllBytes($filename, $bytes)
 }
 
 # rensigne un text dans un champ
@@ -158,11 +163,11 @@ function logOut($driver, $url, $informations) {
 }
 
 #traite une action web
-function webAction($driver, $url, $informations) {
+function webAction($driver, $url, $informations,$index) {
     
     if ($informations.type -eq "connection") {
-     
-        init-connection -driver $driver -url $url -informations $informations
+
+        init-connection -driver $driver -url $url -informations $informations -index $index
     }
     if ($informations.type -eq "click") {
 
@@ -172,32 +177,31 @@ function webAction($driver, $url, $informations) {
         logOut -url $url -driver $driver -informations $informations
     }
     if ($informations.type -eq "form") {
-
         set-field -driver $driver -url $url -informations $informations
     }
+    if ($informations.type -eq "visit") {
+        url -driver $driver -url $url -index $index
+    }
+    take-screenshot -driver $driver -index $index
+
     
 }
 
 ######################## Main ######################
-#$driver = Start-SeChrome 
+$driver = Start-SeChrome -Incognito -Maximized
 
 describe-ssa
 
 $POS = $json.POS
 
-for ($i = $start; $i -lt $end; $i++) {
-    
-    if ($POS[$i].type -eq "Link") {
-        Write-Host "Url action found" 
-        #Url -url $POS[$i].url -driver $driver
-    }
+for ($i = $start; $i -le $end; $i++) {
     
     if ($POS[$i].type -eq "webAction") {
         Write-Host "Web action found type : " $($POS[$i].informations.type)
-        #webAction -driver $driver -informations $POS[$i].informations -url $POS[$i].url     
+        webAction -driver $driver -informations $POS[$i].informations -url $POS[$i].url -index $POS[$i].index  
     }
     $CURRENT_URL = $POS[$i].url
     Write-Host current URL : $CURRENT_URL
 }
     
-#Stop-SeDriver -Target $driver
+Stop-SeDriver -Target $driver

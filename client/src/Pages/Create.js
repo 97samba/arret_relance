@@ -6,7 +6,6 @@ import {
     FormControlLabel,
     FormGroup,
     Grid,
-    LinearProgress,
     makeStyles,
     Radio,
     RadioGroup,
@@ -47,7 +46,7 @@ const Create = () => {
     //les Actions POS
     const [posActions, setPosActions] = useState([]);
     //creation automatique de la verification
-    const [autoCreate, setAutoCreate] = useState(false);
+    //const [autoCreate, setAutoCreate] = useState(false);
     //Si on fait la relance automatiquement
     const [autoRelance, setAutoRelance] = useState(false);
     //Soit PARPRE ou POS

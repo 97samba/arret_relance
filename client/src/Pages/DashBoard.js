@@ -8,10 +8,16 @@ import {
     ListSubheader,
     Paper,
     Typography,
+    Card,
+    CardContent,
+    CardHeader,
+    Button,
 } from "@material-ui/core";
 import {
+    ArrowForwardIos,
     Assignment,
     AssignmentTurnedIn,
+    CheckCircle,
     InsertDriveFile,
     WatchLaterRounded,
 } from "@material-ui/icons";
@@ -19,6 +25,7 @@ import { useEffect, useState } from "react";
 import DashboardCard from "../Components/Dashboard/DashboardCard";
 import { useHistory } from "react-router";
 import { makeStyles } from "@material-ui/core";
+import image from "./test_container_1-8.png";
 
 //Url de contact du server
 const url = "http://localhost:5000/api";
@@ -59,28 +66,28 @@ const DashBoard = () => {
             <Container className={classes.root}>
                 {/**haut */}
                 <Grid container spacing={4}>
-                    <Grid item spacing={1} xs={12} sm={6} md={3} lg={3}>
+                    <Grid item xs={12} sm={6} md={3} lg={3}>
                         <DashboardCard
                             name="PARPRE réalisées"
                             icon={<Assignment color="primary" />}
                             documentNumber={documents.filter((doc) => doc.Arret.length > 0).length}
                         />
                     </Grid>
-                    <Grid item spacing={1} xs={12} sm={6} md={3} lg={3}>
+                    <Grid item xs={12} sm={6} md={3} lg={3}>
                         <DashboardCard
                             name="POS réalisées"
                             icon={<AssignmentTurnedIn color="primary" />}
                             documentNumber={documents.filter((doc) => doc.POS.length > 0).length}
                         />
                     </Grid>
-                    <Grid item spacing={1} xs={12} sm={6} md={3} lg={3}>
+                    <Grid item xs={12} sm={6} md={3} lg={3}>
                         <DashboardCard
                             name="SSA traités"
                             documentNumber={documents.length}
                             icon={<InsertDriveFile color="primary" />}
                         />
                     </Grid>
-                    <Grid item spacing={1} xs={12} sm={6} md={3} lg={3}>
+                    <Grid item xs={12} sm={6} md={3} lg={3}>
                         <DashboardCard
                             name="Plannifiées (******)"
                             documentNumber={0}
@@ -90,14 +97,14 @@ const DashBoard = () => {
                 </Grid>
                 {/**Milieu */}
                 <Grid container spacing={4}>
-                    <Grid item md={3}>
+                    <Grid item md={6}>
                         <Paper>
                             <List
                                 style={{ minHeight: 500 }}
                                 component="nav"
                                 subheader={
                                     <ListSubheader color="primary">
-                                        SSA récents (Arrêt | Relance | POS)
+                                        Tests VABFO récents
                                     </ListSubheader>
                                 }
                             >
@@ -111,16 +118,44 @@ const DashBoard = () => {
                                             >
                                                 <ListItemText primary={doc.name} />
 
-                                                <Typography>
-                                                    {doc.Arret.length} | {doc.Relance.length} |{" "}
-                                                    {doc.POS.length}
-                                                </Typography>
+                                                <Typography>OK </Typography>
+                                                <CheckCircle
+                                                    style={{ color: "Green", marginLeft: 5 }}
+                                                />
                                             </ListItem>
                                             <Divider orientation="horizontal" light />
                                         </div>
                                     ))}
                             </List>
                         </Paper>
+                    </Grid>
+                    <Grid item md={6}>
+                        <Card>
+                            <CardHeader
+                                title="Test"
+                                subheader="Description du SSA"
+                                action={
+                                    <Button
+                                        variant="text"
+                                        color="primary"
+                                        endIcon={<ArrowForwardIos />}
+                                    >
+                                        consulter
+                                    </Button>
+                                }
+                            />
+                            <CardContent>
+                                <Typography>Historique des tests</Typography>
+                                <Typography>Images prises par le script</Typography>
+                                <img
+                                    //src="'../../../server/Powershell/test_container_1-8.png'"
+                                    src={image}
+                                    alt="title"
+                                    height={800 / 4}
+                                    width={1900 / 4}
+                                />
+                            </CardContent>
+                        </Card>
                     </Grid>
                 </Grid>
             </Container>

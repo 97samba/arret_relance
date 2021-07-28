@@ -1,6 +1,6 @@
 
 $SCRIPT_DIRECTORY = ".\scripts"
-$POSExcutor = "POSTester/ps1"
+$POSExecutor = ".\POSTester.ps1"
 
 function verify-args($parameters) {
     
@@ -379,11 +379,15 @@ function Create-Command ($step) {
         "rename" { 
             return "powershell ./$($step.type).ps1 $($step.path) $($step.name) `$SRV"
         }
+        "link" { 
+            return "powershell ./CheckUrl.ps1 status $($step.url) `$SRV"
+        }
         Default {
             return "powershell write-host Commande non prise en compte"
         }
     }
 }
+
 #
 ####### Créer les étapes de POS
 #
@@ -391,7 +395,7 @@ function create-POS($actions) {
     
     write-line -line " "
     write-line -line "######################################## Tests ########################################"
-    write-line -line "Tests_POS()"
+    write-line -line "Launch_POS()"
     write-line -line "{"
 
     #La plage d'actions à vérifier avant de voir une action different d'un parcours web
@@ -401,17 +405,19 @@ function create-POS($actions) {
     for ($i = 0; $i -lt $actions.POS.length; $i++){
         if($actions.POS[$i].type -eq "webAction"){
             $actionToGenerateNow+=$actions.POS[$i]
+            #si c'est le dernier, on écrit les étapes qui sont enregistées
             if($i -eq $actions.POS.length - 1){
                 create-WebActionStep -start $($actionToGenerateNow[0].index) -end ($($actionToGenerateNow[-1].index))
             }
         }else{
+            # On vérifie s'il y'a des actions POS, on les écrit dans le fichier 
             if($actionToGenerateNow.length -gt 0){
-    
+                
                 create-WebActionStep -start $($actionToGenerateNow[0].index) -end ($($actionToGenerateNow[-1].index))
-                #on flush le tableau
+                # on flush le tableau
                 $actionToGenerateNow=@()
             }
-            
+            # Puis on écrit l'étape
             create-etape -step $actions.POS[$i]
         }
     }   
@@ -420,19 +426,16 @@ function create-POS($actions) {
 
 function create-WebActionStep($start,$end)
 {
-
     write-line -line " " -tab 1
-
     write-line -line "echo `" Execution des étapes POS de $start à $end`"" -tab 1
-    write-line -line "CMD_WIN = powershell $POSExecutor .\Json\$PARPRE_NAME.json $start $end" -tab 1
+    write-line -line "CMD_WIN = `"powershell $POSExecutor .\Json\$PARPRE_NAME.json $start $end`"" -tab 1
     write-line -line "res=`$`(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q adm-deploy@`$REBOND_WIN `"`$CMD_WIN`"`)" -tab 1
     write-line -line "echo `" [Action Web :`"`$APPLI`"] / OK RES`(`"`$res`"`) `" " -tab 1
     write-line -line "echo `"FIN : `$`(date +`'%d/%m/%Y %H:%M:%S`'`)`"" -tab 1
     write-line -line "echo " -tab 1
-    write-line -line " " -tab 1
-
-
+    write-line -line " " -tab 1   
 }
+
 #
 ####### Créer le main 
 
@@ -446,7 +449,7 @@ function create-main() {
     write-line -line "echo `"# | Version EBO : 19/05/2021`""
     write-line -line "echo `"# | Date creation : 19/05/2021`""
 
-    write-line -line "Tests_POS" -tab 2
+    write-line -line "Launch_POS" -tab 2
 
     write-line -line "echo `"FIN DU TRAITEMENT`" >>`$FIC_ETAT"
 
@@ -490,5 +493,3 @@ $FILE_NAME = $PARPRE_NAME + "_POS.sh"
 init -file $args[0]
 
 main-process -file $args[0]
-
-

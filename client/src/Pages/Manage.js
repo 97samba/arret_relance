@@ -2,20 +2,16 @@ import {
     Box,
     Button,
     Grid,
-    IconButton,
-    InputBase,
     makeStyles,
-    Paper,
     Typography,
     CircularProgress,
     Dialog,
     DialogTitle,
     Divider,
     TextField,
-    Chip,
 } from "@material-ui/core";
 import { useEffect, useState } from "react";
-import { ArrowBack, ArrowForward, SearchSharp } from "@material-ui/icons";
+import { ArrowBack, ArrowForward } from "@material-ui/icons";
 import ListSSA from "../Components/Manage/ListSSA";
 import axios from "axios";
 import { Autocomplete } from "@material-ui/lab";
@@ -92,7 +88,7 @@ const Manage = () => {
                                 elevation={0}
                                 onClick={() => {
                                     SetExcelTab(!ExcelTab);
-                                    allExcel.length == 0 && GetAllExcel();
+                                    allExcel.length === 0 && GetAllExcel();
                                 }}
                                 style={{ background: "#a6db9e" }}
                             >
@@ -125,9 +121,7 @@ const Manage = () => {
                     <Grid item sm={5}>
                         <Box display="flex" justifyContent="center">
                             <Typography variant="h6" color="primary">
-                                {ExcelTab
-                                    ? "Transformers Excel"
-                                    : "Transformers format Web"}
+                                {ExcelTab ? "Transformers Excel" : "Transformers format Web"}
                             </Typography>
                         </Box>
                     </Grid>
@@ -136,12 +130,7 @@ const Manage = () => {
 
             <div>
                 <Divider light />
-                <Grid
-                    style={{ padding: 5 }}
-                    container
-                    direction="row"
-                    className={classes.root}
-                >
+                <Grid style={{ padding: 5 }} container direction="row" className={classes.root}>
                     <Grid item xs={3} md={1} sm={1}>
                         <Typography>Code</Typography>
                     </Grid>
@@ -162,24 +151,13 @@ const Manage = () => {
                         <Typography> Date de création </Typography>
                     </Grid>
 
-                    <Grid
-                        item
-                        xs={3}
-                        md={3}
-                        sm={3}
-                        spacing={1}
-                        container
-                        justify="center"
-                    >
+                    <Grid item xs={3} md={3} sm={3} spacing={1} container justify="center">
                         <Typography>Actions</Typography>
                     </Grid>
                 </Grid>
 
                 <div>
-                    <Dialog
-                        open={loading}
-                        style={{ minHeight: 100, minWidth: 100 }}
-                    >
+                    <Dialog open={loading} style={{ minHeight: 100, minWidth: 100 }}>
                         <Box
                             display="flex"
                             alignContent="center"

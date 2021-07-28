@@ -32,10 +32,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 const Condition = ({ index, initialSTate, verified }) => {
     const classes = useStyles();
-    const { deleteAction, duplicateAction, saveData, AddServer } = useContext(ActionContext);
+    const { deleteAction, duplicateAction, saveData } = useContext(ActionContext);
 
     const [state, setState] = useState({ initialSTate });
-    const [recieved, setRecieved] = useState({ ...verified });
+    //const [recieved, setRecieved] = useState({ ...verified });
     const [openDialog, setOpenDialog] = useState(false);
 
     const [type, setType] = useState("If");

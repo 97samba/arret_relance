@@ -43,7 +43,6 @@ const Link = ({ index, initialSTate }) => {
 
     useEffect(() => {
         setState(initialSTate);
-        setState(initialSTate);
     }, []);
     const formatUrl = (url) => {
         if (url.startsWith("http") || url.length < 4) {
@@ -104,6 +103,7 @@ const Link = ({ index, initialSTate }) => {
                             onChange={(e) => setState({ ...state, url: formatUrl(e.target.value) })}
                             onBlur={(e) => {
                                 //testConnection(e);
+                                saveInformations();
                             }}
                         />
                     </Grid>
@@ -117,7 +117,7 @@ const Link = ({ index, initialSTate }) => {
                             >
                                 <MenuItem value="Down">Down</MenuItem>
                                 <MenuItem value="UP">UP</MenuItem>
-                                <MenuItem value="Null">Page blanche</MenuItem>
+                                <MenuItem value="whitePage">Page blanche</MenuItem>
                             </Select>
                         </FormControl>
                     </Grid>

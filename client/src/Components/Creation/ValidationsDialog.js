@@ -19,7 +19,7 @@ const ValidationDialog = ({ informations, setInformations, generateJson }) => {
 
     const handleGenerate = async () => {
         setGenerating(true);
-        if (informations.nom != "" && informations.prenom != "") {
+        if (informations.nom !== "" && informations.prenom !== "") {
             var state = await generateJson();
             setButtonText("Enregistrement de la PARPRE");
             await new Promise((res) => setTimeout(res, 1500));
@@ -39,10 +39,7 @@ const ValidationDialog = ({ informations, setInformations, generateJson }) => {
         <div>
             <Dialog
                 open={informations.open}
-                onClose={() =>
-                    !generating &&
-                    setInformations({ ...informations, open: false })
-                }
+                onClose={() => !generating && setInformations({ ...informations, open: false })}
             >
                 <DialogTitle>Informations du Transformers</DialogTitle>
                 <DialogContent>
@@ -50,11 +47,7 @@ const ValidationDialog = ({ informations, setInformations, generateJson }) => {
                         Version Transformers : 2.0.4 --- EBO 01/01/2021
                     </DialogContentText>
 
-                    <Typography
-                        style={{ marginBottom: 10, fontWeight: "bold" }}
-                    >
-                        Auteur
-                    </Typography>
+                    <Typography style={{ marginBottom: 10, fontWeight: "bold" }}>Auteur</Typography>
                     <Grid container spacing={2} direction="row">
                         <Grid item md={6}>
                             <TextField
@@ -85,18 +78,11 @@ const ValidationDialog = ({ informations, setInformations, generateJson }) => {
                             />
                         </Grid>
                     </Grid>
-                    <Box
-                        m={4}
-                        display="flex"
-                        justifyContent="center"
-                        flexDirection="row"
-                    >
+                    <Box m={4} display="flex" justifyContent="center" flexDirection="row">
                         <Button
                             color="primary"
                             disabled={
-                                informations.nom == "" ||
-                                informations.prenom == "" ||
-                                generating
+                                informations.nom === "" || informations.prenom === "" || generating
                             }
                             variant="contained"
                             endIcon={<Save />}
@@ -106,15 +92,8 @@ const ValidationDialog = ({ informations, setInformations, generateJson }) => {
                         </Button>
                     </Box>
                     {generating || buttonText === "Enregistré" ? (
-                        <Box
-                            m={4}
-                            display="flex"
-                            justifyContent="center"
-                            alignItems="center"
-                        >
-                            <Typography style={{ marginRight: 10 }}>
-                                {buttonText}
-                            </Typography>
+                        <Box m={4} display="flex" justifyContent="center" alignItems="center">
+                            <Typography style={{ marginRight: 10 }}>{buttonText}</Typography>
 
                             {buttonText === "Enregistré" ? (
                                 <Done color="primary" />
@@ -125,17 +104,12 @@ const ValidationDialog = ({ informations, setInformations, generateJson }) => {
                     ) : (
                         <Typography></Typography>
                     )}
-                    <Box
-                        display="flex"
-                        justifyContent="space-between"
-                        alignItems="center"
-                    >
+                    <Box display="flex" justifyContent="space-between" alignItems="center">
                         <Typography style={{ fontSize: 10, marginRight: 10 }}>
                             Sfr SN_2.0.4
                         </Typography>
                         <Typography>
-                            {new Date().toLocaleString()} -{" "}
-                            {informations.prenom} {informations.nom}
+                            {new Date().toLocaleString()} - {informations.prenom} {informations.nom}
                         </Typography>
                     </Box>
                 </DialogContent>

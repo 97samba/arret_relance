@@ -44,7 +44,7 @@ then
     fi
 fi
 FIC_ETAT=$LOCAL_DIR/etat.txt
-FIC_TEMP=$LOCAL_DIR/tmp.txt
+FIC_TMP=$LOCAL_DIR/tmp.txt
 case $TYPE_ACTION in
     Arret)
         LOCAL_LOG_FILE=$LOG_DIR/Stop_$APPLI.log
@@ -145,6 +145,7 @@ Relance_App()
         then
                 ETAPE=Etape2
                 SRV=$localhost
+                RES_ATTENDU="running"
                 let NUM_ERR++ 
                 USER=
                 CMD_WIN="powershell ./database.ps1 status $instance MSSQL $SRV" 
@@ -198,6 +199,7 @@ Relance_App()
         then
                 ETAPE=Etape4
                 SRV=$localhost
+                RES_ATTENDU="running"
                 let NUM_ERR++ 
                 USER=
                 CMD_WIN="powershell ./service.ps1 status bits $SRV" 
@@ -223,7 +225,7 @@ Relance_App()
 ######################################## RELANCE ########################################
 Arret_App()
 {
-    NB_ETAPE=4
+    NB_ETAPE=5
  
     let NUM_ERR=10 
     #Les environnements sur lesquels vont s'executer la commande
@@ -259,6 +261,7 @@ Arret_App()
         then
                 ETAPE=Etape2
                 SRV=$localhost
+                RES_ATTENDU="stopped"
                 let NUM_ERR++ 
                 USER=
                 CMD_WIN="powershell ./service.ps1 status bits $SRV" 
@@ -312,6 +315,7 @@ Arret_App()
         then
                 ETAPE=Etape4
                 SRV=$localhost
+                RES_ATTENDU="stopped"
                 let NUM_ERR++ 
                 USER=
                 CMD_WIN="powershell ./database.ps1 status $instance MSSQL $SRV" 
@@ -328,6 +332,31 @@ Arret_App()
                 echo "===> ERREUR "$NUM_ERR" : RESULTAT : "$res" / DIFFERENT DU RESULTAT ATTENDU ("$RES_ATTENDU")"
                 exit $NUM_ERR
                 fi
+                echo
+        fi
+        
+    done
+    #Les environnements sur lesquels vont s'executer la commande
+    ENVS=(PROD HPROD HPROD2 DEV)
+    
+    for i in "${ENVS[@]}"
+    do
+        if [ $i == $TYPE_ENVIRONNEMENT ] 
+        then
+                ETAPE=Etape5
+                SRV=$localhost
+                RES_ATTENDU="test"
+                let NUM_ERR++ 
+                USER=user
+                CMD_WIN="grep ps -ef" 
+                echo
+                echo "DEBUT : $(date +'%d/%m/%Y %H:%M:%S')"
+                echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"]" 
+                echo "Commande : "$CMD_WIN
+                res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q adm-deploy@$REBOND_WIN "$CMD_WIN")
+                retval=$?
+                echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"] / OK RES("$res") " 
+                echo "FIN : $(date +'%d/%m/%Y %H:%M:%S')"
                 echo
         fi
         

@@ -17,7 +17,6 @@ import {
     DashboardSharp,
     FolderOpenSharp,
     SettingsSharp,
-    Timeline,
 } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core";
 import { useHistory, useLocation } from "react-router";

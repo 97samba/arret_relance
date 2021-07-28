@@ -64,11 +64,12 @@ const generateJsonFile = async (element) => {
 
 //genere le fichier d'arret relance
 const generateARScript = (element, res, mode) => {
+    console.log("création du script d'arret relance");
     exec(`./Powershell/PARPREGenerator.ps1 ./Powershell/Json/${element.name}.json`, {
         shell: "powershell.exe",
     })
         .then((result) => {
-            console.log("stdout :", result.stdout);
+            console.log("stdout PARPRE :", result.stdout);
             if (result.stderr) {
                 console.log("ERROR  :", result.stderr);
             }
@@ -133,13 +134,11 @@ const HashPassword = async (webActions) => {
 };
 
 const generatePOS = async (element) => {
-    await exec(
-        `./Powershell/PosGenerator.ps1 ./Powershell/Json/${element.name}.json`,
-        { shell: "powershell" },
-        (error, stdout, stderr) => {
-            console.log("sortie : ", stdout);
-        }
-    );
+    await exec(`./Powershell/PosGenerator.ps1 ./Powershell/Json/${element.name}.json`, {
+        shell: "powershell.exe",
+    }).then((result) => console.log("Out POS : ", result.stdout));
+
+    console.log("fin création de POS");
 };
 //Copy les scripts vers un master
 const copyARandPOSToMaster = async (ssaName, server) => {

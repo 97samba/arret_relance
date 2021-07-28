@@ -2,6 +2,7 @@ import {
     Avatar,
     Box,
     Button,
+    Checkbox,
     FormControl,
     Grid,
     InputLabel,
@@ -10,6 +11,7 @@ import {
     Select,
     TextField,
     Typography,
+    FormControlLabel,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core";
 import { Web } from "@material-ui/icons";
@@ -137,8 +139,7 @@ const WebAction = ({ index, initialSTate }) => {
                             label="Lien"
                             value={state.url}
                             onChange={(e) => setState({ ...state, url: e.target.value })}
-                            onBlur={(e) => {
-                                testConnection(e);
+                            onBlur={() => {
                                 saveInformations();
                             }}
                         />
@@ -152,6 +153,7 @@ const WebAction = ({ index, initialSTate }) => {
                                 onChange={(e) => {
                                     setActionType(e.target.value);
                                     setInformations({ ...informations, type: e.target.value });
+                                    saveInformations();
                                 }}
                             >
                                 <MenuItem value="connection">Connexion</MenuItem>
@@ -159,16 +161,41 @@ const WebAction = ({ index, initialSTate }) => {
                                 <MenuItem value="click">Click</MenuItem>
                                 <MenuItem value="form">Remplir champ(s)</MenuItem>
                                 <MenuItem value="verify">Vérifier un contenu</MenuItem>
+                                <MenuItem value="visit">Visite simple</MenuItem>
                             </Select>
                         </FormControl>
                     </Grid>
                     <Grid item md={2}>
                         <Box display="flex" justifyContent="center">
-                            <FormControl>
-                                <Button variant="contained" color="primary" onClick={showDialog}>
-                                    options
-                                </Button>
-                            </FormControl>
+                            {actionType === "visit" ? (
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            key="ScreenShot"
+                                            name="ScreenShot"
+                                            checked={informations.capture}
+                                            onClick={(e) => {
+                                                setInformations({
+                                                    capture: e.target.checked,
+                                                    type: actionType,
+                                                });
+                                                saveInformations();
+                                            }}
+                                        />
+                                    }
+                                    label="ScreenShot"
+                                />
+                            ) : (
+                                <FormControl>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        onClick={showDialog}
+                                    >
+                                        options
+                                    </Button>
+                                </FormControl>
+                            )}
                         </Box>
                     </Grid>
 
