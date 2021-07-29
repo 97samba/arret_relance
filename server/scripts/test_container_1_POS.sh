@@ -15,7 +15,7 @@ case $TYPE_ENVIRONNEMENT in
     HPROD)
         localhost=localhost
         instance=definir
-        REBOND_WIN=sw15272
+        REBOND_WIN=SW11183.int.wsf.ads
         ;;
     HPROD2)
         localhost=localhost
@@ -31,15 +31,90 @@ case $TYPE_ENVIRONNEMENT in
 esac
  
 ################################ FIN VARIABLES ################################
+if [ ! -d $LOCAL_DIR ] 
+then
+    mkdir -p $LOCAL_DIR
+    if [ $? -ne 0 ] 
+    then
+        echo
+        echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        echo "Echec creation repertoire LOG ($LOCAL_DIR)"
+        echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        echo
+    fi
+fi
+FIC_ETAT=$LOCAL_DIR/etat.txt
+FIC_TMP=$LOCAL_DIR/tmp.txt
+case $TYPE_ACTION in
+    Arret)
+        LOCAL_LOG_FILE=$LOG_DIR/Stop_$APPLI.log
+        LOCAL_REPORT_FILE=$LOG_DIR/Stop_$APPLI"_Report.log"
+        ;;
+    Relance)
+        LOCAL_LOG_FILE=$LOG_DIR/Start_$APPLI.log
+        LOCAL_REPORT_FILE=$LOG_DIR/Start_$APPLI"_Report.log"
+        ;;
+    Tests)
+        LOCAL_LOG_FILE=$LOG_DIR/Tests_$APPLI.log
+        LOCAL_REPORT_FILE=$LOG_DIR/Tests_$APPLI"_Report.log"
+        ;;
+    *)
+        echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        echo "Type d'action incorrecte (Arret / Relance / Tests )"
+        echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        echo
+        exit 0
+esac
+
+if [ -f $FIC_ETAT ]
+then
+    rm -f $FIC_ETAT
+fi
+echo "DEBUT DU TRAITEMENT" > $FIC_ETAT
+if [ -f $FIC_TMP ]
+then
+    rm -f 
+fi
+
+if [ -f $LOCAL_LOG_FILE ]
+then
+    mv $LOCAL_LOG_FILE $LOCAL_LOG_FILE.old
+fi
+
+if [ -f $LOCAL_REPORT_FILE ]
+then
+    mv $LOCAL_REPORT_FILE $LOCAL_REPORT_FILE.old
+fi
+
+
+logEvent(){
+    if [ -z "$1" ]
+    then
+        echo >> $LOCAL_LOG_FILE
+    else
+        echo "$(date + '%d/%m/%Y %H:%M:%S') : $1 " >> $LOCAL_LOG_FILE
+    fi
+}
+
+logReport(){
+    if [ -z "$1" ]
+    then
+        echo >> $LOCAL_REPORT_FILE
+    else
+        echo "$(date + '%d/%m/%Y %H:%M:%S') : $1 " >>  $LOCAL_REPORT_FILE
+    fi
+
+}
  
 ######################################## Tests ########################################
 Launch_POS()
 {
      
-    echo " Execution des étapes POS de 0 à 1"
+    echo " Execution des étapes POS 0  1"
     CMD_WIN = "powershell .\POSTester.ps1 .\Json\test_container_1.json 0 1"
     res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q adm-deploy@$REBOND_WIN "$CMD_WIN")
-    echo " [Action Web :"$APPLI"] / OK RES("$res") " 
+    echo 
+    echo " [ Action Web :"$APPLI"] / OK RES("$res") " 
     echo "FIN : $(date +'%d/%m/%Y %H:%M:%S')"
     echo 
      
@@ -73,10 +148,11 @@ Launch_POS()
         
     done
      
-    echo " Execution des étapes POS de 3 à 6"
+    echo " Execution des étapes POS 3  6"
     CMD_WIN = "powershell .\POSTester.ps1 .\Json\test_container_1.json 3 6"
     res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q adm-deploy@$REBOND_WIN "$CMD_WIN")
-    echo " [Action Web :"$APPLI"] / OK RES("$res") " 
+    echo 
+    echo " [ Action Web :"$APPLI"] / OK RES("$res") " 
     echo "FIN : $(date +'%d/%m/%Y %H:%M:%S')"
     echo 
      
@@ -110,11 +186,20 @@ Launch_POS()
         
     done
      
-    echo " Execution des étapes POS de 8 à 8"
+    echo " Execution des étapes POS 8  8"
     CMD_WIN = "powershell .\POSTester.ps1 .\Json\test_container_1.json 8 8"
     res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q adm-deploy@$REBOND_WIN "$CMD_WIN")
-    echo " [Action Web :"$APPLI"] / OK RES("$res") " 
+    echo 
+    echo " [ Action Web :"$APPLI"] / OK RES("$res") " 
     echo "FIN : $(date +'%d/%m/%Y %H:%M:%S')"
     echo 
      
 }
+ 
+######################################## MAIN ########################################
+echo "# | Version TRANSFORMERS : 19/05/2021"
+echo "# | Version POS : 19/05/2021"
+echo "# | Version EBO : 19/05/2021"
+echo "# | Date creation : 19/05/2021"
+        Launch_POS
+echo "FIN DU TRAITEMENT" >>$FIC_ETAT

@@ -349,6 +349,7 @@ function create-windowsStep($step) {
 
         write-line -line "echo `$res > `$FIC_TMP" -tab 3
         write-line -line "if grep -c `"`$RES_ATTENDU`" `$FIC_TMP > /dev/null; then" -tab 3
+        write-line -line "echo " -tab 3
         write-line -line "echo `"===> OK / RESULTAT : `"`$res`" / RES_ATTENDU`(`"`$RES_ATTENDU`"`)`)`"" -tab 3
         write-line -line "else" -tab 3
         write-line -line "echo `"===> ERREUR `"`$NUM_ERR`" : RESULTAT : `"`$res`" / DIFFERENT DU RESULTAT ATTENDU `(`"`$RES_ATTENDU`"`)`"" -tab 3
@@ -358,8 +359,11 @@ function create-windowsStep($step) {
 
     }
     else {
-        
+        write-line -line "echo " -tab 3
+
         write-line -line "echo `"Serveur `"`$SRV`" - [`"`$TYPE_ACTION`":`"`$APPLI`":`"`$ETAPE`"/`"`$NB_ETAPE`"] / OK RES`(`"`$res`"`) `" " -tab 3
+        write-line -line "echo " -tab 3
+
         write-line -line "echo `"FIN : `$`(date +`'%d/%m/%Y %H:%M:%S`'`)`"" -tab 3
     }
 }
@@ -384,9 +388,11 @@ function create-linuxStep($step) {
     if ($($step.action) -eq "status") {
 
         write-line -line "echo `$res > `$FIC_TMP" -tab 2
+        write-line -line "echo " -tab 3
         write-line -line "if grep -c `"`$RES_ATTENDU`" `$FIC_TMP > /dev/null; then" -tab 2
         write-line -line    "echo `"Serveur `"`$SRV`" - [`"`$TYPE_ACTION`":`"`$APPLI`":`"`$ETAPE`"/`"`$NB_ETAPE`"]  / OK `(RES`(`"`$res`"`)` / RES_ATTENDU`(`"`$RES_ATTENDU`"`)`)`"" -tab 3
         write-line -line "else" -tab 2
+        write-line -line "echo " -tab 3
         write-line -line    "echo `"Serveur `"`$SRV`" - [`"`$TYPE_ACTION`":`"`$APPLI`":`"`$ETAPE`"/`"`$NB_ETAPE`"]  / ERREUR `"`$NUM_ERR`" : RESULTAT `(`"`$res`"`) DIFFERENT DU RESULTAT ATTENDU `(`"`$RES_ATTENDU`"`)`"" -tab 3
         write-line -line    "exit `$NUM_ERR" -tab 3
         write-line -line "fi" -tab 2

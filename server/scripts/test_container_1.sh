@@ -130,7 +130,9 @@ Relance_App()
                 echo "Commande : "$CMD_WIN
                 res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q adm-deploy@$REBOND_WIN "$CMD_WIN")
                 retval=$?
+                echo 
                 echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"] / OK RES("$res") " 
+                echo 
                 echo "FIN : $(date +'%d/%m/%Y %H:%M:%S')"
                 echo
         fi
@@ -157,6 +159,7 @@ Relance_App()
                 retval=$?
                 echo $res > $FIC_TMP
                 if grep -c "$RES_ATTENDU" $FIC_TMP > /dev/null; then
+                echo 
                 echo "===> OK / RESULTAT : "$res" / RES_ATTENDU("$RES_ATTENDU"))"
                 else
                 echo "===> ERREUR "$NUM_ERR" : RESULTAT : "$res" / DIFFERENT DU RESULTAT ATTENDU ("$RES_ATTENDU")"
@@ -184,7 +187,9 @@ Relance_App()
                 echo "Commande : "$CMD_WIN
                 res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q adm-deploy@$REBOND_WIN "$CMD_WIN")
                 retval=$?
+                echo 
                 echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"] / OK RES("$res") " 
+                echo 
                 echo "FIN : $(date +'%d/%m/%Y %H:%M:%S')"
                 echo
         fi
@@ -211,6 +216,7 @@ Relance_App()
                 retval=$?
                 echo $res > $FIC_TMP
                 if grep -c "$RES_ATTENDU" $FIC_TMP > /dev/null; then
+                echo 
                 echo "===> OK / RESULTAT : "$res" / RES_ATTENDU("$RES_ATTENDU"))"
                 else
                 echo "===> ERREUR "$NUM_ERR" : RESULTAT : "$res" / DIFFERENT DU RESULTAT ATTENDU ("$RES_ATTENDU")"
@@ -246,7 +252,9 @@ Arret_App()
                 echo "Commande : "$CMD_WIN
                 res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q adm-deploy@$REBOND_WIN "$CMD_WIN")
                 retval=$?
+                echo 
                 echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"] / OK RES("$res") " 
+                echo 
                 echo "FIN : $(date +'%d/%m/%Y %H:%M:%S')"
                 echo
         fi
@@ -273,6 +281,7 @@ Arret_App()
                 retval=$?
                 echo $res > $FIC_TMP
                 if grep -c "$RES_ATTENDU" $FIC_TMP > /dev/null; then
+                echo 
                 echo "===> OK / RESULTAT : "$res" / RES_ATTENDU("$RES_ATTENDU"))"
                 else
                 echo "===> ERREUR "$NUM_ERR" : RESULTAT : "$res" / DIFFERENT DU RESULTAT ATTENDU ("$RES_ATTENDU")"
@@ -300,7 +309,9 @@ Arret_App()
                 echo "Commande : "$CMD_WIN
                 res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q adm-deploy@$REBOND_WIN "$CMD_WIN")
                 retval=$?
+                echo 
                 echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"] / OK RES("$res") " 
+                echo 
                 echo "FIN : $(date +'%d/%m/%Y %H:%M:%S')"
                 echo
         fi
@@ -327,6 +338,7 @@ Arret_App()
                 retval=$?
                 echo $res > $FIC_TMP
                 if grep -c "$RES_ATTENDU" $FIC_TMP > /dev/null; then
+                echo 
                 echo "===> OK / RESULTAT : "$res" / RES_ATTENDU("$RES_ATTENDU"))"
                 else
                 echo "===> ERREUR "$NUM_ERR" : RESULTAT : "$res" / DIFFERENT DU RESULTAT ATTENDU ("$RES_ATTENDU")"
@@ -347,7 +359,7 @@ Arret_App()
                 SRV=$localhost
                 RES_ATTENDU="test"
                 let NUM_ERR++ 
-                USER=user
+                USER=
                 CMD_WIN="grep ps -ef" 
                 echo
                 echo "DEBUT : $(date +'%d/%m/%Y %H:%M:%S')"
@@ -355,7 +367,9 @@ Arret_App()
                 echo "Commande : "$CMD_WIN
                 res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q adm-deploy@$REBOND_WIN "$CMD_WIN")
                 retval=$?
+                echo 
                 echo "Serveur "$SRV" - ["$TYPE_ACTION":"$APPLI":"$ETAPE"/"$NB_ETAPE"] / OK RES("$res") " 
+                echo 
                 echo "FIN : $(date +'%d/%m/%Y %H:%M:%S')"
                 echo
         fi

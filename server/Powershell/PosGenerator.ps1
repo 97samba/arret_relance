@@ -89,7 +89,7 @@ function create-variable($Variables) {
     $variables | ForEach-Object {
         write-line -line "$($_.prod)=$($_.hprod)" -tab 2
     }
-    write-line -line "REBOND_WIN=sw15272" -tab 2
+    write-line -line "REBOND_WIN=SW11183.int.wsf.ads" -tab 2
     write-line -line ";;" -tab 2
 
     write-line -line "HPROD2)"-tab 1
@@ -133,7 +133,7 @@ function create-logAndReport() {
     write-line -line "fi"
 
     write-line -line "FIC_ETAT=`$LOCAL_DIR/etat.txt"
-    write-line -line "FIC_TEMP=`$LOCAL_DIR/tmp.txt"
+    write-line -line "FIC_TMP=`$LOCAL_DIR/tmp.txt"
     write-line -line "case `$TYPE_ACTION in"
     
     write-line -line "Arret)" -tab 1
@@ -427,10 +427,11 @@ function create-POS($actions) {
 function create-WebActionStep($start,$end)
 {
     write-line -line " " -tab 1
-    write-line -line "echo `" Execution des étapes POS de $start à $end`"" -tab 1
+    write-line -line "echo `" Execution des étapes POS $start  $end`"" -tab 1
     write-line -line "CMD_WIN = `"powershell $POSExecutor .\Json\$PARPRE_NAME.json $start $end`"" -tab 1
     write-line -line "res=`$`(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q adm-deploy@`$REBOND_WIN `"`$CMD_WIN`"`)" -tab 1
-    write-line -line "echo `" [Action Web :`"`$APPLI`"] / OK RES`(`"`$res`"`) `" " -tab 1
+    write-line -line "echo " -tab 1
+    write-line -line "echo `" [ Action Web :`"`$APPLI`"] / OK RES`(`"`$res`"`) `" " -tab 1
     write-line -line "echo `"FIN : `$`(date +`'%d/%m/%Y %H:%M:%S`'`)`"" -tab 1
     write-line -line "echo " -tab 1
     write-line -line " " -tab 1   
@@ -466,17 +467,15 @@ function main-process($file) {
     #Création de variables
     create-variable $($json_element.variables.servers)
 
-    create-POS -actions $json_element
-
     
     #Création des logs et reports
-    #create-logAndReport 
+    create-logAndReport 
     
     #Séquence de Tests
-    #create-POS -actions $json_element
+    create-POS -actions $json_element
 
     #création du MAIN
-    #create-main     
+    create-main     
     
 }
 
