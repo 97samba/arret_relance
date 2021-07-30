@@ -58,6 +58,7 @@ const ARCard = ({
     informations,
     setInformations,
     titleError,
+    cardType,
 }) => {
     const classes = useStyles();
     const [open, setOpen] = useState(false);
@@ -307,6 +308,7 @@ const ARCard = ({
                             setPingedServers,
                             pingedServers,
                             verification,
+                            cardType,
                         }}
                     >
                         <form noValidate autoComplete="on">

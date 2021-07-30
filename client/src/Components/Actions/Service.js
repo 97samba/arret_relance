@@ -35,6 +35,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Service = ({ index, type, initialSTate }) => {
+    const { deleteAction, duplicateAction, saveData, verification, cardType } =
+        useContext(ActionContext);
     //css
     const classes = useStyles();
 
@@ -47,7 +49,7 @@ const Service = ({ index, type, initialSTate }) => {
 
     const [serviceError, setServiceError] = useState(false);
     const [serverError, setServerError] = useState(false);
-
+    const [result, setResult] = useState(cardType === "POS" ? "running" : "stopped");
     const [options, setOptions] = useState({
         block: true,
         prod: true,
@@ -56,7 +58,6 @@ const Service = ({ index, type, initialSTate }) => {
         dev: true,
     });
     //context pour sauvegarder l'état dans le parent
-    const { deleteAction, duplicateAction, saveData, verification } = useContext(ActionContext);
 
     useEffect(() => {
         setState(initialSTate);
@@ -136,7 +137,7 @@ const Service = ({ index, type, initialSTate }) => {
                             </Select>
                         </FormControl>
                     </Grid>
-                    <Grid item md={6} xl={6}>
+                    <Grid item md={cardType !== "POS" ? 6 : 4} xl={cardType !== "POS" ? 6 : 4}>
                         <TextField
                             value={state.name}
                             className={classes.fields}
@@ -160,6 +161,17 @@ const Service = ({ index, type, initialSTate }) => {
                             //testService(e.target.value)
                         />
                     </Grid>
+                    {cardType === "POS" && status === "status" ? (
+                        <Grid item md={2} xl={2}>
+                            <TextField
+                                className={classes.fields}
+                                value={result}
+                                label="Résultat Attendu"
+                                color="primary"
+                                onChange={(e) => setResult(e.target.value)}
+                            />
+                        </Grid>
+                    ) : null}
                     <Grid item md={1} xl={1}>
                         <Grid container spacing={3} alignItems="center">
                             <Grid item md={6}>

@@ -411,6 +411,7 @@ const Create = () => {
                         informations={informations}
                         setInformations={setInformations}
                         titleError={titleError}
+                        cardType="POS"
                     />
                 ) : (
                     <div>
@@ -428,6 +429,7 @@ const Create = () => {
                             informations={informations}
                             setInformations={setInformations}
                             titleError={titleError}
+                            cardType="STOP"
                         />
                         {autoRelance ? (
                             <ARCard
@@ -444,6 +446,7 @@ const Create = () => {
                                 informations={informations}
                                 setInformations={setInformations}
                                 titleError={titleError}
+                                cardType="START"
                             />
                         ) : (
                             <ARCard
@@ -458,6 +461,7 @@ const Create = () => {
                                 informations={informations}
                                 setInformations={setInformations}
                                 titleError={titleError}
+                                cardType="START"
                             />
                         )}
                     </div>
