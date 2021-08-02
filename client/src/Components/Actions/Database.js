@@ -62,7 +62,7 @@ const Database = ({ index, type, initialSTate }) => {
         }
 
         initialSTate.databaseType !== undefined
-            ? setDatabaseType(initialSTate.databaseType.toUpperCase())
+            ? setDatabaseType(initialSTate.databaseType)
             : setDatabaseType("MSSQL");
     }, []);
 

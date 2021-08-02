@@ -137,7 +137,12 @@ const Service = ({ index, type, initialSTate }) => {
                             </Select>
                         </FormControl>
                     </Grid>
-                    <Grid item md={cardType !== "POS" ? 6 : 4} xl={cardType !== "POS" ? 6 : 4}>
+                    <Grid
+                        item
+                        //affiche le champs 'Resultat attendu' si on est en POS
+                        md={cardType === "POS" && status === "status" ? 4 : 6}
+                        xl={cardType === "POS" && status === "status" ? 6 : 4}
+                    >
                         <TextField
                             value={state.name}
                             className={classes.fields}
@@ -163,13 +168,18 @@ const Service = ({ index, type, initialSTate }) => {
                     </Grid>
                     {cardType === "POS" && status === "status" ? (
                         <Grid item md={2} xl={2}>
-                            <TextField
-                                className={classes.fields}
-                                value={result}
-                                label="Résultat Attendu"
-                                color="primary"
-                                onChange={(e) => setResult(e.target.value)}
-                            />
+                            <FormControl className={classes.fields}>
+                                <InputLabel>Résultat Attendu</InputLabel>
+                                <Select
+                                    fullWidth
+                                    value={result}
+                                    onChange={(e) => setResult(e.target.value)}
+                                    onBlur={() => saveInformations()}
+                                >
+                                    <MenuItem value="running">running</MenuItem>
+                                    <MenuItem value="stopped">stopped</MenuItem>
+                                </Select>
+                            </FormControl>
                         </Grid>
                     ) : null}
                     <Grid item md={1} xl={1}>

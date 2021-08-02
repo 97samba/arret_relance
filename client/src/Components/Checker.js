@@ -1,7 +1,7 @@
 import ENV from "../Env";
 //test si le service existe
 export const testService = async (service, server, setServiceError) => {
-    if (server === null) {
+    if (server === null || service.startsWith("$")) {
         return;
     }
 

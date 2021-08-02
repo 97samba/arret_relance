@@ -16,7 +16,7 @@ import ActionContext from "../../Context/ActionContext";
 import OptionMenu from "../Creation/OptionMenu";
 import OptionDialog from "../Creation/OptionDialog";
 import PathField from "../Fields/PathField";
-import { testPing } from "../Checker";
+import { testPing, testPath } from "../Checker";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -57,12 +57,10 @@ const Rename = ({ index, type, initialSTate }) => {
     useEffect(() => {
         if (initialSTate.server && state.server === undefined) {
             verification && testPing(initialSTate.server, setServerError);
-            //verification && testService(initialSTate.name, initialSTate.server, setServiceError);
         }
 
         if (state.server) {
             verification && testPing(state.server, setServerError);
-            //verification && testService(state.name, state.server, setServiceError);
         }
     }, [verification]);
 
@@ -82,19 +80,7 @@ const Rename = ({ index, type, initialSTate }) => {
             //os: "windows"
         });
     };
-    const pathProps = {
-        index: index,
-        className: classes.fields,
-        serverError: serverError,
-        path: path != "" ? path : initialSTate.path,
-        type: "Fichier",
-        scriptError: scriptError,
-        server: state.server,
-        setScriptError: setScriptError,
-        setPath: setPath,
-        setScriptError: setScriptError,
-        saveInformations: saveInformations,
-    };
+
     return (
         <div>
             <Paper elevation={0} className={classes.root}>
@@ -143,33 +129,43 @@ const Rename = ({ index, type, initialSTate }) => {
                         />
                     </Grid>
                     <Grid item xs={6} sm={6} md={6} xl={6}>
-                        {/**
                         <TextField
                             onChange={(e) => setState({ ...state, path: e.target.value })}
                             onBlur={(e) => {
-                                saveInformations()
-                                checker.testPath(e.target.value, state.server, setScriptError)
-                            }
-                            }
+                                saveInformations();
+                                verification &&
+                                    testPath(e.target.value, state.server, setScriptError);
+                            }}
                             value={state.path}
                             className={classes.fields}
-                            id='Path'
-                            color='primary'
-
-                            label={scriptError === "true" ? 'Fichier non retrouvé sur le serveur' : scriptError === "dossier" ? 'Dossier ? ' : 'Path'}
-                            error={state.path === "" || scriptError === "true" || scriptError === "dossier"}
-
+                            id="Path"
+                            color="primary"
+                            label={
+                                scriptError === "true"
+                                    ? "Fichier non retrouvé sur le serveur"
+                                    : scriptError === "dossier"
+                                    ? "Dossier ? "
+                                    : "Path"
+                            }
+                            error={
+                                (state.path === "" ||
+                                    scriptError === "true" ||
+                                    scriptError === "dossier") &&
+                                verification
+                            }
                             inputProps={{
                                 style: {
                                     fontSize:
-                                        state.path && state.path.split("").length > 35 && state.path.split("").length < 50 ? 13 :
-                                            state.path && state.path.split("").length > 50 ? 12 : "1rem"
-                                }
+                                        state.path &&
+                                        state.path.split("").length > 35 &&
+                                        state.path.split("").length < 50
+                                            ? 13
+                                            : state.path && state.path.split("").length > 50
+                                            ? 12
+                                            : "1rem",
+                                },
                             }}
-
                         />
-                         */}
-                        <PathField props={pathProps} />
                     </Grid>
 
                     <Grid item xs={1} sm={1} md={1} xl={1}>

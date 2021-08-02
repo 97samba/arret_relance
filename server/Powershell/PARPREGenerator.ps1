@@ -409,15 +409,17 @@ function create-linuxStep($step) {
 # Créer une ligne de commande
 function Create-Command ($step) {
 
+    
+    # detect-variables('Sql Browser (svc)')
     switch ($($step.type)) {
         "service" { 
-            return "powershell ./$($step.type).ps1 $($step.action) $($step.name) `$SRV"
+            return "powershell ./$($step.type).ps1  $($step.action) $($step.name) `$SRV"
         }
         "process" { 
             return "powershell ./$($step.type).ps1 $($step.action) $($step.name) `$SRV"
         }
         "database" { 
-            return "powershell ./$($step.type).ps1 $($step.action) `$$($step.name) $($step.databaseType) `$SRV"
+            return "powershell ./$($step.type).ps1 $($step.action) $($step.name) $($step.databaseType) `$SRV"
         }
         "script" { 
             return "powershell ./invoke.ps1 $($step.path) `$SRV"
@@ -442,6 +444,22 @@ function Create-Command ($step) {
         }
         Default {
             return "powershell write-host Commande non prise en compte"
+        }
+    }
+}
+
+function detect-variables($argument){
+    
+    $newState = Get-Variable -variable $argument
+    return $newState
+}
+
+function get-variable($variable){
+    
+    $($json_element.variables.servers) | ForEach-Object {
+        if($variable.contains($($_.prod))){
+            # Write-Host "$variable replace by prod `$$($_.prod)"
+            return $variable.replace($($_.prod),"$"+$($_.prod))
         }
     }
 }

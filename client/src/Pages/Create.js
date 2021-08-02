@@ -111,19 +111,18 @@ const Create = () => {
             serversInStopActions.add(action.server.toLowerCase());
 
             if (action.type === "database") {
-                databasesInStopActions.add(action.name.toLowerCase());
+                databasesInStopActions.add(action.name.toLowerCase().replace("$", ""));
             }
         });
-
+        console.log("serveur ", serversInStopActions, " databases : ", databasesInStopActions);
         //on rajoute les serveurs manquants
         serversInStopActions.forEach((server) => {
             if (!Allservers.includes(server)) {
                 Allservers.push(server);
-                var name = "";
-                server.startsWith("SW")
-                    ? (name = server.replace("sw", "SRV_WIN_"))
-                    : (name = server);
-                console.log("adding ", name);
+                // var name = "";
+                // server.startsWith("SW")
+                //     ? (name = server.replace("sw", "SRV_WIN_"))
+                //     : (name = server);
                 setServers([
                     ...servers,
                     {
@@ -131,7 +130,7 @@ const Create = () => {
                         prod: server.toLowerCase(),
                         hprod: "definir",
                         dev: "definir",
-                        name: name,
+                        // name: name,
                         auto: true,
                     },
                 ]);
@@ -141,15 +140,15 @@ const Create = () => {
         databasesInStopActions.forEach((database) => {
             if (!Allservers.includes(database)) {
                 Allservers.push(database);
-                var name = `BDD_${database}`;
+                // var name = `BDD_${database}`;
                 setServers([
                     ...servers,
                     {
-                        id: servers.length + 1,
+                        id: servers.length,
                         prod: database.toLowerCase(),
                         hprod: "definir",
                         dev: "definir",
-                        name: name,
+                        // name: name,
                         auto: true,
                     },
                 ]);
@@ -274,7 +273,6 @@ const Create = () => {
                 return res;
             });
         return resultat.data;
-        //console.log(JSON.stringify(parpre));
     };
 
     const handleTitle = (title) => {

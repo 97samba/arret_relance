@@ -1,7 +1,6 @@
 import {
     Avatar,
     Box,
-    FormControl,
     Grid,
     InputLabel,
     MenuItem,
@@ -11,13 +10,12 @@ import {
     Typography,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core";
-import { Autorenew, Search } from "@material-ui/icons";
+import { Search } from "@material-ui/icons";
 import { useContext, useState, useEffect } from "react";
 import ActionContext from "../../Context/ActionContext";
 import OptionMenu from "../Creation/OptionMenu";
 import OptionDialog from "../Creation/OptionDialog";
-import checker, { testPing } from "../Checker";
-import PathField from "../Fields/PathField";
+import { testPath, testPing } from "../Checker";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -59,12 +57,12 @@ const Log = ({ index, type, initialSTate }) => {
     useEffect(() => {
         if (initialSTate.server && state.server === undefined) {
             verification && testPing(initialSTate.server, setServerError);
-            //verification && testDisk(initialSTate.server, setServiceError);
+            verification && testPath(initialSTate.path, initialSTate.server, setScriptError);
         }
 
         if (state.server) {
             verification && testPing(state.server, setServerError);
-            //verification && testService(state.name, state.server, setServiceError);
+            verification && testPath(state.server, initialSTate.server, setScriptError);
         }
     }, [verification]);
 
@@ -85,19 +83,6 @@ const Log = ({ index, type, initialSTate }) => {
         });
     };
 
-    const pathProps = {
-        index: index,
-        className: classes.fields,
-        serverError: serverError,
-        path: path != "" ? path : initialSTate.path,
-        type: "Fichier",
-        scriptError: scriptError,
-        server: state.server,
-        setScriptError: setScriptError,
-        setPath: setPath,
-        setScriptError: setScriptError,
-        saveInformations: saveInformations,
-    };
     return (
         <div>
             <Paper elevation={0} className={classes.root}>
@@ -146,32 +131,43 @@ const Log = ({ index, type, initialSTate }) => {
                         />
                     </Grid>
                     <Grid item xs={4} sm={4} md={4} xl={4}>
-                        {/**
                         <TextField
                             onChange={(e) => setState({ ...state, path: e.target.value })}
                             onBlur={(e) => {
-                                saveInformations()
-                                checker.testPath(e.target.value, state.server, setScriptError)
-                            }
-                            }
+                                saveInformations();
+                                verification &&
+                                    testPath(e.target.value, state.server, setScriptError);
+                            }}
                             value={state.path}
                             className={classes.fields}
-                            id='Path'
-                            color='primary'
-                            label={scriptError === "true" ? 'Fichier non retrouvé sur le serveur' : scriptError === "dossier" ? 'Dossier ? ' : 'Path'}
-                            error={state.path === "" || scriptError === "true" || scriptError === "dossier"}
-
+                            id="Path"
+                            color="primary"
+                            label={
+                                scriptError === "true"
+                                    ? "Fichier non retrouvé sur le serveur"
+                                    : scriptError === "dossier"
+                                    ? "Dossier ? "
+                                    : "Path"
+                            }
+                            error={
+                                (state.path === "" ||
+                                    scriptError === "true" ||
+                                    scriptError === "dossier") &&
+                                verification
+                            }
                             inputProps={{
                                 style: {
                                     fontSize:
-                                        state.path && state.path.split("").length > 35 && state.path.split("").length < 50 ? 13 :
-                                            state.path && state.path.split("").length > 50 ? 12 : "1rem"
-                                }
+                                        state.path &&
+                                        state.path.split("").length > 35 &&
+                                        state.path.split("").length < 50
+                                            ? 13
+                                            : state.path && state.path.split("").length > 50
+                                            ? 12
+                                            : "1rem",
+                                },
                             }}
-
                         />
-                         */}
-                        <PathField props={pathProps} />
                     </Grid>
 
                     <Grid item xs={1} sm={1} md={1} xl={1}>

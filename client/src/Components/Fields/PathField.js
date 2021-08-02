@@ -31,7 +31,7 @@ const PathField = ({ props }) => {
                 onChange={(e) => props.setPath(e.target.value)}
                 onBlur={() => {
                     props.saveInformations();
-                    props.verification && testPath(props.path, props.server, props.setScriptError);
+                    testPath(props.path, props.server, props.setScriptError);
                 }}
             />
         </div>
