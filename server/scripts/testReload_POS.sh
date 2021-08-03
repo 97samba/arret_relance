@@ -5,18 +5,21 @@ LOCAL_DIR=/tmp
 LOG_DIR=/tmp
 TIME_OUT=600
 ################################ VARIABLES ################################
-APPLI=testPhillipe
+APPLI=testReload
 case $TYPE_ENVIRONNEMENT in 
     PROD)
-        =
+        localhost=localhost
+        instance=instance
         REBOND_WIN=sw15298
         ;;
     HPROD)
-        =
+        localhost=definir
+        instance=definir
         REBOND_WIN=SW11183.int.wsf.ads
         ;;
     HPROD2)
-        =
+        localhost=definir
+        instance=definir
         REBOND_WIN=sw15272
         ;;
     *)
@@ -106,15 +109,6 @@ logReport(){
 ######################################## Tests ########################################
 Launch_POS()
 {
-     
-    echo " Execution des étapes POS 0  1"
-    CMD_WIN = "powershell .\POSTester.ps1 .\Json\testPhillipe.json 0 1"
-    res=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=no -q adm-deploy@$REBOND_WIN "$CMD_WIN")
-    echo 
-    echo " [ Action Web :"$APPLI"] / OK RES("$res") " 
-    echo "FIN : $(date +'%d/%m/%Y %H:%M:%S')"
-    echo 
-     
 }
  
 ######################################## MAIN ########################################

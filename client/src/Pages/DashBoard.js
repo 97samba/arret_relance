@@ -26,6 +26,7 @@ import DashboardCard from "../Components/Dashboard/DashboardCard";
 import { useHistory } from "react-router";
 import { makeStyles } from "@material-ui/core";
 import image from "./test_container_1-8.png";
+import SSAViewer from "../Components/Dashboard/SSAViewer";
 
 //Url de contact du server
 const url = "http://localhost:5000/api";
@@ -39,20 +40,28 @@ const useStyles = makeStyles((theme) => {
 });
 
 const DashBoard = () => {
+    //tous les documents
     const [documents, setDocuments] = useState([]);
+    //le SSA en cours de lecture
+    const [viewedSSA, setViewedSSA] = useState([]);
+
     const history = useHistory();
     const classes = useStyles();
 
     useEffect(() => {
         document.title = "Dashboard";
-        getAlSsa();
+        getAllSsa();
     }, []);
 
-    const getAlSsa = () => {
+    const getAllSsa = () => {
         fetch(`${url}/DashBoard/getAllSSA`)
             .then((res) => res.json())
-            .then((result) => setDocuments(result));
+            .then((result) => {
+                setDocuments(result);
+                setViewedSSA(result[0]);
+            });
     };
+
     const visitSSA = (ssa) => {
         history.push({
             pathname: "/create",
@@ -61,11 +70,15 @@ const DashBoard = () => {
         });
     };
 
+    const presentSSA = (ssa) => {
+        setViewedSSA(ssa);
+    };
+
     return (
         <div>
-            <Container className={classes.root}>
+            <Container className={classes.root} disableGutters>
                 {/**haut */}
-                <Grid container spacing={4}>
+                <Grid container spacing={3}>
                     <Grid item xs={12} sm={6} md={3} lg={3}>
                         <DashboardCard
                             name="PARPRE réalisées"
@@ -96,7 +109,7 @@ const DashBoard = () => {
                     </Grid>
                 </Grid>
                 {/**Milieu */}
-                <Grid container spacing={4}>
+                <Grid container spacing={3}>
                     <Grid item md={6}>
                         <Paper>
                             <List
@@ -114,7 +127,7 @@ const DashBoard = () => {
                                             <ListItem
                                                 button
                                                 key={index}
-                                                onClick={() => visitSSA(doc)}
+                                                onClick={() => presentSSA(doc)}
                                             >
                                                 <ListItemText primary={doc.name} />
 
@@ -130,32 +143,11 @@ const DashBoard = () => {
                         </Paper>
                     </Grid>
                     <Grid item md={6}>
-                        <Card>
-                            <CardHeader
-                                title="Test"
-                                subheader="Description du SSA"
-                                action={
-                                    <Button
-                                        variant="text"
-                                        color="primary"
-                                        endIcon={<ArrowForwardIos />}
-                                    >
-                                        consulter
-                                    </Button>
-                                }
-                            />
-                            <CardContent>
-                                <Typography>Historique des tests</Typography>
-                                <Typography>Images prises par le script</Typography>
-                                <img
-                                    //src="'../../../server/Powershell/test_container_1-8.png'"
-                                    src={image}
-                                    alt="title"
-                                    height={800 / 4}
-                                    width={1900 / 4}
-                                />
-                            </CardContent>
-                        </Card>
+                        {viewedSSA !== undefined ? (
+                            <SSAViewer image={image} state={viewedSSA} />
+                        ) : (
+                            <Typography>Loading</Typography>
+                        )}
                     </Grid>
                 </Grid>
             </Container>

@@ -49,6 +49,8 @@ const Log = ({ index, type, initialSTate }) => {
     const { deleteAction, duplicateAction, saveData, verification } = useContext(ActionContext);
 
     useEffect(() => {
+        setOptions({ ...options, os: "windows" });
+
         setState(initialSTate);
         setOptions(initialSTate.options);
     }, []);
@@ -62,7 +64,7 @@ const Log = ({ index, type, initialSTate }) => {
 
         if (state.server) {
             verification && testPing(state.server, setServerError);
-            verification && testPath(state.server, initialSTate.server, setScriptError);
+            verification && testPath(state.path, initialSTate.server, setScriptError);
         }
     }, [verification]);
 
@@ -96,6 +98,12 @@ const Log = ({ index, type, initialSTate }) => {
                         <TextField
                             onChange={(e) => setState({ ...state, server: e.target.value })}
                             onBlur={(e) => {
+                                setOptions({
+                                    ...options,
+                                    os: e.target.value.toLowerCase().startsWith("sw")
+                                        ? "windows"
+                                        : "linux",
+                                });
                                 saveInformations();
                                 verification && testPing(e.target.value, setServerError);
                             }}

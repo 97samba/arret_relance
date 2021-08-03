@@ -52,6 +52,7 @@ const Process = ({ index, type, initialSTate }) => {
     useEffect(() => {
         setState(initialSTate);
         setOptions(initialSTate.options);
+        setOptions({ ...options, os: "windows" });
 
         setStatus(initialSTate.action);
     }, []);
@@ -97,6 +98,12 @@ const Process = ({ index, type, initialSTate }) => {
                         <TextField
                             onChange={(e) => setState({ ...state, server: e.target.value })}
                             onBlur={(e) => {
+                                setOptions({
+                                    ...options,
+                                    os: e.target.value.toLowerCase().startsWith("sw")
+                                        ? "windows"
+                                        : "linux",
+                                });
                                 saveInformations();
                                 verification && testPing(e.target.value, setServerError);
                             }}

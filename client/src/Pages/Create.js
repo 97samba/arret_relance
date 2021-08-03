@@ -251,6 +251,7 @@ const Create = () => {
     };
 
     const generateJson = async () => {
+        setPageMode("Modification");
         const parpre = {
             name: title,
             auteur: informations.prenom + " " + informations.nom,

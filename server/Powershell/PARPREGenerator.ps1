@@ -413,7 +413,7 @@ function Create-Command ($step) {
     # detect-variables('Sql Browser (svc)')
     switch ($($step.type)) {
         "service" { 
-            return "powershell ./$($step.type).ps1  $($step.action) $($step.name) `$SRV"
+            return "powershell ./$($step.type).ps1 $($step.action) \`"$($step.name)\`"  `$SRV"
         }
         "process" { 
             return "powershell ./$($step.type).ps1 $($step.action) $($step.name) `$SRV"

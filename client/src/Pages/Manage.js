@@ -178,19 +178,21 @@ const Manage = () => {
                 <div>
                     {ExcelTab ? (
                         allExcel.length > 0 ? (
-                            allExcel.map((excel) => (
-                                <ListSSA
-                                    ssa={excel}
-                                    fromExcel={true}
-                                    key={excel._id}
-                                    setLoading={setLoading}
-                                />
-                            ))
+                            allExcel
+                                .sort((a, b) => a.name.localeCompare(b.name))
+                                .map((excel) => (
+                                    <ListSSA
+                                        ssa={excel}
+                                        fromExcel={true}
+                                        key={excel._id}
+                                        setLoading={setLoading}
+                                    />
+                                ))
                         ) : (
                             <div>chargement</div>
                         )
                     ) : (
-                        POS.map((pos) => (
+                        POS.sort((a, b) => a.name.localeCompare(b.name)).map((pos) => (
                             <ListSSA
                                 ssa={pos}
                                 key={pos._id}

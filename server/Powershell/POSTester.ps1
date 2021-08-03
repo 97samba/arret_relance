@@ -18,6 +18,7 @@ $CURRENT_URL = ""
 $json = get-content $args[0] | ConvertFrom-Json
 $start=0
 $end= $json.POS.length
+$SERVER_IMAGE_REPO="C:\Users\samba\Desktop\projetSFR\AR\server\public\Images\"
 
 if($args[1] -ge 0){
     $start=$args[1]
@@ -72,7 +73,7 @@ function get-driver($navigator) {
 function take-screenshot($driver,$index){
     $screenshot = Invoke-SeScreenshot -Target $driver 
     
-    $filename = Join-Path (Get-Location).Path "$($json.name)-$index.png"
+    $filename = Join-Path $SERVER_IMAGE_REPO "$($json.name)-$index.png"
     $bytes = [Convert]::FromBase64String($screenshot)
 
     [IO.File]::WriteAllBytes($filename, $bytes)

@@ -256,48 +256,22 @@ const ARCard = ({
                     title={name}
                     subheader="Windows"
                     action={
-                        <SpeedDial
-                            ariaLabel="SpeedDial"
-                            icon={<SpeedDialIcon onClick={() => setOpen(!open)} />}
-                            open={open}
-                            direction="left"
-                            onMouseEnter={() => setOpen(true)}
-                        >
-                            {
-                                //si c'est une POS donc status
-                                type !== "status"
-                                    ? iconsAction
-                                          .filter(
-                                              (icon) =>
-                                                  icon.type != "webAction" &&
-                                                  icon.type != "condition"
-                                          )
-                                          .map((action) => (
-                                              <SpeedDialAction
-                                                  key={action.name}
-                                                  icon={action.icon}
-                                                  tooltipTitle={action.name}
-                                                  tooltipPlacement="down"
-                                                  onClick={action.action}
-                                              />
-                                          ))
-                                    : iconsAction
-                                          .filter((icon) => icon.type != "rename")
-                                          .map((action) => (
-                                              <SpeedDialAction
-                                                  key={action.name}
-                                                  icon={action.icon}
-                                                  tooltipTitle={action.name}
-                                                  tooltipPlacement="down"
-                                                  onClick={action.action}
-                                              />
-                                          ))
-                            }
-                        </SpeedDial>
+                        (cardType === "POS" || cardType === "STOP") && (
+                            <Button
+                                color="secondary"
+                                variant="contained"
+                                onClick={validateDocument}
+                                endIcon={<KeyboardArrowRight />}
+                            >
+                                Save
+                            </Button>
+                        )
                     }
                 />
-
                 <CardContent>
+                    {titleError ? (
+                        <Typography style={{ color: "red", marginTop: 10 }}>{errorText}</Typography>
+                    ) : null}
                     <ActionContext.Provider
                         value={{
                             actions,
@@ -374,26 +348,54 @@ const ARCard = ({
                                     />
                                 ) : null
                             )}
-                            <Grid container direction="row" justify="space-between">
+                            <Grid
+                                container
+                                direction="row"
+                                justify="space-between"
+                                style={{ marginTop: 20 }}
+                            >
                                 <Grid item>
-                                    <Button
-                                        color="secondary"
-                                        variant="contained"
-                                        onClick={validateDocument}
-                                        endIcon={<KeyboardArrowRight />}
+                                    <SpeedDial
+                                        ariaLabel="SpeedDial"
+                                        icon={<SpeedDialIcon onClick={() => setOpen(!open)} />}
+                                        open={open}
+                                        direction="right"
+                                        onMouseEnter={() => setOpen(true)}
                                     >
-                                        Save
-                                    </Button>
+                                        {
+                                            //si c'est une POS donc status
+                                            type !== "status"
+                                                ? iconsAction
+                                                      .filter(
+                                                          (icon) =>
+                                                              icon.type != "webAction" &&
+                                                              icon.type != "condition"
+                                                      )
+                                                      .map((action) => (
+                                                          <SpeedDialAction
+                                                              key={action.name}
+                                                              icon={action.icon}
+                                                              tooltipTitle={action.name}
+                                                              tooltipPlacement="down"
+                                                              onClick={action.action}
+                                                          />
+                                                      ))
+                                                : iconsAction.map((action) => (
+                                                      <SpeedDialAction
+                                                          key={action.name}
+                                                          icon={action.icon}
+                                                          tooltipTitle={action.name}
+                                                          tooltipPlacement="down"
+                                                          onClick={action.action}
+                                                      />
+                                                  ))
+                                        }
+                                    </SpeedDial>
                                 </Grid>
                                 <Typography variant="caption" style={{ marginTop: 10 }}>
                                     {informations.prenom} {informations.nom}
                                 </Typography>
                             </Grid>
-                            {titleError ? (
-                                <Typography style={{ color: "red", marginTop: 10 }}>
-                                    {errorText}
-                                </Typography>
-                            ) : null}
                         </form>
                     </ActionContext.Provider>
                 </CardContent>

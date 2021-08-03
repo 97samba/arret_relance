@@ -3,6 +3,7 @@ import React from "react";
 import {
     AppBar,
     Box,
+    Button,
     List,
     ListItem,
     ListItemIcon,
@@ -155,17 +156,10 @@ const Layout = ({ children }) => {
                                 </Typography>
                             </Box>
                         </div>
-                        {/*
-                        <Button
-                         
-                        variant='contained' 
-                        
-                        color='primary' 
-                        className = {classes.button}
-                        >
-                            Charger un Excel
+
+                        <Button variant="contained" color="primary" className={classes.button}>
+                            Convertir un Excel
                         </Button>
-                        */}
                     </div>
 
                     {/**Les liens du menu */}

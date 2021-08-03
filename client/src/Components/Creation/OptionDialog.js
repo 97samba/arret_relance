@@ -1,42 +1,59 @@
-import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, FormControlLabel, FormGroup,  Grid, Slider, TextField, Typography } from "@material-ui/core";
-import { FormControl } from "@material-ui/core"
+import {
+    Button,
+    Checkbox,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    Divider,
+    FormControlLabel,
+    FormGroup,
+    Grid,
+    InputLabel,
+    MenuItem,
+    Select,
+    Slider,
+    TextField,
+    Typography,
+} from "@material-ui/core";
+import { FormControl } from "@material-ui/core";
 
 import { useEffect, useState } from "react";
 
 const OptionDialog = ({ options, saveInfos, setOptions, openDialog, setOpenDialog }) => {
-
     useEffect(() => {
-        setOptions({...options,timeOut:timeOut})
-    },[])
-    const [block, setBlock] = useState(true)
-    const [timeOut, setTimeOut] = useState(0)
+        setOptions({ ...options, timeOut: timeOut });
+    }, []);
 
+    const [block, setBlock] = useState(true);
+    const [timeOut, setTimeOut] = useState(0);
     const marks = [
         {
-            value:0,
-            label:'0 s'
+            value: 0,
+            label: "0 s",
         },
         {
-            value:2,
-            label:'2 s'
+            value: 2,
+            label: "2 s",
         },
         {
-            value:4,
-            label:'4 s'
+            value: 4,
+            label: "4 s",
         },
         {
-            value:6,
-            label:'6 s'
+            value: 6,
+            label: "6 s",
         },
         {
-            value:8,
-            label:'8 s'
+            value: 8,
+            label: "8 s",
         },
         {
-            value:10,
-            label:'10 s'
+            value: 10,
+            label: "10 s",
         },
-    ]
+    ];
 
     return (
         <div>
@@ -44,11 +61,11 @@ const OptionDialog = ({ options, saveInfos, setOptions, openDialog, setOpenDialo
                 open={openDialog}
                 onClose={() => {
                     setOpenDialog(false);
-                    saveInfos()
+                    saveInfos();
                 }}
                 fullWidth
             >
-                <DialogTitle id='dialog-option' >Options </DialogTitle>
+                <DialogTitle id="dialog-option">Options </DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                         Personnaliser votre éxécution en fonction des environnements.
@@ -56,81 +73,112 @@ const OptionDialog = ({ options, saveInfos, setOptions, openDialog, setOpenDialo
                     <Grid container spacing={2} direction="column">
                         <Grid item>
                             <Grid container>
-                                <Grid item >
+                                <Grid item>
                                     <Typography>Environnement :</Typography>
-
                                 </Grid>
                                 <Grid item>
                                     <FormGroup row>
                                         <FormControlLabel
-                                            control={<Checkbox
-                                                key="prod"
-                                                name="prod"
-                                                checked={options.prod}
-                                                onClick={(e) => setOptions({ ...options, prod: e.target.checked })}
-                                            />}
+                                            control={
+                                                <Checkbox
+                                                    key="prod"
+                                                    name="prod"
+                                                    checked={options.prod}
+                                                    onClick={(e) =>
+                                                        setOptions({
+                                                            ...options,
+                                                            prod: e.target.checked,
+                                                        })
+                                                    }
+                                                />
+                                            }
                                             label="Production"
                                         />
                                         <FormControlLabel
-                                            control={<Checkbox
-                                                key="hprod"
-                                                name="hprod"
-                                                checked={options.hprod}
-                                                onClick={(e) => setOptions({ ...options, hprod: e.target.checked })}
-                                            />}
+                                            control={
+                                                <Checkbox
+                                                    key="hprod"
+                                                    name="hprod"
+                                                    checked={options.hprod}
+                                                    onClick={(e) =>
+                                                        setOptions({
+                                                            ...options,
+                                                            hprod: e.target.checked,
+                                                        })
+                                                    }
+                                                />
+                                            }
                                             label="Validation"
                                         />
                                         <FormControlLabel
-                                            control={<Checkbox
-                                                key="prod"
-                                                name="prod"
-                                                checked={options.inte}
-                                                onClick={(e) => setOptions({ ...options, inte: e.target.checked })}
-                                            />}
+                                            control={
+                                                <Checkbox
+                                                    key="prod"
+                                                    name="prod"
+                                                    checked={options.inte}
+                                                    onClick={(e) =>
+                                                        setOptions({
+                                                            ...options,
+                                                            inte: e.target.checked,
+                                                        })
+                                                    }
+                                                />
+                                            }
                                             label="Intégration"
                                         />
                                         <FormControlLabel
-                                            control={<Checkbox
-                                                key="prod"
-                                                name="prod"
-                                                checked={options.dev}
-                                                onClick={(e) => setOptions({ ...options, dev: e.target.checked })}
-                                            />}
+                                            control={
+                                                <Checkbox
+                                                    key="prod"
+                                                    name="prod"
+                                                    checked={options.dev}
+                                                    onClick={(e) =>
+                                                        setOptions({
+                                                            ...options,
+                                                            dev: e.target.checked,
+                                                        })
+                                                    }
+                                                />
+                                            }
                                             label="Développement"
                                         />
-
                                     </FormGroup>
-
                                 </Grid>
-
                             </Grid>
-
                         </Grid>
 
-                        <Divider orientation="horizontal" />
-
+                        <Divider orientation="horizontal" light />
 
                         <Grid item>
-                            <Grid container alignItems="center" direction="row" spacing={2} >
-                                <Grid item md={6} >
-                                    <Typography>Resultat attendu :</Typography>
-
+                            <Grid container alignItems="flex-end" direction="row" spacing={2}>
+                                <Grid item md={6}>
+                                    <Typography>Systéme d'exploitation</Typography>
                                 </Grid>
                                 <Grid item md={6}>
-                                    <TextField
-                                        label="Résultat"
-                                        variant="filled"
-                                        fullWidth
-                                    >
-                                    </TextField>
+                                    <FormControl style={{ width: "100%" }}>
+                                        <InputLabel>OS</InputLabel>
+
+                                        <Select
+                                            value={options.os || "null"}
+                                            label="OS"
+                                            fullWidth
+                                            onChange={(e) => {
+                                                setOptions({ ...options, os: e.target.value });
+                                            }}
+                                        >
+                                            <MenuItem value="linux">Linux</MenuItem>
+                                            <MenuItem value="windows">Windows</MenuItem>
+                                            <MenuItem value="null">Non défini</MenuItem>
+                                        </Select>
+                                    </FormControl>
                                 </Grid>
                             </Grid>
                         </Grid>
-                        <Divider orientation="horizontal" />
+                        <Divider orientation="horizontal" light style={{ marginTop: 10 }} />
 
                         <Grid item>
-                            <Grid container alignItems="center" direction="row" spacing={2} >
-                                <Grid item md={6} >
+                            <Grid container alignItems="center" direction="row" spacing={2}>
+                                <Grid item md={6}>
                                     <Typography>Sleep :</Typography>
                                 </Grid>
                                 <Grid item md={6}>
@@ -142,57 +190,37 @@ const OptionDialog = ({ options, saveInfos, setOptions, openDialog, setOpenDialo
                                             max={10}
                                             step={2}
                                             marks={marks}
-                                            onChange={(e,value)=>setTimeOut(value)}
+                                            onChange={(e, value) => setTimeOut(value)}
                                         />
                                     </FormControl>
                                 </Grid>
-
                             </Grid>
                         </Grid>
 
-
-                        <Divider orientation="horizontal" />
+                        <Divider orientation="horizontal" light />
 
                         <Grid item>
-                            <Grid container alignItems="center" direction="row" spacing={2} >
-                                <Grid item md={6} >
-                                    <TextField
-                                        label="Login"
-                                        variant="filled"
-                                        fullWidth
-                                    >
-
-                                    </TextField>
-
+                            <Grid container alignItems="center" direction="row" spacing={2}>
+                                <Grid item md={6}>
+                                    <Typography>Resultat attendu :</Typography>
                                 </Grid>
                                 <Grid item md={6}>
                                     <TextField
-                                        label="Mot de passe"
+                                        label="Résultat"
                                         variant="filled"
-                                        type="password"
                                         fullWidth
-                                    >
-
-                                    </TextField>
+                                    ></TextField>
                                 </Grid>
-
                             </Grid>
                         </Grid>
-
                     </Grid>
-
                 </DialogContent>
                 <DialogActions>
-                    <Button >
-                        Confirmer
-                    </Button>
-
+                    <Button>Confirmer</Button>
                 </DialogActions>
-
             </Dialog>
-
         </div>
     );
-}
+};
 
 export default OptionDialog;

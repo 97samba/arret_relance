@@ -56,6 +56,8 @@ const Disk = ({ index, type, initialSTate }) => {
 
     useEffect(() => {
         setState(initialSTate);
+        setOptions({ ...options, os: "windows" });
+
         setOptions(initialSTate.options);
     }, []);
 
@@ -113,6 +115,12 @@ const Disk = ({ index, type, initialSTate }) => {
                         <TextField
                             onChange={(e) => setState({ ...state, server: e.target.value })}
                             onBlur={(e) => {
+                                setOptions({
+                                    ...options,
+                                    os: e.target.value.toLowerCase().startsWith("sw")
+                                        ? "windows"
+                                        : "linux",
+                                });
                                 saveInformations();
                                 if (e.target.value) {
                                     verification && testPing(e.target.value, setServerError);

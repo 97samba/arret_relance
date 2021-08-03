@@ -32,6 +32,7 @@ const ValidationDialog = ({ informations, setInformations, generateJson }) => {
             setGenerating(false);
             await new Promise((res) => setTimeout(res, 3000));
             setInformations({ ...informations, open: false });
+            //window.open("http://www.google.com", "__blank", "noopener");
         }
     };
 

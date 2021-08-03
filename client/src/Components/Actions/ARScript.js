@@ -43,6 +43,8 @@ const ARScript = ({ index, initialSTate }) => {
 
     useEffect(async () => {
         setState(initialSTate);
+        setOptions({ ...options, os: "windows" });
+
         setOptions(initialSTate.options);
     }, []);
     //verification du server et du service
@@ -102,6 +104,12 @@ const ARScript = ({ index, initialSTate }) => {
                             value={state.server}
                             onChange={(e) => setState({ ...state, server: e.target.value })}
                             onBlur={(e) => {
+                                setOptions({
+                                    ...options,
+                                    os: e.target.value.toLowerCase().startsWith("sw")
+                                        ? "windows"
+                                        : "linux",
+                                });
                                 saveInformations();
                                 verification && testPing(e.target.value, setServerError);
                                 //serverError === false && checker.testPath(e.target.value,state.server,setScriptError)

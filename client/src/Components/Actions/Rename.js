@@ -51,6 +51,7 @@ const Rename = ({ index, type, initialSTate }) => {
     const { deleteAction, duplicateAction, saveData, verification } = useContext(ActionContext);
     useEffect(() => {
         setState(initialSTate);
+
         setOptions(initialSTate.options);
     }, []);
     //verification du server et du service
@@ -94,6 +95,12 @@ const Rename = ({ index, type, initialSTate }) => {
                         <TextField
                             onChange={(e) => setState({ ...state, server: e.target.value })}
                             onBlur={(e) => {
+                                setOptions({
+                                    ...options,
+                                    os: e.target.value.toLowerCase().startsWith("sw")
+                                        ? "windows"
+                                        : "linux",
+                                });
                                 saveInformations();
                                 testPing(e.target.value, setServerError);
                             }}

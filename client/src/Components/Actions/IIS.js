@@ -56,6 +56,8 @@ const PoolIIS = ({ index, type, initialSTate }) => {
 
     useEffect(() => {
         setState(initialSTate);
+        setOptions({ ...options, os: "windows" });
+
         if (initialSTate.action) {
             setStatus(initialSTate.action.toLowerCase());
             setOptions(initialSTate.options);
@@ -77,11 +79,6 @@ const PoolIIS = ({ index, type, initialSTate }) => {
     const saveInformations = () => {
         if (state.name === undefined || state.server === undefined) {
             return;
-        }
-
-        let result;
-        if (status === "status") {
-            type === "stop" ? (result = "stopped") : (result = "running");
         }
 
         saveData({
@@ -116,6 +113,12 @@ const PoolIIS = ({ index, type, initialSTate }) => {
                             error={verification ? serverError : false}
                             onChange={(e) => setState({ ...state, server: e.target.value })}
                             onBlur={(e) => {
+                                setOptions({
+                                    ...options,
+                                    os: e.target.value.toLowerCase().startsWith("sw")
+                                        ? "windows"
+                                        : "linux",
+                                });
                                 saveInformations();
                                 verification && testPing(e.target.value, setServerError);
                             }}
