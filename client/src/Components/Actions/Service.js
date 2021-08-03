@@ -50,13 +50,7 @@ const Service = ({ index, type, initialSTate }) => {
     const [serviceError, setServiceError] = useState(false);
     const [serverError, setServerError] = useState(false);
     const [result, setResult] = useState(cardType === "POS" ? "running" : "stopped");
-    const [options, setOptions] = useState({
-        block: true,
-        prod: true,
-        hprod: true,
-        inte: true,
-        dev: true,
-    });
+    const [options, setOptions] = useState(initialSTate.options);
     //context pour sauvegarder l'état dans le parent
 
     useEffect(() => {
@@ -108,6 +102,12 @@ const Service = ({ index, type, initialSTate }) => {
                         <TextField
                             onChange={(e) => setState({ ...state, server: e.target.value })}
                             onBlur={(e) => {
+                                setOptions({
+                                    ...options,
+                                    os: e.target.value.toLowerCase().startsWith("sw")
+                                        ? "windows"
+                                        : "linux",
+                                });
                                 saveInformations();
                                 verification && testPing(e.target.value, setServerError);
                                 verification &&
