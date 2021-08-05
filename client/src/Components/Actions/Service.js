@@ -46,7 +46,6 @@ const Service = ({ index, type, initialSTate }) => {
     const [status, setStatus] = useState(type);
     //menu options
     const [openDialog, setOpenDialog] = useState(false);
-
     const [serviceError, setServiceError] = useState(false);
     const [serverError, setServerError] = useState(false);
     const [result, setResult] = useState(cardType === "POS" ? "running" : "stopped");
@@ -83,6 +82,8 @@ const Service = ({ index, type, initialSTate }) => {
             type: "service",
             server: state.server,
             name: state.name,
+            // en cas de status result donne le resulta attendu
+            result: result,
             action: status,
             options: options,
             //os: "windows"
