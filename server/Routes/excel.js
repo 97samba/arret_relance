@@ -288,13 +288,14 @@ const toService = (action) => {
         server: action.prod,
         name: action.cmd.split(" ").slice(2).join(" "),
         action: action.cmd.split(" ")[1],
-        os: action.os,
+
         options: {
             block: true,
             prod: true,
             hprod: true,
             inte: true,
             dev: true,
+            os: action.os,
         },
     };
     return action;
@@ -305,13 +306,13 @@ const toProcess = (action) => {
         server: action.prod,
         name: action.cmd.split(" ").slice(2).join(" "),
         action: action.cmd.split(" ")[1],
-        os: action.os,
         options: {
             block: true,
             prod: true,
             hprod: true,
             inte: true,
             dev: true,
+            os: action.os,
         },
     };
     return action;
@@ -321,13 +322,14 @@ const toScript = (action) => {
         type: "script",
         server: action.prod,
         path: action.cmd.split(" ").slice(1),
-        os: action.os,
+
         options: {
             block: true,
             prod: true,
             hprod: true,
             inte: true,
             dev: true,
+            os: action.os,
         },
     };
     return action;
@@ -339,13 +341,14 @@ const toCommand = (action) => {
         name: action.cmd,
         login: action.user,
         result: action.result,
-        os: action.os,
+
         options: {
             block: true,
             prod: true,
             hprod: true,
             inte: true,
             dev: true,
+            os: action.os,
         },
     };
     return action;
@@ -363,6 +366,7 @@ const toCheckUrl = (action) => {
             hprod: true,
             inte: true,
             dev: true,
+            os: "windows",
         },
     };
     return action;
@@ -375,6 +379,7 @@ const toCheckLog = (action) => {
             hprod: true,
             inte: true,
             dev: true,
+            os: "windows",
         },
     };
     return action;
@@ -399,13 +404,14 @@ const toDatabase = (action) => {
         type: "database",
         name: action.cmd.split(" ")[2],
         databaseType: action.cmd.split(" ")[3],
-        os: action.os,
+
         options: {
             block: true,
             prod: true,
             hprod: true,
             inte: true,
             dev: true,
+            os: action.os,
         },
     };
     return action;

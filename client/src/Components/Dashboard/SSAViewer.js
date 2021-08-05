@@ -14,9 +14,9 @@ import { useEffect, useState } from "react";
 import { useHistory } from "react-router";
 import ENV from "../../Env";
 
-const SSAViewer = ({ state, image }) => {
+const SSAViewer = ({ state }) => {
     // const [state, setState] = useState();
-    const [docInformations, setDocInformations] = useState([
+    var docInformations = [
         { type: "service", name: "Service(s)" },
         { type: "process", name: "Processus" },
         { type: "link", name: "Lien(s)" },
@@ -27,18 +27,9 @@ const SSAViewer = ({ state, image }) => {
         { type: "disk", name: "Disque(s)" },
         { type: "IIS", name: "Pool IIS" },
         { type: "rename", name: "Renommer un fichier" },
-    ]);
+    ];
 
     const history = useHistory();
-    useEffect(() => {
-        var newState = docInformations;
-        state.Arret &&
-            newState.map((doc) => {
-                var number = state.Arret.filter((element) => element.type === doc.type).length;
-                doc.number = number;
-            });
-        setDocInformations(newState);
-    }, [state]);
 
     const visitSSA = (ssa) => {
         history.push({
@@ -68,20 +59,42 @@ const SSAViewer = ({ state, image }) => {
                 <CardContent>
                     <Typography>PARPRE de {state.name}</Typography>
                     {state.Arret !== undefined ? (
-                        <List>
-                            {docInformations.map(
-                                (doc, index) =>
-                                    doc.number > 0 && (
-                                        <div>
-                                            <ListItem>
-                                                <ListItemText primary={doc.name} />
-                                                <Typography>{doc.number}</Typography>
-                                            </ListItem>
-                                            <Divider orientation="horizontal" light />
-                                        </div>
-                                    )
-                            )}
-                        </List>
+                        // <List>
+                        //     {docInformations.map((doc, index) => (
+                        //         <div>
+                        //             <ListItem key={index}>
+                        //                 <ListItemText primary={doc.name} />
+                        //                 <Typography>
+                        //                     {
+                        //                         state.Arret.filter(
+                        //                             (element) => element.type === doc.name
+                        //                         ).length
+                        //                     }
+                        //                 </Typography>
+                        //             </ListItem>
+                        //             <Divider orientation="horizontal" light />
+                        //         </div>
+                        //     ))}
+                        // </List>
+                        <div>
+                            <List>
+                                <ListItem key={0}>
+                                    <ListItemText primary="Arrêt" />
+                                    <Typography>{state.Arret.length}</Typography>
+                                </ListItem>
+                                <Divider light orientation="horizontal" />
+                                <ListItem key={1}>
+                                    <ListItemText primary="Relance" />
+                                    <Typography>{state.Relance.length}</Typography>
+                                </ListItem>
+                                <Divider light orientation="horizontal" />
+                                <ListItem key={2}>
+                                    <ListItemText primary="POS" />
+                                    <Typography>{state.POS.length}</Typography>
+                                </ListItem>
+                                <Divider light orientation="horizontal" />
+                            </List>
+                        </div>
                     ) : (
                         <Typography> Pas de SSA</Typography>
                     )}
@@ -93,7 +106,7 @@ const SSAViewer = ({ state, image }) => {
                                     //src="'../../../server/Powershell/test_container_1-8.png'"
                                     key={index}
                                     src={`${ENV.SERVER_URI}/Images/${state.name}-${step.index}.png`}
-                                    alt="title"
+                                    alt={`${state.name}-${step.index}`}
                                     height={800 / 3.2}
                                     width={1900 / 3.2}
                                     style={{ marginTop: 10 }}

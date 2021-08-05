@@ -1,1 +1,32 @@
-{"name":"testPhillipe","auteur":"testeur test","date_de_creation":"03/08/2021, 14:41:47","type":"PARPRE","Arret":[],"Relance":[],"POS":[{"index":0,"type":"webAction","url":"https://linkedin.com","informations":{"type":"connection","login":"philippe","password":"76492d1116743f0423413b16050a5345MgB8AFcAZABsAEkAUQBzAEsAegBqAGwAbQBqADUAdgAyAFAARgBEAG4AZgBKAHcAPQA9AHwAZQAxADcANQBmADMANgAwADEAMgBmADkAYwAwADMANgA0AGUAMABmADcANwAzADAAOQAwADYANgAxADEAYgA0ADYANQA1ADUAOQA3ADEAYQAzADIAZABiADQAZgBiADAAMgA4AGIAZABlADYAMABmAGUANQA0AGUANgAxADMAMwA=\r\n","loginSelector":"#session_key","passwordSelector":"#session_password"},"options":{"block":true,"prod":true,"hprod":true,"inte":true,"dev":true}},{"index":1,"type":"webAction","url":"http://github.com","informations":{"type":"visit"},"options":{"block":true,"prod":true,"hprod":true,"inte":true,"dev":true}}],"variables":{"servers":[]}}
+{
+    "name": "testPhillipe",
+    "auteur": "testeur test",
+    "date_de_creation": "05/08/2021, 15:19:41",
+    "type": "PARPRE",
+    "Arret": [],
+    "Relance": [],
+    "POS": [
+        {
+            "index": 0,
+            "type": "webAction",
+            "url": "https://linkedin.com",
+            "informations": {
+                "type": "connection",
+                "login": "philippe",
+                "password": "76492d1116743f0423413b16050a5345MgB8AFcAZABsAEkAUQBzAEsAegBqAGwAbQBqADUAdgAyAFAARgBEAG4AZgBKAHcAPQA9AHwAZQAxADcANQBmADMANgAwADEAMgBmADkAYwAwADMANgA0AGUAMABmADcANwAzADAAOQAwADYANgAxADEAYgA0ADYANQA1ADUAOQA3ADEAYQAzADIAZABiADQAZgBiADAAMgA4AGIAZABlADYAMABmAGUANQA0AGUANgAxADMAMwA=\r\n",
+                "loginSelector": "#session_key",
+                "passwordSelector": "#session_password",
+                "navigator": "Firefox"
+            },
+            "options": { "block": true, "prod": true, "hprod": true, "inte": true, "dev": true }
+        },
+        {
+            "index": 1,
+            "type": "webAction",
+            "url": "http://github.com",
+            "informations": { "type": "visit" },
+            "options": { "block": true, "prod": true, "hprod": true, "inte": true, "dev": true }
+        }
+    ],
+    "variables": { "servers": [] }
+}

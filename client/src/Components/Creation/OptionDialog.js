@@ -34,24 +34,24 @@ const OptionDialog = ({ options, saveInfos, setOptions, openDialog, setOpenDialo
             label: "0 s",
         },
         {
-            value: 2,
-            label: "2 s",
-        },
-        {
-            value: 4,
-            label: "4 s",
-        },
-        {
-            value: 6,
-            label: "6 s",
-        },
-        {
-            value: 8,
-            label: "8 s",
+            value: 5,
+            label: "5 s",
         },
         {
             value: 10,
             label: "10 s",
+        },
+        {
+            value: 20,
+            label: "20 s",
+        },
+        {
+            value: 30,
+            label: "30 s",
+        },
+        {
+            value: 40,
+            label: "40 s",
         },
     ];
 
@@ -187,8 +187,8 @@ const OptionDialog = ({ options, saveInfos, setOptions, openDialog, setOpenDialo
                                             defaultValue={0}
                                             value={timeOut}
                                             aria-labelledby="continuous-slider"
-                                            max={10}
-                                            step={2}
+                                            max={40}
+                                            //step={2}
                                             marks={marks}
                                             onChange={(e, value) => setTimeOut(value)}
                                         />

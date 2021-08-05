@@ -85,21 +85,6 @@ const WebAction = ({ index, initialSTate }) => {
         }
     };
 
-    const testConnection = async (e) => {
-        const formatedUrl = formatUrl(e.target.value);
-        setState({ ...state, link: formatedUrl });
-
-        if (formatedUrl !== "") {
-            console.log("accessing ", formatedUrl);
-
-            setState({ ...state, url: formatedUrl });
-
-            fetch(`http://localhost:5000/api/PARPRE/link?url=${formatedUrl}`)
-                .then((res) => res.json())
-                .then((result) => console.log(result.result));
-        }
-    };
-
     const showDialog = () => {
         setOpenDialog(true);
     };
@@ -117,7 +102,11 @@ const WebAction = ({ index, initialSTate }) => {
             index: index,
             type: "webAction",
             url: state.url,
-            informations: informations,
+            informations: {
+                ...informations,
+                navigator: informations.navigator || "Chrome",
+                navigatorMode: informations.navigatorMode || "normal",
+            },
             options: options,
         });
     };
@@ -173,7 +162,7 @@ const WebAction = ({ index, initialSTate }) => {
                                         <Checkbox
                                             key="ScreenShot"
                                             name="ScreenShot"
-                                            checked={informations.capture}
+                                            checked={informations.capture || true}
                                             onClick={(e) => {
                                                 setInformations({
                                                     capture: e.target.checked,

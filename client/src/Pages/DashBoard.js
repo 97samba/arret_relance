@@ -25,7 +25,6 @@ import { useEffect, useState } from "react";
 import DashboardCard from "../Components/Dashboard/DashboardCard";
 import { useHistory } from "react-router";
 import { makeStyles } from "@material-ui/core";
-import image from "./test_container_1-8.png";
 import SSAViewer from "../Components/Dashboard/SSAViewer";
 
 //Url de contact du server
@@ -60,14 +59,6 @@ const DashBoard = () => {
                 setDocuments(result);
                 setViewedSSA(result[0]);
             });
-    };
-
-    const visitSSA = (ssa) => {
-        history.push({
-            pathname: "/create",
-            state: { name: ssa.name, id: ssa._id },
-            fromExcel: false,
-        });
     };
 
     const presentSSA = (ssa) => {
@@ -144,7 +135,7 @@ const DashBoard = () => {
                     </Grid>
                     <Grid item md={6}>
                         {viewedSSA !== undefined ? (
-                            <SSAViewer image={image} state={viewedSSA} />
+                            <SSAViewer state={viewedSSA} />
                         ) : (
                             <Typography>Loading</Typography>
                         )}

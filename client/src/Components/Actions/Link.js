@@ -40,6 +40,7 @@ const Link = ({ index, initialSTate }) => {
     const [urlState, setUrlState] = useState("UP");
     const [navigationMode, setnavigationMode] = useState("normal");
     const [openDialog, setOpenDialog] = useState(false);
+    const [options, setOptions] = useState(initialSTate.options);
 
     useEffect(() => {
         setState(initialSTate);
@@ -80,6 +81,7 @@ const Link = ({ index, initialSTate }) => {
                 urlState: urlState,
                 navigationMode: navigationMode,
             },
+            options: { ...options, os: "windows" },
         });
     };
 

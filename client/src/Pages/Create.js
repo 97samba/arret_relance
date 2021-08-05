@@ -17,7 +17,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import ARCard from "../Components/ARCard";
 import RightNav from "../Components/Creation/RightNav";
-import { useHistory } from "react-router";
+import { useHistory, Prompt } from "react-router";
 import { testTitle } from "../Components/Checker";
 import ValidationDialog from "../Components/Creation/ValidationsDialog";
 
@@ -54,6 +54,7 @@ const Create = () => {
     //Le mode d'utilisation: creation ou modification
     const [pageMode, setPageMode] = useState("Création");
     const [loading, setLoading] = useState(false);
+    const [pageModified, setPageModified] = useState(false);
     //Les informations du transformers auteeur, date...
     const [informations, setInformations] = useState({
         open: false,
@@ -206,15 +207,20 @@ const Create = () => {
     };
 
     const saveStart = (object) => {
+        !pageModified && setPageModified(true);
         setStartActions(object);
     };
 
     const saveStop = (object) => {
+        !pageModified && setPageModified(true);
+
         setStopActions(object);
         saveServer(object);
     };
 
     const reverseStopAction = (actions) => {
+        !pageModified && setPageModified(true);
+
         var newRelance = actions
             .slice(0)
             .reverse()
@@ -252,6 +258,8 @@ const Create = () => {
 
     const generateJson = async () => {
         setPageMode("Modification");
+        setPageModified(false);
+
         const parpre = {
             name: title,
             auteur: informations.prenom + " " + informations.nom,
@@ -287,6 +295,11 @@ const Create = () => {
 
     return (
         <div>
+            {/* En cas sortie de la page sans enregistrement */}
+            <Prompt
+                message="Les modifications n'ont pas été sauvegardées, voulez-vous quitter la page?"
+                when={pageModified}
+            />
             <div className={classes.root}>
                 <Grid
                     container

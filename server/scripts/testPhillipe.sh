@@ -1,6 +1,17 @@
+#!/bin/bash
+#------------------------------------------------+ 
+# SSA = testPhillipe 
+# Auteur = testeur test 
+# Arrêt = 0 étapes
+# Relance = 0 étapes 
+# compatible Arrêt / Relance par OS = OUI 
+# Verion = Transformers Web 1_SN_v2 
+#------------------------------------------------+ 
+
 TYPE_ACTION=$1
 TYPE_ENVIRONNEMENT=$2
 BUILD_JENKINS_USER=$3
+BUILD_OS=$4
 LOCAL_DIR=/tmp
 LOG_DIR=/tmp
 TIME_OUT=600
@@ -13,7 +24,7 @@ case $TYPE_ENVIRONNEMENT in
         ;;
     HPROD)
         =
-        REBOND_WIN=sw15272
+        REBOND_WIN=SW11183.int.wsf.ads
         ;;
     HPROD2)
         =
@@ -111,7 +122,7 @@ Relance_App()
     let NUM_ERR=10 
 }
  
-######################################## RELANCE ########################################
+######################################## Arret ########################################
 Arret_App()
 {
     NB_ETAPE=0

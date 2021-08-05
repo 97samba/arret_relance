@@ -127,6 +127,12 @@ const Database = ({ index, type, initialSTate }) => {
                                     : setDatabaseType("Oracle");
                             }}
                             onBlur={(e) => {
+                                setOptions({
+                                    ...options,
+                                    os: e.target.value.toLowerCase().startsWith("sw")
+                                        ? "windows"
+                                        : "linux",
+                                });
                                 saveInformations();
                                 verification && testPing(e.target.value, setServerError);
                             }}
@@ -146,15 +152,44 @@ const Database = ({ index, type, initialSTate }) => {
                     </Grid>
                     <Grid item xs={2} md={2} xl={2}>
                         <FormControl className={classes.fields}>
-                            <InputLabel>Action</InputLabel>
+                            <InputLabel
+                                error={
+                                    state.server &&
+                                    !state.server.startsWith("sw") &&
+                                    state.server !== "localhost" &&
+                                    status === "status"
+                                }
+                            >
+                                {state.server &&
+                                !state.server.startsWith("sw") &&
+                                state.server !== "localhost" &&
+                                status === "status"
+                                    ? "Linux unsupported"
+                                    : "Action"}
+                            </InputLabel>
                             <Select
                                 value={status}
                                 onChange={(e) => setStatus(e.target.value)}
                                 onBlur={saveInformations}
+                                error={
+                                    state.server &&
+                                    !state.server.startsWith("sw") &&
+                                    state.server !== "localhost" &&
+                                    status === "status"
+                                }
                             >
                                 <MenuItem value="stop">Stop</MenuItem>
                                 <MenuItem value="start">Start</MenuItem>
-                                <MenuItem value="status">Status</MenuItem>
+                                <MenuItem
+                                    disabled={
+                                        state.server &&
+                                        !state.server.startsWith("sw") &&
+                                        state.server !== "localhost"
+                                    }
+                                    value="status"
+                                >
+                                    Status
+                                </MenuItem>
                             </Select>
                         </FormControl>
                     </Grid>

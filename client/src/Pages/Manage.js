@@ -15,6 +15,7 @@ import { ArrowBack, ArrowForward } from "@material-ui/icons";
 import ListSSA from "../Components/Manage/ListSSA";
 import axios from "axios";
 import { Autocomplete } from "@material-ui/lab";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -38,6 +39,7 @@ const Manage = () => {
     const [ExcelTab, SetExcelTab] = useState(false);
     const [allExcel, setAllExcel] = useState([]);
     const [loading, setLoading] = useState(false);
+    const history = useHistory();
 
     useEffect(() => {
         document.title = "Modify";
@@ -65,6 +67,13 @@ const Manage = () => {
                 SetPOS(result);
                 setLoading(false);
             });
+    };
+    const visitSSA = (ssa) => {
+        history.push({
+            pathname: "/create",
+            state: { name: ssa.name, id: ssa._id },
+            fromExcel: false,
+        });
     };
 
     return (
@@ -99,13 +108,14 @@ const Manage = () => {
                     <Grid item sm={3}>
                         <Autocomplete
                             id="autocomplete-ssa"
+                            onChange={(event, newDoc) => {
+                                visitSSA(newDoc);
+                            }}
                             options={POS}
                             getOptionLabel={(option) => option.name}
                             noOptionsText="SSA inconnu"
                             style={{ width: 300 }}
-                            onChange={(event, newValue) => {
-                                console.log(newValue);
-                            }}
+                            filterSelectedOptions
                             renderInput={(params) => (
                                 <TextField
                                     {...params}

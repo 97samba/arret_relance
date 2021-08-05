@@ -4,7 +4,7 @@ import DashBoard from "./Pages/DashBoard";
 import Manage from "./Pages/Manage";
 import Settings from "./Pages/Settings";
 import Layout from "./Components/Layout";
-import { createMuiTheme, ThemeProvider } from "@material-ui/core";
+import { createMuiTheme, ThemeProvider, Typography } from "@material-ui/core";
 import Modify from "./Pages/Modify";
 import ViewItem from "./Pages/ViewItem";
 import TestSSA from "./Pages/Automator";

@@ -19,6 +19,7 @@ const ValidationDialog = ({ informations, setInformations, generateJson }) => {
 
     const handleGenerate = async () => {
         setGenerating(true);
+        setButtonText("Début du traitement");
         if (informations.nom !== "" && informations.prenom !== "") {
             var state = await generateJson();
             setButtonText("Enregistrement de la PARPRE");

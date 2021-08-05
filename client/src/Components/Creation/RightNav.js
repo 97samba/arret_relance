@@ -120,6 +120,7 @@ const RightNav = ({ ServerRow, saveRows }) => {
                             headerHeight={40}
                             onEditCellChangeCommitted={(cell) => handleCellchange(cell)}
                             onRowClick={(e) => SetSelectedRow(e.id)}
+                            onCellClick={(e) => console.log("Cell ", e)}
                         />
                     </div>
                     <Box display="flex" justifyContent="space-between" mt={1} m={2}>
