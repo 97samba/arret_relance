@@ -14,6 +14,7 @@ import { makeStyles } from "@material-ui/core";
 import { Http } from "@material-ui/icons";
 import { useContext, useEffect, useState } from "react";
 import ActionContext from "../../Context/ActionContext";
+import ENV from "../../Env";
 import OptionMenu from "../Creation/OptionMenu";
 
 const useStyles = makeStyles((theme) => ({
@@ -62,7 +63,7 @@ const Link = ({ index, initialSTate }) => {
         if (e.target.value !== "") {
             // console.log("accessing ", formatedUrl);
 
-            await fetch(`http://localhost:5000/api/PARPRE/link?url=${formatedUrl}`)
+            await fetch(`${ENV.SERVER_API_URI}/PARPRE/link?url=${formatedUrl}`)
                 .then((res) => res.json())
                 .then((result) => console.log(result.result))
                 .then(() => saveInformations());

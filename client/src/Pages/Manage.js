@@ -16,6 +16,7 @@ import ListSSA from "../Components/Manage/ListSSA";
 import axios from "axios";
 import { Autocomplete } from "@material-ui/lab";
 import { useHistory } from "react-router-dom";
+import ENV from "../Env";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -34,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Manage = () => {
-    const url = "http://localhost:5000/api";
+    const url = ENV.SERVER_API_URI;
     const [POS, SetPOS] = useState([]);
     const [ExcelTab, SetExcelTab] = useState(false);
     const [allExcel, setAllExcel] = useState([]);
@@ -49,9 +50,9 @@ const Manage = () => {
     const GetAllExcel = () => {
         setLoading(true);
 
-        axios.post(`http://localhost:5000/api/ConvertAll-Excel`).then((res) => {
+        axios.post(`${ENV.SERVER_API_URI}/ConvertAll-Excel`).then((res) => {
             setAllExcel(res.data);
-            console.log("data ", res.data);
+            // console.log("data ", res.data);
             setLoading(false);
         });
     };

@@ -20,6 +20,7 @@ import RightNav from "../Components/Creation/RightNav";
 import { useHistory, Prompt } from "react-router";
 import { testTitle } from "../Components/Checker";
 import ValidationDialog from "../Components/Creation/ValidationsDialog";
+import ENV from "../Env";
 
 var drawerWidthRight = 260;
 
@@ -72,7 +73,7 @@ const Create = () => {
     const classes = useStyles();
 
     //Url de contact du server
-    const url = "http://localhost:5000/api";
+    const url = ENV.SERVER_API_URI;
 
     //La page de création et la page de modifiation sont les mêmes, la difference est assurée par pageMode
     useEffect(() => {
@@ -361,7 +362,7 @@ const Create = () => {
                                     <FormControlLabel
                                         control={
                                             <Switch
-                                                size="medium"
+                                                size="small"
                                                 onChange={() => {
                                                     reverseStopAction(StopActions);
                                                     setAutoRelance(!autoRelance);
@@ -375,7 +376,7 @@ const Create = () => {
                                         control={
                                             <Switch
                                                 color="primary"
-                                                size="medium"
+                                                size="small"
                                                 onChange={() => {
                                                     setVerification(!verification);
                                                 }}

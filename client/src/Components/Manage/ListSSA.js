@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { Avatar, Card, CardContent, Grid, Typography } from "@material-ui/core";
 import { Delete } from "@material-ui/icons";
 import { useHistory } from "react-router";
+import ENV from "../../Env";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -16,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 const ListSSA = ({ ssa, fromExcel, setLoading }) => {
-    const url = "http://localhost:5000/api";
+    const url = ENV.SERVER_API_URI;
     const history = useHistory();
 
     const classes = useStyles();
@@ -50,9 +51,7 @@ const ListSSA = ({ ssa, fromExcel, setLoading }) => {
                             <Grid item xs={1} md={1} sm={1}>
                                 <Avatar>
                                     {ssa.name.split("_").length > 1
-                                        ? ssa.name
-                                              .split("_")[1][0]
-                                              .toUpperCase()
+                                        ? ssa.name.split("_")[1][0].toUpperCase()
                                         : ssa.name[0].toUpperCase()}
                                 </Avatar>
                             </Grid>
@@ -70,10 +69,7 @@ const ListSSA = ({ ssa, fromExcel, setLoading }) => {
                                 <Typography> {ssa.auteur}</Typography>
                             </Grid>
                             <Grid item xs={2} md={2} sm={2}>
-                                <Typography>
-                                    {" "}
-                                    {new Date(ssa.createdAt).toLocaleString()}
-                                </Typography>
+                                <Typography> {new Date(ssa.createdAt).toLocaleString()}</Typography>
                             </Grid>
                             <Grid item xs={2} md={3} sm={2}>
                                 <Grid

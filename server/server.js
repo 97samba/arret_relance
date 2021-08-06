@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+var helmet = require("helmet");
 require("dotenv").config();
 const path = require("path");
 const port = process.env.APP_BDD_PORT;
@@ -8,6 +9,7 @@ const port = process.env.APP_BDD_PORT;
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
+app.use(helmet());
 
 //les routes windows
 app.use("/api", require("./Routes/db"));

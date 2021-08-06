@@ -26,9 +26,10 @@ import DashboardCard from "../Components/Dashboard/DashboardCard";
 import { useHistory } from "react-router";
 import { makeStyles } from "@material-ui/core";
 import SSAViewer from "../Components/Dashboard/SSAViewer";
+import ENV from "../Env";
 
 //Url de contact du server
-const url = "http://localhost:5000/api";
+const url = ENV.SERVER_API_URI;
 
 const useStyles = makeStyles((theme) => {
     return {

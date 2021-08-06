@@ -63,13 +63,13 @@ const useStyles = makeStyles((theme) => {
             marginBottom: theme.spacing(2),
         },
         appbar: {
-            width: `calc(100% - ${drawerWidth}px -${drawerWidthRight})`,
+            width: `calc(100% - ${drawerWidth}px )`,
         },
         toolbar: theme.mixins.toolbar,
         page: {
             background: "F9F9F9",
             width: "100%",
-            padding: theme.spacing(2),
+            padding: theme.spacing(1),
         },
         drawerPaper: {
             width: drawerWidth,
@@ -135,7 +135,7 @@ const Layout = ({ children }) => {
             {/** toolbar */}
             <AppBar className={classes.appbar} elevation={0}>
                 <Toolbar className={classes.toolbar}>
-                    <Typography></Typography>
+                    <Typography variant="h6">Transformers : DEV</Typography>
                 </Toolbar>
             </AppBar>
 
@@ -150,16 +150,16 @@ const Layout = ({ children }) => {
                 <div>
                     <div>
                         <div className={classes.logo}>
-                            <Box m={4} mt={5} display="flex" fontWeight={800}>
-                                <Typography variant="h6" className={classes.title} color="primary">
-                                    Transformers
-                                </Typography>
+                            <Box display="flex" fontWeight={800}>
+                                <Button
+                                    variant="contained"
+                                    color="default"
+                                    className={classes.button}
+                                >
+                                    Convertir un Excel
+                                </Button>
                             </Box>
                         </div>
-
-                        <Button variant="contained" color="primary" className={classes.button}>
-                            Convertir un Excel
-                        </Button>
                     </div>
 
                     {/**Les liens du menu */}
