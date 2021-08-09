@@ -7,11 +7,17 @@ const path = require("path");
 const port = process.env.APP_BDD_PORT;
 
 const app = express();
+
+//dependances
 app.use(cors());
+
+//parse le continu web
 app.use(bodyParser.json());
+
+//contre les attaques web
 app.use(helmet());
 
-//les routes windows
+//les routes
 app.use("/api", require("./Routes/db"));
 app.use("/api", require("./Routes/win"));
 app.use("/api", require("./Routes/excel"));
