@@ -1,6 +1,7 @@
 import {
     Box,
     CircularProgress,
+    Container,
     Dialog,
     DialogTitle,
     FormControlLabel,
@@ -28,6 +29,7 @@ const useStyles = makeStyles((theme) => {
     return {
         root: {
             width: `calc(100% - ${drawerWidthRight}px)`,
+            // height: "100%",
         },
     };
 });
@@ -295,7 +297,7 @@ const Create = () => {
     };
 
     return (
-        <div>
+        <Container maxWidth={false}>
             {/* En cas sortie de la page sans enregistrement */}
             <Prompt
                 message="Les modifications n'ont pas été sauvegardées, voulez-vous quitter la page?"
@@ -502,7 +504,7 @@ const Create = () => {
                     generateJson={generateJson}
                 />
             </div>
-        </div>
+        </Container>
     );
 };
 

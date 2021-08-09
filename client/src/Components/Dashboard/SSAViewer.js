@@ -59,23 +59,6 @@ const SSAViewer = ({ state }) => {
                 <CardContent>
                     <Typography>PARPRE de {state.name}</Typography>
                     {state.Arret !== undefined ? (
-                        // <List>
-                        //     {docInformations.map((doc, index) => (
-                        //         <div>
-                        //             <ListItem key={index}>
-                        //                 <ListItemText primary={doc.name} />
-                        //                 <Typography>
-                        //                     {
-                        //                         state.Arret.filter(
-                        //                             (element) => element.type === doc.name
-                        //                         ).length
-                        //                     }
-                        //                 </Typography>
-                        //             </ListItem>
-                        //             <Divider orientation="horizontal" light />
-                        //         </div>
-                        //     ))}
-                        // </List>
                         <div>
                             <List>
                                 <ListItem key={0}>
@@ -103,13 +86,18 @@ const SSAViewer = ({ state }) => {
                         state.POS.filter((element) => element.type === "webAction").map(
                             (step, index) => (
                                 <img
-                                    //src="'../../../server/Powershell/test_container_1-8.png'"
                                     key={index}
                                     src={`${ENV.SERVER_URI}/Images/${state.name}-${step.index}.png`}
                                     alt={`${state.name}-${step.index}`}
-                                    height={800 / 3.2}
-                                    width={1900 / 3.2}
+                                    height={800 / 2.5}
+                                    width={1900 / 2.5}
                                     style={{ marginTop: 10 }}
+                                    onClick={() =>
+                                        window.open(
+                                            `${ENV.SERVER_URI}/Images/${state.name}-${step.index}.png`,
+                                            "_blank"
+                                        )
+                                    }
                                 />
                             )
                         )}

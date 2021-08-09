@@ -68,7 +68,7 @@ const DashBoard = () => {
 
     return (
         <div>
-            <Container className={classes.root} disableGutters>
+            <Container className={classes.root} maxWidth={false}>
                 {/**haut */}
                 <Grid container spacing={3}>
                     <Grid item xs={12} sm={6} md={3} lg={3}>

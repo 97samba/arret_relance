@@ -142,7 +142,7 @@ const Service = ({ index, type, initialSTate }) => {
                         item
                         //affiche le champs 'Resultat attendu' si on est en POS
                         md={cardType === "POS" && status === "status" ? 4 : 6}
-                        xl={cardType === "POS" && status === "status" ? 6 : 4}
+                        xl={cardType === "POS" && status === "status" ? 4 : 6}
                     >
                         <TextField
                             value={state.name}

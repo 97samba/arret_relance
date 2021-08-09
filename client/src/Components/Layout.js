@@ -30,8 +30,7 @@ const useStyles = makeStyles((theme) => {
         root: {
             display: "flex",
             background: "#F6F6FB",
-            //minHeight: "750px",
-            height: "100%",
+            minHeight: "750px",
         },
         nav: {
             width: drawerWidth,
