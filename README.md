@@ -11,6 +11,9 @@ En même temps que l'utilisateur saisie les informations, l'application fait aus
 * Vérifier si la base de données saisie existe
 * Vérifies si le script à lancer est présent 
 * ...
+# Architecture Logique:
+![DashBoard](https://github.com/97samba/arret_relance/blob/main/pars-architecture.PNG)
+
 
 # Technologies:
 MERN: Mongo db, Express, React, Node
