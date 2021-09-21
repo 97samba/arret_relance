@@ -10,6 +10,7 @@ En même temps que l'utilisateur saisie les informations, l'application fait aus
 * Pinger le serveur renseigné
 * Vérifier si la base de données saisie existe
 * Vérifies si le script à lancer est présent 
+* ...
 
 # Technologies:
 MERN: Mongo db, Express, React, Node
